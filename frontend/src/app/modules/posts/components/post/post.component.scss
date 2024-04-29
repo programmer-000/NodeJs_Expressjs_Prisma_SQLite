@@ -1,0 +1,50 @@
+.post {
+  padding: 20px;
+  margin: 0 0 20px;
+
+  &__header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__title {
+
+  }
+
+  &__subTitle {
+    color: grey;
+  }
+
+  &__description {
+    font-weight: 600;
+    padding: 20px 0 0 0;
+  }
+
+  &__text {
+    text-align: justify;
+  }
+
+
+  &__img {
+    max-height: 100px;
+    max-width: 200px;
+    text-align: right;
+    overflow: hidden;
+
+    img {
+      width: auto;
+      height: 100%;
+    }
+
+  }
+}
+
+::ng-deep .mat-mdc-card-header-text {
+  display: none !important;
+}

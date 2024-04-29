@@ -1,0 +1,40 @@
+.users-table {
+  position: relative;
+
+  &__container {
+    max-height: 750px;
+    overflow: auto;
+  }
+
+  &__avatar {
+    width: auto;
+    max-height: 100px;
+    overflow: hidden;
+    text-align: center;
+
+    img {
+      width: 100px;
+      height: auto;
+    }
+  }
+
+  &__status {
+    &-active {
+      color: green;
+    }
+    &-inactive {
+      color: red;
+    }
+
+  }
+}
+
+table {
+  width: 100%;
+}
+
+.data-spinner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}

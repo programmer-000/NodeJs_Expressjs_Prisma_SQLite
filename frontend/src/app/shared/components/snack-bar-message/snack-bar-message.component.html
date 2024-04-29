@@ -1,0 +1,28 @@
+<div
+  class="snackBar"
+  [class.isError]="isError"
+  [class.isSuccess]="isSuccess"
+>
+  <!-- Icon wrapper to display success or error icon -->
+  <div class="snackBar__icon-wrapper">
+    <!-- Display checkmark icon for success messages -->
+    <ng-container *ngIf="isSuccess">
+      <i class="far fa-check-circle snackBar__action-icon"></i>
+    </ng-container>
+    <!-- Display cross icon for error messages -->
+    <ng-container *ngIf="isError">
+      <i class="far fa-times-circle snackBar__action-icon"></i>
+    </ng-container>
+  </div>
+
+  <!-- Message content -->
+  <div class="snackBar__message" [innerHTML]="snackMessage"></div>
+
+  <!-- Close button -->
+  <div class="snackBar__close-wrapper">
+    <!-- Close button icon -->
+    <div class="snackBar__close-button" (click)="snackBarRef.dismiss()">
+      <i class="fas fa-times snackBar__close-icon"></i>
+    </div>
+  </div>
+</div>

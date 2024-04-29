@@ -1,0 +1,61 @@
+.snackBar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  width: 100%;
+  min-width: 300px;
+  box-sizing: border-box;
+
+  &__icon-wrapper {
+    margin-right: 10px;
+  }
+
+  &__close-wrapper {
+    margin-left: 10px;
+  }
+
+
+  &__close-icon {
+    color: white;
+    font-size: 16px;
+  }
+
+
+  &.isError {
+    background: #ff4081 !important;
+    color: white !important;
+    border-radius: 3px;
+  }
+
+  &.isSuccess {
+    background: #00ff5b8a !important;
+    color: black !important;
+    font-weight: 500;
+    border-radius: 3px;
+  }
+
+  .snack-bar__message {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .mdc-snackbar__surface {
+    background: white !important;
+  }
+}
+
+.snack-bar__action-icon {
+  color: white;
+  font-size: 16px;
+}
+
+::ng-deep .mdc-snackbar__label {
+  padding: 2px;
+}
+
+::ng-deep .mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  padding: 0;
+  background: transparent;
+}

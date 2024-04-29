@@ -1,0 +1,34 @@
+.additional-selection {
+  opacity: 0.75;
+  font-size: 0.75em;
+}
+
+.select-container {
+  margin-top: 10px;
+}
+
+.filters {
+  margin-bottom: 25px;
+
+  &__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  &__field {
+    margin: 0 25px 0 0;
+  }
+
+  &__select {
+    .cdk-overlay-pane {
+      top: 100px !important;
+    }
+
+  }
+
+  &__btnAdd {
+    margin: 0 20px 0 0;
+  }
+}

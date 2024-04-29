@@ -1,0 +1,74 @@
+<mat-card class="login">
+  <!-- Title of the login card -->
+  <mat-card-title class="login__title">Login Account</mat-card-title>
+  <mat-card-content>
+    <!-- Form for user authentication -->
+    <form [formGroup]="authForm" (ngSubmit)="onSubmitAuth()" class="login__form">
+
+      <div>
+        <!-- Email input field -->
+        <mat-form-field color="accent" class="field-full-width">
+          <input matInput #email class="form-control" placeholder="Email" formControlName="email"
+                 type="email"
+                 name="email"
+                 maxlength="50" required>
+          <!-- Display character count and validation error -->
+          <mat-hint align="end">{{email.value.length || 0}}/50</mat-hint>
+          <mat-error *ngIf="authForm.controls['email'].hasError('required')">
+            Email <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Password input field -->
+        <mat-form-field color="accent" class="field-full-width">
+          <mat-label>Password</mat-label>
+          <input type="password" matInput #password class="form-control" placeholder="Password"
+                 formControlName="password" autocomplete="off" [type]="hide ? 'password' : 'text'"
+                 name="password"
+                 maxlength="50" required>
+          <!-- Toggle password visibility -->
+          <button mat-icon-button matSuffix type="button" (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                  [attr.aria-pressed]="hide">
+            <mat-icon class="password-icon">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          <!-- Display character count and validation error -->
+          <mat-hint align="end">{{password.value.length || 0}}/50</mat-hint>
+          <mat-error *ngIf="authForm.controls['password'].hasError('required')">
+            Password <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div mat-actions class="login__actions">
+        <!-- Login button -->
+        <button mat-raised-button color="primary"
+                type="submit"
+                [disabled]="!authForm.valid">
+          {{'Login'}}
+        </button>
+
+        <!-- Link to registration page -->
+        <a class="login__link"
+           [routerLink]="['../' + AppRouteEnum.Registration]">
+          <span>Register</span>
+        </a>
+
+        <!-- Link to forgot password page -->
+        <a class="login__link" [routerLink]="['../' + AppRouteEnum.ForgotPassword]">
+          <span>Forgot Password</span>
+        </a>
+      </div>
+
+    </form>
+  </mat-card-content>
+
+  <!-- Display loading spinner while data is loading -->
+  <mat-progress-spinner
+    *ngIf="dataLoading"
+    color="primary"
+    diameter="70"
+    mode="indeterminate"
+    class="login-spinner"
+  >
+  </mat-progress-spinner>
+</mat-card>

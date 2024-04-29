@@ -1,0 +1,113 @@
+<mat-card class="filters">
+  <mat-card-content class="filters__content">
+    <!-- Form for filtering posts -->
+    <form [formGroup]="postFilterForm" class="filters__form">
+
+      <!-- Select input for authors -->
+      <mat-form-field class="filters__field">
+        <mat-select class="filters__select" (openedChange)="openedChangeAuthors($event)"
+                    placeholder="Select authors"
+                    formControlName="authors"
+                    multiple>
+
+          <!-- Display selected author(s) -->
+          <mat-select-trigger>
+            <span *ngIf="postFilterForm.controls['authors'].value?.length > 0">
+              {{postFilterForm.controls['authors'].value ? postFilterForm.controls['authors'].value[0].firstName : ''}}
+            </span>
+            <span *ngIf="postFilterForm.controls['authors'].value?.length > 1" class="additional-selection">
+              (+{{postFilterForm.controls['authors'].value.length - 1}} {{postFilterForm.controls['authors'].value?.length === 2 ? 'other' : 'others'}}
+              )
+            </span>
+          </mat-select-trigger>
+
+          <!-- Search input for authors -->
+          <div class="select-container">
+            <mat-optgroup>
+              <mat-form-field style="width:100%;">
+                <input #search autocomplete="off" placeholder="Search" aria-label="Search" matInput
+                       [formControl]="searchTextboxControl">
+                <button [disableRipple]="true" *ngIf="search.value" matSuffix mat-icon-button aria-label="Clear"
+                        (click)="clearSearch($event)">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </mat-form-field>
+            </mat-optgroup>
+
+            <!-- Display no results message if there are no matching authors -->
+            <mat-optgroup *ngIf="(filteredOptions | async)?.length == 0">
+              <div>No results found!</div>
+            </mat-optgroup>
+
+            <!-- Option for each author -->
+            <mat-option
+              (onSelectionChange)="selectionChange($event)"
+              *ngFor="let option of filteredOptions | async"
+              [value]="option">
+              {{option.firstName}}
+              {{option.lastName}}
+            </mat-option>
+          </div>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Select input for categories -->
+      <mat-form-field>
+        <mat-select class="filters__select" (openedChange)="openedChangeCategories($event)"
+                    placeholder="Select categories"
+                    formControlName="categories"
+                    multiple>
+
+          <!-- Display selected category(s) -->
+          <mat-select-trigger>
+            <span *ngIf="postFilterForm.controls['categories'].value?.length > 0">
+              {{postFilterForm.controls['categories'].value ? postFilterForm.controls['categories'].value[0].name : ''}}
+            </span>
+            <span *ngIf="postFilterForm.controls['categories'].value?.length > 1" class="additional-selection">
+              (+{{postFilterForm.controls['categories'].value.length - 1}} {{postFilterForm.controls['categories'].value?.length === 2 ? 'other' : 'others'}}
+              )
+            </span>
+          </mat-select-trigger>
+
+          <!-- Search input for categories -->
+          <div class="select-container">
+            <mat-optgroup>
+              <mat-form-field style="width:100%;">
+                <input #searchCategories autocomplete="off" placeholder="Search" aria-label="Search categories" matInput
+                       [formControl]="searchTextboxControlCategories">
+                <button [disableRipple]="true" *ngIf="searchCategories.value" matSuffix mat-icon-button
+                        aria-label="Clear"
+                        (click)="clearSearchCategories($event)">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </mat-form-field>
+            </mat-optgroup>
+
+            <!-- Display no results message if there are no matching categories -->
+            <mat-optgroup *ngIf="(filteredOptionsCategories | async)?.length == 0">
+              <div>No results found!</div>
+            </mat-optgroup>
+
+            <!-- Option for each category -->
+            <mat-option
+              (onSelectionChange)="selectionChangeCategories($event)"
+              *ngFor="let option of filteredOptionsCategories | async"
+              [value]="option">
+              {{option.name}}
+            </mat-option>
+          </div>
+        </mat-select>
+      </mat-form-field>
+    </form>
+
+    <!-- Buttons for managing categories and adding new posts -->
+    <mat-card-actions align="end">
+      <button mat-raised-button class="filters__btnAdd" (click)="openDialog()">
+        Manage post categories
+      </button>
+      <button mat-mini-fab color="primary" aria-label="Add" matTooltip="Add new post" (click)="addPost()">
+        <mat-icon aria-label="Add">add</mat-icon>
+      </button>
+    </mat-card-actions>
+  </mat-card-content>
+</mat-card>

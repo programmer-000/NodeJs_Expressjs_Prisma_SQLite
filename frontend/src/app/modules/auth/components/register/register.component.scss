@@ -1,0 +1,43 @@
+:host {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  padding: 10vh 0;
+}
+
+.register {
+  background: #43efff14;
+
+  &__title {
+    padding: 20px 0;
+    text-align: center;
+  }
+
+  &__form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.button {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.field-full-width {
+  width: 100%;
+}
+
+.user-spinner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%)
+}

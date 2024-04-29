@@ -1,0 +1,36 @@
+<div class="posts">
+
+  <!-- Filter panel component -->
+  <div class="posts__filter">
+    <app-posts-filter-panel></app-posts-filter-panel>
+  </div>
+
+  <!-- Post components -->
+  <app-post *ngFor="let post of posts$ | async; trackBy: trackByFn; let i = index"
+            [post]="post"
+  ></app-post>
+
+  <!-- Paginator component -->
+  <mat-paginator class="demo-paginator"
+                 (page)="handlePageEvent($event)"
+                 [length]="length"
+                 [pageSize]="pageSize"
+                 [disabled]="disabled"
+                 [showFirstLastButtons]="showFirstLastButtons"
+                 [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
+                 [hidePageSize]="hidePageSize"
+                 [pageIndex]="pageIndex"
+                 aria-label="Select page">
+  </mat-paginator>
+
+  <!-- Progress spinner -->
+  <mat-progress-spinner
+    *ngIf="dataLoading"
+    color="primary"
+    diameter="70"
+    mode="indeterminate"
+    class="posts-spinner"
+  >
+  </mat-progress-spinner>
+
+</div>

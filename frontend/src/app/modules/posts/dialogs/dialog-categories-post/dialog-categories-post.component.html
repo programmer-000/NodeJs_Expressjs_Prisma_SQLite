@@ -1,0 +1,72 @@
+<h1 mat-dialog-title>Manage post categories</h1>
+<div *ngIf="visibilityFields"
+     mat-dialog-content
+     class="category">
+
+  <mat-form-field class="category__field"
+                  (keydown.enter)="$event.preventDefault(); addFlag ? addCategory(): updateCategory()">
+    <mat-label>{{ addFlag ? 'Create a new category' : 'Update Category'}}</mat-label>
+    <input matInput [formControl]="category">
+    <mat-error *ngIf="category.hasError('required')">
+      Category <strong>required</strong>
+    </mat-error>
+    <button *ngIf="category.value !== ''"
+            matSuffix
+            mat-icon-button
+            aria-label="Clear"
+            (click)="category.patchValue('')">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <button
+    class="category__btnSubmit"
+    mat-raised-button
+    aria-label="Create - Update"
+    [disabled]="!category.value"
+    (click)="addFlag ? addCategory(): updateCategory()"
+  >{{addFlag ? 'Create' : 'Update'}}
+  </button>
+
+</div>
+
+<div class="btn-wrap">
+  <button
+    mat-mini-fab
+    color="primary"
+    aria-label="Add"
+    matTooltip="Add new Category"
+    (click)="displayFields()"
+  >
+    <mat-icon>add</mat-icon>
+  </button>
+</div>
+
+
+<div class="categories-wrap">
+  <mat-divider></mat-divider>
+  <div class="categories" role="listitem" *ngFor="let category of listAllCategories$ | async; trackBy: trackByFn; let i = index">
+    <div class="categories__title">{{category.name}}</div>
+    <div class="categories__btn">
+      <button mat-icon-button color="primary" matTooltip="Edit" (click)="editCategory(category)">
+        <mat-icon aria-label="Edit">edit</mat-icon>
+      </button>
+      <button mat-icon-button color="primary" matTooltip="Delete" (click)="openDialogDeleteCategory(category)">
+        <mat-icon aria-label="Delete">delete</mat-icon>
+      </button>
+    </div>
+  </div>
+  <mat-divider></mat-divider>
+
+  <mat-progress-spinner
+    *ngIf="dataLoading"
+    diameter="40"
+    mode="indeterminate"
+    class="categories-spinner"
+  >
+  </mat-progress-spinner>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onNoClick()">Cancel</button>
+</div>

@@ -1,0 +1,21 @@
+.posts {
+  padding: 25px;
+  position: relative;
+
+  &__panel {
+    margin-bottom: 25px;
+    mat-card {
+      background: #f0f8ff;
+    }
+  }
+
+  &__btn {
+    margin: 0 20px 0 0;
+  }
+}
+
+.posts-spinner {
+  position: absolute;
+  left: 50%;
+  top: 10%;
+}

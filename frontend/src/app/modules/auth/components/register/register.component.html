@@ -1,0 +1,154 @@
+<mat-card class="register">
+  <!-- Title for the register card -->
+  <mat-card-title class="register__title">Register Account</mat-card-title>
+  <mat-card-content>
+    <!-- Registration form with form group and submission handler -->
+    <form [formGroup]="registerForm" novalidate (ngSubmit)="onSubmitNewUser()" class="register__form">
+      <div>
+
+        <!-- Email input field -->
+        <mat-form-field color="accent" class="field-full-width">
+          <input matInput #email class="form-control" placeholder="Email" formControlName="email"
+                 type="email"
+                 name="email"
+                 maxlength="50" required>
+          <!-- Display character count and validation error message -->
+          <mat-hint align="end">{{email.value.length || 0}}/50</mat-hint>
+          <mat-error *ngIf="registerForm.controls['email'].hasError('required')">
+            Email <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <!-- First Name input field -->
+        <mat-form-field color="accent" class="field-full-width">
+          <input matInput #firstName class="form-control" placeholder="First Name" formControlName="firstName"
+                 name="firstName"
+                 maxlength="50" required>
+          <!-- Display character count and validation error message -->
+          <mat-hint align="end">{{firstName.value.length || 0}}/50</mat-hint>
+          <mat-error *ngIf="registerForm.controls['firstName'].hasError('required')">
+            First Name <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Last Name input field -->
+        <mat-form-field color="accent" class="field-full-width">
+          <input matInput #lastName class="form-control" placeholder="Last Name" formControlName="lastName"
+                 name="lastName"
+                 maxlength="50" required>
+          <!-- Display character count and validation error message -->
+          <mat-hint align="end">{{lastName.value.length || 0}}/50</mat-hint>
+          <mat-error *ngIf="registerForm.controls['lastName'].hasError('required')">
+            Last Name <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Country input field with autocomplete -->
+        <mat-form-field class="field-full-width">
+          <mat-label>Country</mat-label>
+          <input type="text"
+                 matInput
+                 formControlName="location"
+                 placeholder="Pick Country"
+                 [matAutocomplete]="auto">
+          <!-- Autocomplete options -->
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let country of filteredCountries | async" [value]="country.name">
+              {{country.name}}
+            </mat-option>
+          </mat-autocomplete>
+          <!-- Clear button and validation error message -->
+          <button *ngIf="registerForm.controls['location'].value" matSuffix mat-icon-button aria-label="Clear"
+                  (click)="registerForm.controls['location'].patchValue('')">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-error *ngIf="registerForm.controls['location'].hasError('required')">
+            Country <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Password input field -->
+        <mat-form-field color="accent" class="field-full-width">
+          <mat-label>Password</mat-label>
+          <input type="password" matInput #password class="form-control" placeholder="Password"
+                 formControlName="password" autocomplete="off" [type]="hide ? 'password' : 'text'"
+                 name="password"
+                 maxlength="50" required>
+          <!-- Toggle password visibility and display character count and validation error message -->
+          <button mat-icon-button matSuffix type="button" (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                  [attr.aria-pressed]="hide">
+            <mat-icon class="password-icon">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          <mat-hint align="end">{{password.value.length || 0}}/50</mat-hint>
+          <mat-error *ngIf="registerForm.controls['password'].hasError('required')">
+            Password <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Confirm Password input field -->
+        <mat-form-field color="accent" class="field-full-width">
+          <mat-label>Confirm Password</mat-label>
+          <input type="password" matInput #confirmPassword class="form-control" placeholder="Password"
+                 formControlName="confirmPassword" autocomplete="off" [type]="hide ? 'password' : 'text'"
+                 name="confirmPassword"
+                 maxlength="50" required>
+          <!-- Toggle password visibility and display character count and validation error message -->
+          <button mat-icon-button matSuffix type="button" (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                  [attr.aria-pressed]="hide">
+            <mat-icon class="password-icon">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          <mat-hint align="end">{{confirmPassword.value.length || 0}}/50</mat-hint>
+          <mat-error *ngIf="registerForm.controls['confirmPassword'].hasError('required')">
+            Confirm Password <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="registerForm.controls['confirmPassword'].hasError('mustMatch')">
+            Passwords must match <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Birth date input field -->
+        <mat-form-field color="accent" class="field-full-width">
+          <mat-label>Birth date</mat-label>
+          <input matInput [matDatepicker]="picker" placeholder="Choose a birth date"
+                 formControlName="birthAt">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <!-- Validation error message for birth date -->
+          <mat-error *ngIf="registerForm.controls['birthAt'].hasError('required')">
+            Birth date <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Status checkbox -->
+        <p>
+          <mat-checkbox formControlName="status">Status
+            - {{ registerForm.value.status == true ? 'Active' : 'Deactivated' }}
+          </mat-checkbox>
+        </p>
+
+      </div>
+
+      <!-- Form submission buttons -->
+      <div mat-dialog-actions class="register__actions">
+        <button mat-raised-button color="primary"
+                type="submit"
+                [disabled]="!registerForm.valid">
+          Submit
+        </button>
+        <!-- Navigation button to go back -->
+        <a mat-flat-button [routerLink]="['../' + AppRouteEnum.Login]">Back</a>
+      </div>
+    </form>
+  </mat-card-content>
+
+  <!-- Loading spinner -->
+  <mat-progress-spinner
+    *ngIf="dataLoading"
+    color="primary"
+    diameter="70"
+    mode="indeterminate"
+    class="user-spinner"
+  >
+  </mat-progress-spinner>
+
+</mat-card>

@@ -1,0 +1,52 @@
+<div class="app-container">
+
+  <mat-sidenav-container *ngIf="account" class="sidenav-container">
+    <mat-sidenav #drawer class="sidenav" fixedInViewport
+                 [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+                 [mode]="(isHandset$ | async) ? 'over' : 'side'"
+                 [opened]="(isHandset$ | async) === false">
+      <mat-toolbar>Menu</mat-toolbar>
+      <mat-nav-list>
+        <a class="sidenav__item" mat-list-item routerLink='/'>
+          <mat-icon class="sidenav__icon" aria-label="home">home</mat-icon>
+          <span>Home</span>
+        </a>
+        <a class="sidenav__item" mat-list-item routerLink='/users'>
+          <mat-icon class="sidenav__icon" aria-label="people">people</mat-icon>
+          <span>Users</span>
+        </a>
+        <a class="sidenav__item" mat-list-item routerLink='/posts'>
+          <mat-icon class="sidenav__icon" aria-label="list_alt">list_alt</mat-icon>
+          <span>Posts</span>
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content class="sidenav-content">
+      <mat-toolbar color="primary">
+
+        <button
+          type="button"
+          aria-label="Toggle sidenav"
+          mat-icon-button
+          (click)="drawer.toggle()"
+          *ngIf="isHandset$ | async">
+          <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+        </button>
+        <div class="sidenav-content__toolbar">
+          <span>my-app</span>
+          <button (click)="logout()" mat-flat-button>Logout</button>
+        </div>
+
+      </mat-toolbar>
+
+      <!-- Add Content Here -->
+      <router-outlet></router-outlet>
+
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+
+  <router-outlet *ngIf="!account"></router-outlet>
+
+</div>
+
+

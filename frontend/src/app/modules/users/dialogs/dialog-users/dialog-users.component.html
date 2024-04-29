@@ -1,0 +1,143 @@
+<div class="dialog">
+  <!-- Dialog Header -->
+  <div class="dialog__header">
+    <div class="dialog__title">{{ this.currentUser ? this.currentUser.firstName : 'Add User' }}</div>
+
+    <!-- Avatar -->
+    <div class="dialog__avatar">
+      <label class="hoverable" for="fileInput">
+        <img [src]="avatarUrl ? avatarUrl : avatarImageDefault">
+        <div class="hover-text">Choose file</div>
+        <div class="background"></div>
+      </label>
+      <br/>
+      <input name="fileInput" id="fileInput" type='file' accept="image/*" (change)="handleImageLoaded($event)">
+    </div>
+
+    <!-- Delete Avatar Button -->
+    <button *ngIf="avatarUrl" mat-icon-button (click)="deleteAvatar()" class="dialog__iconClose" tabindex="-2"
+            matTooltip="Delete avatar">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- User Form -->
+  <form [formGroup]="userForm" novalidate (ngSubmit)="onSubmitUser()" class="example-form">
+    <div mat-dialog-content>
+
+      <!-- Email Input -->
+      <mat-form-field color="accent" class="field-full-width">
+        <input matInput #email class="form-control" placeholder="Email" formControlName="email" type="email"
+               name="email" maxlength="50" required>
+        <mat-hint align="end">{{ email.value.length || 0 }}/50</mat-hint>
+        <mat-error *ngIf="userForm.controls['email'].hasError('required')">Email <strong>required</strong></mat-error>
+      </mat-form-field>
+
+      <!-- First Name Input -->
+      <mat-form-field color="accent" class="field-full-width">
+        <input matInput #firstName class="form-control" placeholder="First Name" formControlName="firstName"
+               name="firstName" maxlength="50" required>
+        <mat-hint align="end">{{ firstName.value.length || 0 }}/50</mat-hint>
+        <mat-error *ngIf="userForm.controls['firstName'].hasError('required')">First Name <strong>required</strong></mat-error>
+      </mat-form-field>
+
+      <!-- Last Name Input -->
+      <mat-form-field color="accent" class="field-full-width">
+        <input matInput #lastName class="form-control" placeholder="Last Name" formControlName="lastName"
+               name="lastName" maxlength="50" required>
+        <mat-hint align="end">{{ lastName.value.length || 0 }}/50</mat-hint>
+        <mat-error *ngIf="userForm.controls['lastName'].hasError('required')">Last Name <strong>required</strong></mat-error>
+      </mat-form-field>
+
+      <!-- Role Select -->
+      <mat-form-field color="accent" class="field-full-width">
+        <mat-label>Roles</mat-label>
+        <mat-select formControlName="role">
+          <mat-option *ngFor="let role of roleList" [value]="role.id">{{ role.viewValue }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="userForm.controls['role'].hasError('required')">Role <strong>required</strong></mat-error>
+      </mat-form-field>
+
+      <!-- Country Input -->
+      <mat-form-field class="field-full-width">
+        <mat-label>Country</mat-label>
+        <input type="text" matInput formControlName="location" placeholder="Pick Country" [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let country of filteredCountries | async" [value]="country.name">{{ country.name }}</mat-option>
+        </mat-autocomplete>
+        <button *ngIf="userForm.controls['location'].value" matSuffix mat-icon-button aria-label="Clear"
+                (click)="userForm.controls['location'].patchValue('')">
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-error *ngIf="userForm.controls['location'].hasError('required')">Country <strong>required</strong></mat-error>
+      </mat-form-field>
+
+      <!-- Password Inputs (if new user) -->
+      <ng-container *ngIf="data.newUser">
+        <!-- Password Input -->
+        <mat-form-field color="accent" class="field-full-width">
+          <mat-label>Password</mat-label>
+          <input type="password" matInput #password class="form-control" placeholder="Password"
+                 formControlName="password" autocomplete="off" [type]="hide ? 'password' : 'text'" name="password"
+                 maxlength="50" required>
+          <!-- Password Visibility Toggle Button -->
+          <button mat-icon-button matSuffix type="button" (click)="hide = !hide"
+                  [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+            <mat-icon class="password-icon">{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-hint align="end">{{ password.value.length || 0 }}/50</mat-hint>
+          <mat-error *ngIf="userForm.controls['password'].hasError('required')">Password <strong>required</strong></mat-error>
+        </mat-form-field>
+
+        <!-- Confirm Password Input -->
+        <mat-form-field color="accent" class="field-full-width">
+          <mat-label>Confirm Password</mat-label>
+          <input type="password" matInput #confirmPassword class="form-control" placeholder="Password"
+                 formControlName="confirmPassword" autocomplete="off" [type]="hide ? 'password' : 'text'" name="confirmPassword"
+                 maxlength="50" required>
+          <!-- Password Visibility Toggle Button -->
+          <button mat-icon-button matSuffix type="button" (click)="hide = !hide"
+                  [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+            <mat-icon class="password-icon">{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-hint align="end">{{ confirmPassword.value.length || 0 }}/50</mat-hint>
+          <mat-error *ngIf="userForm.controls['confirmPassword'].hasError('required')">Confirm Password <strong>required</strong></mat-error>
+          <mat-error *ngIf="userForm.controls['confirmPassword'].hasError('mustMatch')">Passwords must match <strong>required</strong></mat-error>
+        </mat-form-field>
+      </ng-container>
+
+      <!-- Birth Date Input -->
+      <mat-form-field color="accent" class="field-full-width">
+        <mat-label>Birth date</mat-label>
+        <input matInput [matDatepicker]="picker" placeholder="Choose a birth date" formControlName="birthAt">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="userForm.controls['birthAt'].hasError('required')">Birth date <strong>required</strong></mat-error>
+      </mat-form-field>
+
+      <!-- Status Checkbox -->
+      <p class="dialog__actions">
+        <mat-checkbox formControlName="status">Status - {{ userForm.value.status == true ? 'Active' : 'Deactivated' }}</mat-checkbox>
+
+        <!-- Change Password Link (if not new user) -->
+        <a *ngIf="!data.newUser" class="dialog__link" (click)="openDialogNewPassword(currentUser)">
+          <span>Change password</span>
+        </a>
+      </p>
+
+    </div>
+
+    <!-- Dialog Actions -->
+    <div mat-dialog-actions class="dialog__actions">
+      <!-- Submit Button -->
+      <button mat-raised-button color="primary" type="submit" [disabled]="!userForm.valid" [mat-dialog-close]="true">
+        {{ this.data.newUser ? 'Create' : 'Update' }}
+      </button>
+      <!-- Cancel Button -->
+      <button mat-raised-button color="accent" type="button" [mat-dialog-close]="1" (click)="closeClick()" tabindex="-1">Cancel</button>
+    </div>
+  </form>
+
+  <!-- Progress Spinner (Loading Indicator) -->
+  <mat-progress-spinner *ngIf="dataLoading" color="primary" diameter="70" mode="indeterminate" class="user-spinner"></mat-progress-spinner>
+</div>

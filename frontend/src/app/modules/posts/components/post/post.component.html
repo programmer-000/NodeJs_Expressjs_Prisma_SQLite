@@ -1,0 +1,47 @@
+<mat-card class="post">
+  <mat-card-header class="post__header">
+    <div class="post__details">
+      <!-- Post details -->
+      <h2 class="post__title">{{ post.title }}</h2>
+      <div class="post__subTitle">
+        Author: {{ post.user ? post.user.firstName : '' }} {{ post.user ? post.user.lastName : '' }}
+      </div>
+      <div class="post__subTitle" *ngIf="post.categories">
+        Categories:
+        <span *ngFor="let category of post.categories">
+          {{ category.name }},
+        </span>
+      </div>
+      <div class="post__subTitle">Created: {{ post.createdAt | date: "d/M/yy" }}</div>
+      <div class="post__subTitle">Updated: {{ post.updatedAt | date: "d/M/yy" }}</div>
+    </div>
+
+    <!-- Post image -->
+    <div class="post__img">
+      <img *ngIf="post.picture" [src]="post.picture">
+    </div>
+  </mat-card-header>
+
+  <!-- Post content -->
+  <mat-card-content>
+    <p class="post__description">{{ post.description }}</p>
+    <p class="post__text">{{ post.content }}</p>
+  </mat-card-content>
+
+  <!-- Post actions -->
+  <mat-card-actions>
+    <!-- Edit post button -->
+    <button mat-icon-button class="material-icons app-toolbar-menu save-button"
+            matTooltip="Edit" color="primary"
+            (click)="openDialogEditPost(post.id)">
+      <mat-icon>edit</mat-icon>
+    </button>
+
+    <!-- Delete post button -->
+    <button mat-icon-button class="material-icons app-toolbar-menu delete-button"
+            matTooltip="Delete" color="warn"
+            (click)="openDialogDeletePost(post)">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </mat-card-actions>
+</mat-card>
