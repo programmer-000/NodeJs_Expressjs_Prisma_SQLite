@@ -1,17 +1,22 @@
+<!-- app.component.html -->
+
 <div class="app-container">
 
+  <!-- Main container for the application -->
   <mat-sidenav-container *ngIf="account" class="sidenav-container">
+    <!-- Side navigation menu -->
     <mat-sidenav #drawer class="sidenav" fixedInViewport
                  [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
                  [mode]="(isHandset$ | async) ? 'over' : 'side'"
                  [opened]="(isHandset$ | async) === false">
       <mat-toolbar>Menu</mat-toolbar>
       <mat-nav-list>
+        <!-- Navigation links -->
         <a class="sidenav__item" mat-list-item routerLink='/'>
           <mat-icon class="sidenav__icon" aria-label="home">home</mat-icon>
           <span>Home</span>
         </a>
-        <a class="sidenav__item" mat-list-item routerLink='/users'>
+        <a *appDenyAccess="[RoleEnum.Client]" class="sidenav__item" mat-list-item routerLink='/users'>
           <mat-icon class="sidenav__icon" aria-label="people">people</mat-icon>
           <span>Users</span>
         </a>
@@ -21,9 +26,12 @@
         </a>
       </mat-nav-list>
     </mat-sidenav>
-    <mat-sidenav-content class="sidenav-content">
-      <mat-toolbar color="primary">
 
+    <!-- Main content area -->
+    <mat-sidenav-content class="sidenav-content">
+      <!-- Toolbar -->
+      <mat-toolbar color="primary">
+        <!-- Toggle button for side navigation -->
         <button
           type="button"
           aria-label="Toggle sidenav"
@@ -32,21 +40,44 @@
           *ngIf="isHandset$ | async">
           <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
         </button>
+        <!-- Application title and account information -->
         <div class="sidenav-content__toolbar">
           <span>my-app</span>
-          <button (click)="logout()" mat-flat-button>Logout</button>
-        </div>
+          <!-- Account information -->
+          <div class="account">
+            <div class="account__info">
+              <div class="account__name">{{ account.userInfo.firstName }}</div>
+              <div class="account__role">{{ account.userInfo.role ?? 0 | roles }}</div>
+            </div>
+            <a mat-icon-button [matMenuTriggerFor]="menu" class="account__avatar">
+              <mat-icon *ngIf="!account.userInfo.avatar">account_circle</mat-icon>
+              <img *ngIf="account.userInfo.avatar" class="account__img" [src]="account.userInfo.avatar"/>
+            </a>
 
+            <!-- User menu -->
+            <mat-menu #menu="matMenu">
+              <!-- Settings button -->
+              <button mat-menu-item (click)="editUser(account.userInfo.id)">
+                <mat-icon>settings</mat-icon>
+                <span>Settings</span>
+              </button>
+              <!-- Logout button -->
+              <button mat-menu-item (click)="logout()">
+                <mat-icon>logout</mat-icon>
+                <span>Logout</span>
+              </button>
+            </mat-menu>
+          </div>
+        </div>
       </mat-toolbar>
 
-      <!-- Add Content Here -->
+      <!-- Content area -->
       <router-outlet></router-outlet>
 
     </mat-sidenav-content>
   </mat-sidenav-container>
 
+  <!-- Display router outlet if user is not logged in -->
   <router-outlet *ngIf="!account"></router-outlet>
 
 </div>
-
-

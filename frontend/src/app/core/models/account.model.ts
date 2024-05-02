@@ -1,5 +1,3 @@
-// import { Role } from './role';
-
 export class AccountModel {
   id?: string;
   title?: string;
@@ -7,6 +5,5 @@ export class AccountModel {
   lastName?: string;
   email?: string;
   role?: number;
-  // role?: Role;
-  // jwtToken?: string;
+  avatar?: string;
 }

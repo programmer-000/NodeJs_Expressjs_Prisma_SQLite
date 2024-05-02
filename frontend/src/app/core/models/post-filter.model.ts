@@ -1,4 +1,4 @@
 export class PostFilterModel {
-  authors?: [];
-  categories?: [];
+  authors?: number[];
+  categories?: number[];
 }

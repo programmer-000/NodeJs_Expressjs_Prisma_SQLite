@@ -58,12 +58,6 @@ export class DialogPostsComponent implements OnInit, OnDestroy {
 // Current post model
   currentPost: PostModel;
 
-// Response for new post creation
-  respNewPost: PostModel;
-
-// Response for post update
-  respUpdatePost: PostModel;
-
 // URL of the picture
   pictureUrl: any;
 

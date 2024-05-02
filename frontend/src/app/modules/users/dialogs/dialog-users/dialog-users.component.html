@@ -49,13 +49,13 @@
         <mat-error *ngIf="userForm.controls['lastName'].hasError('required')">Last Name <strong>required</strong></mat-error>
       </mat-form-field>
 
-      <!-- Role Select -->
-      <mat-form-field color="accent" class="field-full-width">
+      <!-- RoleEnum Select -->
+      <mat-form-field *appDenyAccess="[RoleEnum.Client]" color="accent" class="field-full-width">
         <mat-label>Roles</mat-label>
         <mat-select formControlName="role">
-          <mat-option *ngFor="let role of roleList" [value]="role.id">{{ role.viewValue }}</mat-option>
+          <mat-option *ngFor="let role of rolesList" [value]="role.id">{{ role.viewValue }}</mat-option>
         </mat-select>
-        <mat-error *ngIf="userForm.controls['role'].hasError('required')">Role <strong>required</strong></mat-error>
+        <mat-error *ngIf="userForm.controls['role'].hasError('required')">RoleEnum <strong>required</strong></mat-error>
       </mat-form-field>
 
       <!-- Country Input -->

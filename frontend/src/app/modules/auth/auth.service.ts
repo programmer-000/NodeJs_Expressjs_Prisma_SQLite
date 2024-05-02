@@ -29,19 +29,24 @@ export class AuthService {
   constructor(
     private router: Router,
     private http: HttpClient
-  ) {}
+  ) {
+  }
 
   public get accountValue() {
     return this.accountSubject$.value;
+  }
+
+  public get currentRole() {
+    return this.accountSubject$.value!.userInfo.role;
   }
 
   /**
    * New User Registration
    */
   register(registerUserData: RegisterUserModel): Observable<any> {
-    return this.http.post<any>(config.API_URL + `/auth/register/`, { registerUserData })
+    return this.http.post<any>(config.API_URL + `/auth/register/`, {registerUserData})
       .pipe(map(account => {
-        const { accessToken, refreshToken } = account;
+        const {accessToken, refreshToken} = account;
         this.setTokens(accessToken, refreshToken);
         return account;
       }));
@@ -51,9 +56,9 @@ export class AuthService {
    * User authorization
    */
   login(loginUserData: LoginUserModel): Observable<any> {
-    return this.http.post<any>(config.API_URL + `/auth/login/`, { loginUserData })
+    return this.http.post<any>(config.API_URL + `/auth/login/`, {loginUserData})
       .pipe(map(account => {
-        const { accessToken, refreshToken, userInfo } = account;
+        const {accessToken, refreshToken, userInfo} = account;
         this.setTokens(accessToken, refreshToken);
         this.setUser(userInfo);
         this.startRefreshTokenTimer();

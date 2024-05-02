@@ -22,7 +22,7 @@ export class RolesPipe implements PipeTransform {
       case 4:
         return 'Client';
       default:
-        return ''; // Return an empty string if value is not recognized
+        return '';
     }
   }
 }

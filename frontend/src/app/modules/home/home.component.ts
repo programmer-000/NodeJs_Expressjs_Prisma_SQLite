@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HomeService } from './home.service';
 import { Subject, takeUntil } from 'rxjs';
 import { AccountModel } from '../../core/models';
+import { RoleEnum } from '../../core/enums';
 
 @Component({
   selector: 'app-home',
@@ -16,6 +17,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     public homeService: HomeService
   ) {
   }
+
+  // Enum to access route names
+  protected readonly RoleEnum = RoleEnum;
 
   // Subject to handle subscription cleanup
   private destroy$: Subject<void> = new Subject<void>();

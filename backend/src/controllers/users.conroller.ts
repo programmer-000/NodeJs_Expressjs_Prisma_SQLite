@@ -15,8 +15,15 @@ export const getAllUsersHandler = async (params: any): Promise<{ totalCount: num
 
     // Calculate skip value for pagination
     const skip: number = pageIndex * pageSize;
-    // Retrieve total count of users
-    const totalCount: number = await db.user.count();
+    // Retrieve total count of users filtered by roles
+    const totalCount: number = await db.user.count({
+        where: {
+            role: { in: rolesArr },
+            firstName: { startsWith: firstName },
+            lastName: { startsWith: lastName },
+            email: { startsWith: email }
+        }
+    });
 
     // Retrieve users based on parameters
     const users: UsersModel[] = await db.user.findMany({
@@ -38,14 +45,19 @@ export const getAllUsersHandler = async (params: any): Promise<{ totalCount: num
             updatedAt: true,
             role: true,
             avatar: true,
-            posts: true,
             status: true,
             birthAt: true,
-            location: true
+            location: true,
+            posts: {
+                select: {
+                    id: true
+                },
+            }
         },
     });
     return { totalCount, users };
 };
+
 
 /**
  * Retrieves a list of all users with minimal information.
@@ -80,10 +92,14 @@ export const getUserHandler = async (id: number): Promise<UserModel | null> => {
             updatedAt: true,
             role: true,
             avatar: true,
-            posts: true,
             status: true,
             birthAt: true,
-            location: true
+            location: true,
+            posts: {
+                select: {
+                    id: true
+                },
+            },
         },
     });
 };
@@ -136,10 +152,14 @@ export const updateUserHandler = async (user: UserModel, id: number): Promise<an
             updatedAt: true,
             role: true,
             avatar: true,
-            posts: true,
             status: true,
             birthAt: true,
-            location: true
+            location: true,
+            posts: {
+                select: {
+                    id: true
+                },
+            },
         },
     });
 };

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ErrorPageComponent } from './layout/error-page/error-page.component';
 import { AuthGuard } from './core/guards/auth.guard';
-import { AppRouteEnum } from './core/enums';
+import { AppRouteEnum, RoleEnum } from './core/enums';
 
 // Importing modules using dynamic imports for lazy loading
 const homeModule = () => import('./modules/home/home.module').then(m => m.HomeModule);
@@ -14,8 +14,8 @@ const postsModule = () => import('./modules/posts/posts.module').then(m => m.Pos
 const appRoutes: Routes = [
   { path: '', loadChildren: homeModule, canActivate: [AuthGuard] },
   { path: AppRouteEnum.Auth, loadChildren: authModule },
-  { path: AppRouteEnum.Users, loadChildren: usersModule, canActivate: [AuthGuard] },
-  { path: AppRouteEnum.Posts, loadChildren: postsModule, canActivate: [AuthGuard] },
+  { path: AppRouteEnum.Users, loadChildren: usersModule, canActivate: [AuthGuard], data: { roles: [RoleEnum.SuperAdmin, RoleEnum.ProjectAdmin, RoleEnum.Manager] } }, // Permit access: Super Admin, Project Admin, Manager
+  { path: AppRouteEnum.Posts, loadChildren: postsModule, canActivate: [AuthGuard], data: { roles: [RoleEnum.SuperAdmin, RoleEnum.ProjectAdmin, RoleEnum.Manager, RoleEnum.Client] } }, // Permit access: to all roles
   { path: AppRouteEnum.NotFound, component: ErrorPageComponent },
   { path: '**', redirectTo: '/' + AppRouteEnum.NotFound, pathMatch: 'full' },
 ];

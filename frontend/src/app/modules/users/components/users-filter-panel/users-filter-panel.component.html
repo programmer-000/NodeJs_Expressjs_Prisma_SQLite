@@ -4,7 +4,7 @@
     <form [formGroup]="userFilterForm" class="filters__form">
 
       <!-- Roles filter -->
-      <mat-form-field class="filters__input">
+      <mat-form-field *appAllowAccess="[RoleEnum.SuperAdmin, RoleEnum.ProjectAdmin]" class="filters__input">
         <mat-label>Roles</mat-label>
         <mat-select formControlName="roles" multiple>
           <mat-option *ngFor="let role of rolesList" [value]="role">

@@ -2,16 +2,14 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { takeUntil, startWith, map } from 'rxjs/operators';
-import { ROLES } from '../../../../shared/constants/roles';
 import { COUNTRIES } from '../../../../shared/constants/countries';
-import { UserModel } from '../../../../core/models/user.model';
-import { CountriesModel } from '../../../../core/models/countries-model';
 import { MustMatch } from '../../../../core/helpers/must-match.validator';
 import { AuthService } from '../../auth.service';
 import { Router } from '@angular/router';
 import { AppRouteEnum } from '../../../../core/enums';
 import { EMAIL_VALIDATION_PATTERN } from '../../../../shared/validation-patterns/pattern-email';
 import { NotificationService } from '../../../../shared/notification.service';
+import { CountriesModel, UserModel } from '../../../../core/models';
 
 @Component({
   selector: 'app-register',
@@ -38,8 +36,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   // Subscription to user data
   private subUser: Subscription;
 
-  // Lists of roles and countries
-  roleList = ROLES;
+  // Lists of countries
   countriesList = COUNTRIES;
   // Default role is 'Client'
   defaultRole: number = 4;

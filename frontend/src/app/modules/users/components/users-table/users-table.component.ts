@@ -12,6 +12,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { MatSort, SortDirection } from '@angular/material/sort';
 import { AuthModel, UserFilterModel, UserModel } from '../../../../core/models';
 import { AuthService } from '../../../auth/auth.service';
+import { RoleEnum } from '../../../../core/enums';
 
 
 @Component({
@@ -36,6 +37,9 @@ export class UsersTableComponent implements OnInit, OnDestroy {
   @ViewChild(MatTable) table: MatTable<UserModel[]>;
   @ViewChild(MatSort) sort: MatSort;
 
+  // Enum to access route names
+  protected readonly RoleEnum = RoleEnum;
+
   // Current user account information
   currentAccount: AuthModel | null = this.authService.accountValue;
 
@@ -53,7 +57,7 @@ export class UsersTableComponent implements OnInit, OnDestroy {
   disabled = false;
 
   // Columns to display in the table
-  displayedColumns = ['id', 'avatar', 'email', 'firstName', 'lastName', 'createdAt', 'role', 'posts', 'status', 'location', 'birthAt', 'actions'];
+  displayedColumns = ['id', 'avatar', 'role', 'email', 'firstName', 'lastName', 'createdAt', 'posts', 'status', 'location', 'birthAt', 'actions'];
 
   users$ = this.usersService.users$;
 
@@ -74,16 +78,6 @@ export class UsersTableComponent implements OnInit, OnDestroy {
     // Fetch initial data and apply filters
     this.fetchData();
     this.getUsersFilter();
-    this.isAdminOrModerator()
-
-    console.log('currentAccount', this.currentAccount)
-  }
-
-  /**
-   * Check if the user is an admin or moderator
-   */
-  isAdminOrModerator(): boolean {
-    return this.currentAccount?.userInfo?.role == 1 || this.currentAccount?.userInfo?.role == 2;
   }
 
   /**

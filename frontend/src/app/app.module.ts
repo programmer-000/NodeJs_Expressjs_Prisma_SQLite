@@ -16,6 +16,7 @@ import { NotificationService } from './shared/notification.service';
 import { DialogConfirmComponent } from './shared/components/dialog-confirm/dialog-confirm.component';
 import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
+import { SharedModule } from './shared/shared.module';
 
 // Modules array
 const angularMaterialModules = [
@@ -37,7 +38,8 @@ const angularMaterialModules = [
     DialogConfirmComponent,
   ],
   imports: [
-    ...angularMaterialModules, // Importing Modules
+    ...angularMaterialModules,
+    SharedModule,
   ],
   providers: [
     NotificationService,

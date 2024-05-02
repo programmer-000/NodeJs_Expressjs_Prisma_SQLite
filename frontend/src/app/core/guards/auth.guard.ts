@@ -21,14 +21,12 @@ export class AuthGuard implements CanActivate {
 
     if (account) {
       // Check if route is restricted by role
-      // Note: Uncomment and modify this section for role-based authorization
+      if (route.data['roles'] && !route.data['roles'].includes(account.userInfo.role)) {
 
-      // if (route.data.roles && !route.data.roles.includes(account.role)) {
-      //   // Role not authorized so redirect to home page
-      //   this.router.navigate(['/']);
-      //   return false;
-      // }
-
+        // RoleEnum not authorized so redirect to home page
+        this.router.navigate(['/']);
+        return false;
+      }
       // Authorized so return true
       return true;
     } else {

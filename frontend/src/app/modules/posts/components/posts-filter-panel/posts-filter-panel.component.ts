@@ -10,6 +10,7 @@ import { PostsSelectors } from '../../store-posts/posts.selectors';
 import { DialogPostsComponent } from '../../dialogs/dialog-posts/dialog-posts.component';
 import { DialogCategoriesPostComponent } from '../../dialogs/dialog-categories-post/dialog-categories-post.component';
 import { CategoriesModel, UserListModel } from '../../../../core/models';
+import { RoleEnum } from '../../../../core/enums';
 
 @Component({
   selector: 'app-posts-filter-panel',
@@ -30,6 +31,9 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   // Selectors for retrieving data from Ngxs store
   @Select(PostsSelectors.getListUsers) listAllUsers$: Observable<UserListModel[]>;
   @Select(PostsSelectors.getListCategories) listAllCategories$: Observable<CategoriesModel[]>;
+
+  // Enum to access route names
+  protected readonly RoleEnum = RoleEnum;
 
   // Object to hold filter data
   private filterData: any = {authors: [], categories: []};

@@ -13,6 +13,7 @@ export class UsersStateModel {
   users: UserModel[];
   usersCounter?: any;
   selectedUser?: UserModel | null;
+  authUser?: UserModel | null;
 }
 
 /**
@@ -102,6 +103,7 @@ export class UsersState {
         setState({
           ...state,
           users: usersList,
+          authUser: result,
         });
       },
       (error) => {

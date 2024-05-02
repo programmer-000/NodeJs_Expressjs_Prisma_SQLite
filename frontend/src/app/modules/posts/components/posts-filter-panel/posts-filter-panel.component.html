@@ -4,7 +4,7 @@
     <form [formGroup]="postFilterForm" class="filters__form">
 
       <!-- Select input for authors -->
-      <mat-form-field class="filters__field">
+      <mat-form-field *appDenyAccess="[RoleEnum.Client]" class="filters__field">
         <mat-select class="filters__select" (openedChange)="openedChangeAuthors($event)"
                     placeholder="Select authors"
                     formControlName="authors"
@@ -102,7 +102,7 @@
 
     <!-- Buttons for managing categories and adding new posts -->
     <mat-card-actions align="end">
-      <button mat-raised-button class="filters__btnAdd" (click)="openDialog()">
+      <button *appDenyAccess="[RoleEnum.Client]" mat-raised-button class="filters__btnAdd" (click)="openDialog()">
         Manage post categories
       </button>
       <button mat-mini-fab color="primary" aria-label="Add" matTooltip="Add new post" (click)="addPost()">

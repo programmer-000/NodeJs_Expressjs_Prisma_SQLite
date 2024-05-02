@@ -8,9 +8,8 @@ import { PostModel, PostsQueryParamsModel, CreateUpdatePostModel } from '../mode
  * @returns An object containing an array of posts and the total count of posts.
  */
 export const getAllPostsHandler = async (params: PostsQueryParamsModel): Promise<{ posts: PostModel[]; totalCount: number; }> =>  {
-    const {pageIndex, pageSize, authors, categories} = params;
+    const { pageIndex, pageSize, authors, categories } = params;
 
-    const totalCount: number = await db.post.count();
     const skip: number = pageIndex * pageSize;
     const parseAuthors = JSON.parse(authors as string);
 
@@ -18,14 +17,29 @@ export const getAllPostsHandler = async (params: PostsQueryParamsModel): Promise
     const parseCategories = JSON.parse(categories as string);
     let categoriesArr = parseCategories.length ? parseCategories : undefined;
 
-    const posts = await db.post.findMany({
+    // Count only the posts that belong to the specified authors
+    const totalCount: number = await db.post.count({
         where: {
             user: {
-                id: {in: authorsArr},
+                id: { in: authorsArr },
             },
             categories: {
                 some: {
-                    id: {in: categoriesArr}
+                    id: { in: categoriesArr }
+                }
+            }
+        }
+    });
+
+    // Retrieve posts based on parameters
+    const posts = await db.post.findMany({
+        where: {
+            user: {
+                id: { in: authorsArr },
+            },
+            categories: {
+                some: {
+                    id: { in: categoriesArr }
                 }
             }
         },
@@ -47,13 +61,13 @@ export const getAllPostsHandler = async (params: PostsQueryParamsModel): Promise
                     id: true,
                     firstName: true,
                     lastName: true,
-                    // location: true
                 },
             },
         },
     });
     return { posts, totalCount } as { posts: PostModel[]; totalCount: number; };
 };
+
 
 /**
  * Retrieves a single post by its ID.

@@ -19,6 +19,9 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
+// Directives Modules
+import { DirectivesModule } from './directives/directives.module';
+
 // Custom Pipes
 import { RolesPipe } from './pipes/roles.pipe';
 import { AgePipe } from './pipes/age.pipe';
@@ -48,6 +51,7 @@ const sharedModules = [
   FormsModule,
   ReactiveFormsModule,
   RouterModule,
+  DirectivesModule,
   ...angularMaterialModules,
 ];
 
@@ -55,7 +59,7 @@ const sharedModules = [
   declarations: [
     RolesPipe,
     AgePipe,
-    ChangePasswordComponent
+    ChangePasswordComponent,
   ],
   imports: [...sharedModules],
   exports: [
