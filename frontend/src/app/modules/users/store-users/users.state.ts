@@ -1,10 +1,20 @@
 import { Action, State, StateContext } from '@ngxs/store';
-import { AddUser, DeleteUser, GetUsers, SetSelectedUser, UpdateUser, UpdateUserPassword } from './users.action';
+import {
+  AddUser,
+  DeleteUser,
+  GetUsers,
+  SetAuthUser,
+  SetSelectedUser,
+  UpdateUser,
+  UpdateUserPassword
+} from './users.action';
 import { UsersService } from '../users.service';
 import { tap } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { NotificationService } from '../../../shared/notification.service';
-import { UserModel } from '../../../core/models';
+import { AuthUserModel, AuthModel, UserModel } from '../../../core/models';
+import { LocalStorageEnum } from '../../../core/enums';
+import { AuthService } from '../../auth/auth.service';
 
 /**
  * Define the structure of the state
@@ -13,7 +23,7 @@ export class UsersStateModel {
   users: UserModel[];
   usersCounter?: any;
   selectedUser?: UserModel | null;
-  authUser?: UserModel | null;
+  authUser?: AuthUserModel | null;
 }
 
 /**
@@ -24,7 +34,8 @@ export class UsersStateModel {
   defaults: {
     users: [],
     usersCounter: null,
-    selectedUser: null
+    selectedUser: null,
+    authUser: null
   }
 })
 @Injectable()
@@ -32,6 +43,7 @@ export class UsersState {
 
   constructor(
     private usersService: UsersService,
+    private authService: AuthService,
     private notificationService: NotificationService,
   ) {
   }
@@ -62,6 +74,19 @@ export class UsersState {
       selectedUser: payload
     });
   }
+
+  /**
+   * Action to set the authUser
+   */
+  @Action(SetAuthUser)
+    setAuthUser({getState, setState}: StateContext<UsersStateModel>, {payload}: SetAuthUser) {
+    const state = getState();
+    setState({
+      ...state,
+      authUser: payload
+    });
+  }
+
 
   /**
    * Action to add a new user
@@ -99,11 +124,33 @@ export class UsersState {
         const state = getState();
         const usersList = [...state.users];
         const userIndex = usersList.findIndex(item => item.id === id);
+
+        // Update the current account if the user is the same as the current account
+        const currentAccount = this.authService.accountValue;
+        const authUser: AuthUserModel = {
+          id: result.id,
+          firstName: result.firstName,
+          lastName: result.lastName,
+          email: result.email,
+          role: result.role,
+          avatar: result.avatar,
+        }
+        if (authUser.id === currentAccount!.userInfo.id) {
+          localStorage.setItem(LocalStorageEnum.ACCOUNT, JSON.stringify(authUser));
+          const account: AuthModel = {
+            userInfo: authUser,
+            refreshToken: currentAccount!.refreshToken,
+            accessToken: currentAccount!.accessToken
+          }
+          this.authService.accountSubject$.next(account);
+        }
+
+        // Update the user in the list
         usersList[userIndex] = result;
         setState({
           ...state,
           users: usersList,
-          authUser: result,
+          authUser,
         });
       },
       (error) => {

@@ -5,12 +5,16 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import * as config from '../../../app-config';
 import {
+  AuthUserModel,
   AuthModel,
   LoginUserModel,
   PasswordResetTokenModel,
   RegisterUserModel,
   ValidResetTokenModel
 } from '../../core/models';
+import { Store } from '@ngxs/store';
+import { SetAuthUser } from '../users/store-users/users.action';
+import { LocalStorageEnum } from '../../core/enums';
 
 @Injectable({
   providedIn: 'root'
@@ -19,16 +23,12 @@ export class AuthService {
 
   public accountSubject$ = new BehaviorSubject<AuthModel | null>(null);
   public validResetToken$ = new BehaviorSubject<any>({});
-
-  readonly JWT_ACCESS_TOKEN_KEY = 'access_token';
-  readonly JWT_REFRESH_TOKEN_KEY = 'refresh_token';
-  readonly ACCOUNT = 'account';
-
   private refreshTokenTimeout?: number;
 
   constructor(
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    public store: Store,
   ) {
   }
 
@@ -70,12 +70,13 @@ export class AuthService {
    * Saving user data and tokens in LocalStorage
    */
   private setTokens(accessToken: string, refreshToken: string): void {
-    localStorage.setItem(this.JWT_ACCESS_TOKEN_KEY, accessToken);
-    localStorage.setItem(this.JWT_REFRESH_TOKEN_KEY, refreshToken);
+    localStorage.setItem(LocalStorageEnum.JWT_ACCESS_TOKEN_KEY, accessToken);
+    localStorage.setItem(LocalStorageEnum.JWT_REFRESH_TOKEN_KEY, refreshToken);
   }
 
-  private setUser(userInfo: any): void {
-    localStorage.setItem(this.ACCOUNT, JSON.stringify(userInfo));
+  private setUser(userInfo: AuthUserModel): void {
+    localStorage.setItem(LocalStorageEnum.ACCOUNT, JSON.stringify(userInfo));
+    this.store.dispatch(new SetAuthUser(userInfo));
     this.getAccountLocalStorage();
   }
 

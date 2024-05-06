@@ -6,6 +6,9 @@
       <div class="post__subTitle">
         Author: {{ post.user ? post.user.firstName : '' }} {{ post.user ? post.user.lastName : '' }}
       </div>
+      <div class="post__subTitle">
+        Role: {{ post.user ? (post.user.role | roles) : '' }}
+      </div>
       <div class="post__subTitle" *ngIf="post.categories">
         Categories:
         <span *ngFor="let category of post.categories">
@@ -32,6 +35,7 @@
   <mat-card-actions>
     <!-- Edit post button -->
     <button mat-icon-button class="material-icons app-toolbar-menu save-button"
+            [disabled]="checkPermissionRole(post.user.role)"
             matTooltip="Edit" color="primary"
             (click)="openDialogEditPost(post.id)">
       <mat-icon>edit</mat-icon>
@@ -39,6 +43,7 @@
 
     <!-- Delete post button -->
     <button mat-icon-button class="material-icons app-toolbar-menu delete-button"
+            [disabled]="checkPermissionRole(post.user.role)"
             matTooltip="Delete" color="warn"
             (click)="openDialogDeletePost(post)">
       <mat-icon>delete</mat-icon>

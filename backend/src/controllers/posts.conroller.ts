@@ -61,6 +61,7 @@ export const getAllPostsHandler = async (params: PostsQueryParamsModel): Promise
                     id: true,
                     firstName: true,
                     lastName: true,
+                    role: true
                 },
             },
         },
@@ -95,6 +96,7 @@ export const getSinglePostHandler = async (id: number): Promise<any> => {
                     id: true,
                     firstName: true,
                     lastName: true,
+                    role: true
                 },
             },
         },

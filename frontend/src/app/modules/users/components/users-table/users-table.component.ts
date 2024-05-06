@@ -84,6 +84,12 @@ export class UsersTableComponent implements OnInit, OnDestroy {
    *   Construct parameters for fetching data
    */
   private fetchData() {
+    // Set roles for filtering
+    if (this.currentAccount?.userInfo?.role === RoleEnum.Manager) {
+      this.usersFilters.roles = [RoleEnum.Client];
+    }
+
+    // Construct parameters for fetching data
     const params = {
       orderByColumn: this.orderByColumn,
       orderByDirection: this.orderByDirection,

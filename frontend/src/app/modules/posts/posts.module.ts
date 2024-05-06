@@ -31,6 +31,7 @@ import { DialogCategoriesPostComponent } from './dialogs/dialog-categories-post/
 import { NgxsModule } from '@ngxs/store';
 import { PostsState } from './store-posts/posts.state';
 import { DirectivesModule } from '../../shared/directives/directives.module';
+import { SharedModule } from '../../shared/shared.module';
 
 
 // Define routes for the Posts module
@@ -72,7 +73,8 @@ const routes: Routes = [
     MatChipsModule,
     MatListModule,
     MatProgressSpinnerModule,
-    DirectivesModule
+    DirectivesModule,
+    SharedModule
   ]
 })
 export class PostsModule {

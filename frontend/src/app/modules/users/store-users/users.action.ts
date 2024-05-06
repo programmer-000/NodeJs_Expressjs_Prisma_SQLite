@@ -1,4 +1,4 @@
-import { UserModel } from '../../../core/models';
+import { AuthUserModel, UserModel } from '../../../core/models';
 
 /**
  * Action to get users
@@ -58,4 +58,13 @@ export class SetSelectedUser {
   static readonly type = '[Users] Set';
 
   constructor(public payload: UserModel) {}
+}
+
+/**
+ * Action to set a selected user
+ */
+export class SetAuthUser {
+  static readonly type = '[AuthUser] Set';
+
+  constructor(public payload: AuthUserModel) {}
 }

@@ -3,13 +3,14 @@
   <!-- Post Header -->
   <div class="dialog-post__header">
     <div class="dialog-post__title">
-      <!-- Display post title -->
       <p>{{this.currentPost ? this.currentPost.title : 'Add Post'}}</p>
-      <!-- Display author's name -->
-      <p class="dialog-post__subTitle">
+      <p *ngIf="this.currentPost" class="dialog-post__subTitle">
         Author:
         {{this.currentPost ? this.currentPost.user.firstName : ''}}
         {{this.currentPost ? this.currentPost.user.lastName : ''}}
+      </p>
+      <p *ngIf="this.currentPost" class="dialog-post__subTitle">
+        Role: {{ this.currentPost ? (this.currentPost.user.role | roles) : '' }}
       </p>
     </div>
 

@@ -9,6 +9,7 @@ import { PostsSelectors } from '../../store-posts/posts.selectors';
 import { Select, Store } from '@ngxs/store';
 import { PostFilterModel, PostModel } from '../../../../core/models';
 import { AuthService } from '../../../auth/auth.service';
+import { RoleEnum } from '../../../../core/enums';
 
 @Component({
   selector: 'app-posts',
@@ -70,37 +71,13 @@ export class PostsComponent implements OnInit, OnDestroy {
         // Initialize filters with default values
         this.postsFilters = !Object.keys(resp).length ? this.defaultPostsFilters : resp;
 
-        // Set current user's ID as the author if the role is 4
-        if (this.authService.currentRole === 4) {
+        // Set current user's ID as the author if the role is Client
+        if (this.authService.currentRole === RoleEnum.Client) {
           this.postsFilters.authors = [this.userId];
         }
         this.fetchData();
       });
   }
-
-  // private getPostsFilter() {
-  //   this.postsService.postsFilters$.pipe(
-  //     takeUntil(this.destroy$))
-  //     .subscribe(resp => {
-  //       if (this.authService.currentRole === 4) {
-  //         if (!Object.keys(resp).length) {
-  //           this.postsFilters = this.defaultPostsFilters;
-  //           this.postsFilters.authors = [this.userId];
-  //         } else {
-  //           this.postsFilters = resp;
-  //           this.postsFilters.authors = [this.userId];
-  //         }
-  //       } else {
-  //         if (!Object.keys(resp).length) {
-  //           this.postsFilters = this.defaultPostsFilters;
-  //         } else {
-  //           this.postsFilters = resp;
-  //         }
-  //       }
-  //       this.fetchData();
-  //     });
-  // }
-
 
   /**
    * Fetch posts based on filters and pagination

@@ -1,4 +1,4 @@
-export * from './account.model';
+export * from './auth-user.model';
 export * from './auth-model';
 export * from './categories.model';
 export * from './countries-model';

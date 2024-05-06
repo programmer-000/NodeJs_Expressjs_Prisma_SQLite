@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HomeService } from './home.service';
 import { Subject, takeUntil } from 'rxjs';
-import { AccountModel } from '../../core/models';
+import { AuthUserModel } from '../../core/models';
 import { RoleEnum } from '../../core/enums';
 
 @Component({
@@ -24,7 +24,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   // Subject to handle subscription cleanup
   private destroy$: Subject<void> = new Subject<void>();
 
-  data: AccountModel;
+  data: AuthUserModel;
 
   ngOnInit(): void {
     this.fetchData();

@@ -2,10 +2,12 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogPostsComponent } from '../../dialogs/dialog-posts/dialog-posts.component';
 import { DialogConfirmComponent } from '../../../../shared/components/dialog-confirm/dialog-confirm.component';
-import { PostsService } from '../../posts.service';
 import { Store } from '@ngxs/store';
 import { DeletePost } from '../../store-posts/posts.action';
 import { PostModel } from '../../../../core/models';
+import { RoleEnum } from '../../../../core/enums';
+import { Subject } from 'rxjs';
+import { AuthService } from '../../../auth/auth.service';
 
 @Component({
   selector: 'app-post',
@@ -15,10 +17,15 @@ import { PostModel } from '../../../../core/models';
 export class PostComponent implements OnInit, OnDestroy {
   @Input() post: PostModel;
 
+  // Subject to handle subscription cleanup
+  private destroy$: Subject<void> = new Subject<void>();
+  // Enum to access route names
+  protected readonly RoleEnum = RoleEnum;
+
   constructor(
     public store: Store,
     public dialog: MatDialog,
-    public postsService: PostsService,
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -63,6 +70,17 @@ export class PostComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
+  /**
+   * Check if the user has permission to edit or delete a post
+   * @param id ID of the post
+   */
+  public checkPermissionRole(id: number) {
+    const currentUserRole = this.authService.accountSubject$.value?.userInfo.role;
+    return currentUserRole === RoleEnum.Manager && (id === RoleEnum.SuperAdmin || id === RoleEnum.ProjectAdmin);
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
