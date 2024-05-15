@@ -4,6 +4,7 @@
     <form [formGroup]="postFilterForm" class="filters__form">
 
       <!-- Select input for authors -->
+      <!-- Only show if the user is not a client -->
       <mat-form-field *appDenyAccess="[RoleEnum.Client]" class="filters__field">
         <mat-select class="filters__select" (openedChange)="openedChangeAuthors($event)"
                     placeholder="Select authors"

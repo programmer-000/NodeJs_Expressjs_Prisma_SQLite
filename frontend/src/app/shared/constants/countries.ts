@@ -1,4 +1,4 @@
-import { CountriesModel } from '../../core/models/countries-model';
+import { CountriesModel } from '../../core/models';
 
 export const COUNTRIES: Array<CountriesModel> = [
   {

@@ -12,6 +12,11 @@
     overflow: hidden;
     text-align: center;
 
+    &_inactive {
+      opacity: 0.3;
+      filter: grayscale(1);
+    }
+
     img {
       width: 100px;
       height: auto;
@@ -23,6 +28,7 @@
     &-active {
       color: green;
     }
+
     &-inactive {
       color: red;
     }

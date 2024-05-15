@@ -168,9 +168,6 @@ export class DialogCategoriesPostComponent implements OnInit, OnDestroy {
     this.category.valueChanges;
   }
 
-  /**
-   *Clean up subscriptions
-   */
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();

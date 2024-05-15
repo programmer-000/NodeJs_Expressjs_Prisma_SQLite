@@ -11,7 +11,7 @@ import {
 import { UsersService } from '../users.service';
 import { tap } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { NotificationService } from '../../../shared/notification.service';
+import { NotificationService } from '../../../shared/services';
 import { AuthUserModel, AuthModel, UserModel } from '../../../core/models';
 import { LocalStorageEnum } from '../../../core/enums';
 import { AuthService } from '../../auth/auth.service';

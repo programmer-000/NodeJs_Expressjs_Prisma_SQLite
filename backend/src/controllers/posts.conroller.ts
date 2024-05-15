@@ -142,6 +142,7 @@ export const createPostHandler = async (post: CreateUpdatePostModel): Promise<an
                     id: true,
                     firstName: true,
                     lastName: true,
+                    role: true
                 },
             },
         },
@@ -191,6 +192,7 @@ export const updatePostHandler = async (post: CreateUpdatePostModel, id: number
                     id: true,
                     firstName: true,
                     lastName: true,
+                    role: true
                 },
             },
         },

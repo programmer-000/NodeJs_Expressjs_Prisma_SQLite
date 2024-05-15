@@ -41,7 +41,7 @@ export class DialogPostsComponent implements OnInit, OnDestroy {
 @Select(PostsSelectors.getListCategories) listAllCategories$: Observable<CategoriesModel[]>;
 
 // Current userId
-  userId: string | undefined;
+  userId: number | undefined;
 
 // Array to store all categories
   listAllCategories: any = [];

@@ -32,22 +32,27 @@
   }
 
   &__actions {
+    min-width: 200px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-  }
 
-  &__link {
-    text-decoration: none;
-    color: gray;
-    background: #00ffff38;
-    display: block;
-    padding: 3px 15px;
-    border-radius: 20px;
+    &_checkbox {
+      margin: 0 20px 0 0;
+    }
 
-    :hover {
-      cursor: pointer;
-      color: blue;
+    &_link {
+      text-decoration: none;
+      color: gray;
+      background: #00ffff38;
+      display: block;
+      padding: 3px 15px;
+      border-radius: 20px;
+
+      :hover {
+        cursor: pointer;
+        color: blue;
+      }
     }
   }
 }
@@ -108,5 +113,5 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%,-50%)
+  transform: translate(-50%, -50%)
 }

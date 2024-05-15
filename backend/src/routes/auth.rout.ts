@@ -94,20 +94,29 @@ authRouter.post(
                 return response.status(400).json({message: `You must provide an email and a password`})
             }
 
+            // Check existence User
             const existingUser = await AuthUserHandler.findUserByEmail(email);
             let userId = null;
-
+            let userStatus = null;
             if (!existingUser) {
                 return response.status(400).json({message: `User - (${email}) not found`})
             } else {
+                userStatus = existingUser.status;
                 userId = existingUser.id;
             }
 
+            // Check if the user is active
+            if (!userStatus) {
+                return response.status(400).json({message: `User - (${email}) is inactive`})
+            }
+
+            // Check the validity of the password
             const validPassword = bcrypt.compareSync(password, existingUser.password)
             if (!validPassword) {
                 return response.status(400).json({message: `Incorrect password entered`})
             }
 
+            // Generate tokens
             const jti: any = uuidv4();
             const {accessToken, refreshToken} = generateTokens(existingUser, jti);
             const userInfo = {
@@ -118,6 +127,7 @@ authRouter.post(
                 email: existingUser.email,
                 role: existingUser.role
             };
+
             await AuthUserHandler.addRefreshTokenToWhitelist({jti, refreshToken, userId});
             return response.status(201).json({
                 userInfo,

@@ -14,7 +14,7 @@ const postsModule = () => import('./modules/posts/posts.module').then(m => m.Pos
 const appRoutes: Routes = [
   { path: '', loadChildren: homeModule, canActivate: [AuthGuard] },
   { path: AppRouteEnum.Auth, loadChildren: authModule },
-  { path: AppRouteEnum.Users, loadChildren: usersModule, canActivate: [AuthGuard], data: { roles: [RoleEnum.SuperAdmin, RoleEnum.ProjectAdmin, RoleEnum.Manager] } }, // Permit access: Super Admin, Project Admin, Manager
+  { path: AppRouteEnum.Users, loadChildren: usersModule, canActivate: [AuthGuard],data: { roles: [RoleEnum.SuperAdmin, RoleEnum.ProjectAdmin, RoleEnum.Manager] } }, // Permit access: Super Admin, Project Admin, Manager
   { path: AppRouteEnum.Posts, loadChildren: postsModule, canActivate: [AuthGuard], data: { roles: [RoleEnum.SuperAdmin, RoleEnum.ProjectAdmin, RoleEnum.Manager, RoleEnum.Client] } }, // Permit access: to all roles
   { path: AppRouteEnum.NotFound, component: ErrorPageComponent },
   { path: '**', redirectTo: '/' + AppRouteEnum.NotFound, pathMatch: 'full' },

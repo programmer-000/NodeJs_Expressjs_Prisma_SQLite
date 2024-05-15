@@ -1,5 +1,6 @@
 import db from '../utils/db';
 import { UserModel, UsersModel } from '../models';
+import { RoleTypesEnum } from '../enums/role-types.enum';
 
 /**
  * Retrieves all users based on provided parameters.
@@ -11,7 +12,7 @@ export const getAllUsersHandler = async (params: any): Promise<{ totalCount: num
 
     // Parse roles from string to array of numbers
     const parseRoles: number[] = JSON.parse(roles);
-    const rolesArr: number[] = parseRoles.length ? parseRoles : [1, 2, 3, 4];
+    const rolesArr: number[] = parseRoles.length ? parseRoles : [RoleTypesEnum.SuperAdmin, RoleTypesEnum.ProjectAdmin, RoleTypesEnum.Manager, RoleTypesEnum.Client];
 
     // Calculate skip value for pagination
     const skip: number = pageIndex * pageSize;

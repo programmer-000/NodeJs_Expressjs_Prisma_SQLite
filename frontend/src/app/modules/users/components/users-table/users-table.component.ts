@@ -13,6 +13,7 @@ import { MatSort, SortDirection } from '@angular/material/sort';
 import { AuthModel, UserFilterModel, UserModel } from '../../../../core/models';
 import { AuthService } from '../../../auth/auth.service';
 import { RoleEnum } from '../../../../core/enums';
+import { PermissionService } from '../../../../shared/services';
 
 
 @Component({
@@ -26,6 +27,7 @@ export class UsersTableComponent implements OnInit, OnDestroy {
     public store: Store,
     public usersService: UsersService,
     private authService: AuthService,
+    public permissionService: PermissionService,
     public dialog: MatDialog
   ) {
   }
@@ -37,7 +39,7 @@ export class UsersTableComponent implements OnInit, OnDestroy {
   @ViewChild(MatTable) table: MatTable<UserModel[]>;
   @ViewChild(MatSort) sort: MatSort;
 
-  // Enum to access route names
+  // Enum for user roles
   protected readonly RoleEnum = RoleEnum;
 
   // Current user account information
@@ -61,6 +63,7 @@ export class UsersTableComponent implements OnInit, OnDestroy {
 
   users$ = this.usersService.users$;
 
+  // Flag to indicate data loading state
   dataLoading: boolean = false;
 
   // Subject to handle subscription cleanup
@@ -71,30 +74,43 @@ export class UsersTableComponent implements OnInit, OnDestroy {
   orderByDirection = 'asc' as SortDirection;
 
   // Default user filters
-  private defaultUsersFilters: UserFilterModel = { email: '', firstName: '', lastName: '', roles: [] };
+  private defaultUsersFilters: UserFilterModel = {email: '', firstName: '', lastName: '', roles: []};
   private usersFilters: UserFilterModel = this.defaultUsersFilters;
 
   ngOnInit(): void {
-    // Fetch initial data and apply filters
-    this.fetchData();
+    // this.setRolesForFiltering();
     this.getUsersFilter();
   }
 
   /**
-   *   Construct parameters for fetching data
+   * If the roles array in userFilters is empty, then the available roles for filtering are set based on the current user's role.
+   */
+  public setRolesForFiltering() {
+    let roles: number[] = [];
+    const userRole = this.currentAccount?.userInfo?.role;
+    if (userRole === RoleEnum.Manager) {
+      roles = [RoleEnum.Client];
+    } else if (userRole === RoleEnum.ProjectAdmin) {
+      roles = [RoleEnum.Client, RoleEnum.Manager];
+    } else if (userRole === RoleEnum.SuperAdmin) {
+      roles = [RoleEnum.Client, RoleEnum.Manager, RoleEnum.ProjectAdmin, RoleEnum.SuperAdmin];
+    }
+    this.usersFilters.roles = roles;
+  }
+
+  /**
+   * Fetches data based on the current filters and sorting parameters.
+   * It constructs the parameters for fetching data, triggers data loading animation,
+   * dispatches action to fetch users from store, and subscribes to users and usersCounter observables
+   * to update data and pagination.
    */
   private fetchData() {
-    // Set roles for filtering
-    if (this.currentAccount?.userInfo?.role === RoleEnum.Manager) {
-      this.usersFilters.roles = [RoleEnum.Client];
-    }
-
-    // Construct parameters for fetching data
     const params = {
       orderByColumn: this.orderByColumn,
       orderByDirection: this.orderByDirection,
       pageIndex: this.pageIndex,
       pageSize: this.pageSize,
+
       firstName: this.usersFilters.firstName,
       lastName: this.usersFilters.lastName,
       email: this.usersFilters.email,
@@ -125,29 +141,29 @@ export class UsersTableComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Subscribes to user filter changes. It updates the usersFilters variable whenever a new value is emitted.
+   * If the roles array in usersFilters is empty, it calls setRolesForFiltering() to set the roles for filtering.
+   * After updating the usersFilters, it calls fetchData() to fetch the data based on the updated filters.
+   */
+  private getUsersFilter() {
+    this.usersService.usersFilters$.pipe(
+      takeUntil(this.destroy$))
+      .subscribe(resp => {
+        this.usersFilters = resp;
+        if (!this.usersFilters?.roles?.length) {
+          this.setRolesForFiltering();
+        }
+        this.fetchData();
+      });
+  }
+
+  /**
    * Update sorting parameters and fetch data
    */
   sortData($event: any) {
     this.orderByColumn = $event.active;
     this.orderByDirection = $event.direction;
     this.fetchData();
-  }
-
-  /**
-   * Subscribe to usersFilters$ observable to get user filters
-   */
-  private getUsersFilter() {
-    this.usersService.usersFilters$.pipe(
-      takeUntil(this.destroy$))
-      .subscribe(resp => {
-        // Apply user filters and fetch data
-        if (!Object.keys(resp).length) {
-          this.usersFilters = this.defaultUsersFilters;
-        } else {
-          this.usersFilters = resp
-          this.fetchData();
-        }
-      });
   }
 
   /**
@@ -166,7 +182,7 @@ export class UsersTableComponent implements OnInit, OnDestroy {
    */
   addUser() {
     const dialogRef = this.dialog.open(DialogUsersComponent, {
-      data: { newUser: true }
+      data: {newUser: true}
     });
 
     // After dialog is closed, render table rows
@@ -182,7 +198,7 @@ export class UsersTableComponent implements OnInit, OnDestroy {
    */
   editUser(id: UserModel) {
     const dialogRef = this.dialog.open(DialogUsersComponent, {
-      data: { id, newUser: false }
+      data: {id, newUser: false}
     });
 
     // After dialog is closed, render table rows
@@ -195,10 +211,11 @@ export class UsersTableComponent implements OnInit, OnDestroy {
 
   /**
    * Open confirmation dialog before deleting a user
+   * ngOnDestroy is a lifecycle hook that is called when a directive, pipe, or service is destroyed.
    */
   deleteUser(user: UserModel): void {
-    const { id, firstName, avatar } = user;
-    const params = { avatar };
+    const {id, firstName, avatar} = user;
+    const params = {avatar};
 
     const dialogRef = this.dialog.open(DialogConfirmComponent, {
       data: {
@@ -219,8 +236,26 @@ export class UsersTableComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  /**
+   * isPermissionEdit checks if the user is a super admin.
+   * Hiding edit and delete items of the HEAD_SUPER_ADMIN
+   * @param user UserModel
+   */
+  isPermissionHeadSuperAdmin(user: UserModel): boolean {
+    return this.permissionService.isHeadSuperAdmin(user);
+  }
+
+  /**
+   * isPermissionEdit checks if the user has permission to delete a user.
+   * @param user UserModel
+   */
+  isPermissionRemove(user: UserModel): boolean {
+    return this.permissionService.isAuthUser(user);
+  }
+
+  ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
+
 }

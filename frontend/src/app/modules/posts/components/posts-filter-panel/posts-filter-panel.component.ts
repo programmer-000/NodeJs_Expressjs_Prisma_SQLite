@@ -32,7 +32,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   @Select(PostsSelectors.getListUsers) listAllUsers$: Observable<UserListModel[]>;
   @Select(PostsSelectors.getListCategories) listAllCategories$: Observable<CategoriesModel[]>;
 
-  // Enum to access route names
+  // Enum for user roles
   protected readonly RoleEnum = RoleEnum;
 
   // Object to hold filter data
@@ -295,7 +295,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }

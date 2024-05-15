@@ -35,7 +35,7 @@
   <mat-card-actions>
     <!-- Edit post button -->
     <button mat-icon-button class="material-icons app-toolbar-menu save-button"
-            [disabled]="checkPermissionRole(post.user.role)"
+            [disabled]="!hasActionPermission(post.user)"
             matTooltip="Edit" color="primary"
             (click)="openDialogEditPost(post.id)">
       <mat-icon>edit</mat-icon>
@@ -43,7 +43,7 @@
 
     <!-- Delete post button -->
     <button mat-icon-button class="material-icons app-toolbar-menu delete-button"
-            [disabled]="checkPermissionRole(post.user.role)"
+            [disabled]="!hasActionPermission(post.user)"
             matTooltip="Delete" color="warn"
             (click)="openDialogDeletePost(post)">
       <mat-icon>delete</mat-icon>

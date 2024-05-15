@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { LocalStorageEnum } from '../enums';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
@@ -14,7 +15,7 @@ export class JwtInterceptor implements HttpInterceptor {
    */
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // Retrieve JWT token from local storage
-    const accessToken = localStorage.getItem('access_token');
+    const accessToken = localStorage.getItem(LocalStorageEnum.JWT_ACCESS_TOKEN_KEY);
 
     // If token exists, clone the request and append Authorization header with the token
     if (accessToken) {

@@ -18,7 +18,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) {
   }
 
-  // Enum to access route names
+  // Enum for user roles
   protected readonly RoleEnum = RoleEnum;
 
   // Subject to handle subscription cleanup

@@ -5,7 +5,8 @@ import * as UserHandler from '../controllers/users.conroller';
 import fs from 'fs';
 import bcrypt from 'bcrypt';
 import * as AuthUserHandler from '../controllers/auth.controller';
-
+import { UserModel } from '../models';
+import { HEAD_SUPER_ADMIN } from '../constants';
 
 const path = require('path');
 
@@ -226,6 +227,12 @@ usersRouter.delete('/:id', async (request: Request, response: Response) => {
         const previousAvatarUrl = String(request.query.avatar);
         const pathRemovePicture = previousAvatarUrl.replace('http://localhost:5000/', '');
 
+        /** check is Head Super Admin*/
+        const isHeadSuperAdmin: UserModel | null = await UserHandler.findUserById(id);
+        if (isHeadSuperAdmin?.id === HEAD_SUPER_ADMIN.id && isHeadSuperAdmin?.role === HEAD_SUPER_ADMIN.role) {
+            return response.status(409).json({message: `Cannot delete the head super admin user.`})
+        }
+
         /** deleting photos in the database and folder (uploads)*/
         console.log('deleting a picture path in base')
         fs.stat(pathRemovePicture, (err, stats) => {
@@ -239,6 +246,7 @@ usersRouter.delete('/:id', async (request: Request, response: Response) => {
             });
         });
 
+        /** delete user*/
         await UserHandler.deleteUserHandler(id);
         return response.status(204).json('User has been successfully deleted');
     } catch (error: any) {

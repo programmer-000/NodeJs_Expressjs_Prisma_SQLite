@@ -1,5 +1,5 @@
 export class AuthUserModel {
-  id?: string;
+  id?: number;
   firstName?: string;
   lastName?: string;
   email?: string;

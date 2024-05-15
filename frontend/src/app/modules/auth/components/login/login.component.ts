@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../auth.service';
-import { NotificationService } from '../../../../shared/notification.service';
+import { NotificationService, RoleService } from '../../../../shared/services';
 import { AppRouteEnum } from '../../../../core/enums';
 import { EMAIL_VALIDATION_PATTERN } from '../../../../shared/validation-patterns/pattern-email';
 
@@ -30,6 +30,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private route: ActivatedRoute,
     private router: Router,
+    private roleService: RoleService,
     private notificationService: NotificationService,
   ) {}
 
@@ -77,6 +78,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         .subscribe(
           resp => {
             this.dataLoading = false;
+            this.roleService.setRolesList(this.authService.currentRole);
             this.router.navigate(['/' + AppRouteEnum.Users]);
           },
           error => {

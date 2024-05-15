@@ -5,7 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../auth.service';
 import { AppRouteEnum } from '../../../../core/enums';
 import { EMAIL_VALIDATION_PATTERN } from '../../../../shared/validation-patterns/pattern-email';
-import { NotificationService } from '../../../../shared/notification.service';
+import { NotificationService } from '../../../../shared/services';
 import { Router } from '@angular/router';
 
 @Component({

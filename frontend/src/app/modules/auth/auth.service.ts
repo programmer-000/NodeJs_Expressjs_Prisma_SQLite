@@ -15,6 +15,7 @@ import {
 import { Store } from '@ngxs/store';
 import { SetAuthUser } from '../users/store-users/users.action';
 import { LocalStorageEnum } from '../../core/enums';
+import { RoleService } from '../../shared/services';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,7 @@ export class AuthService {
     private router: Router,
     private http: HttpClient,
     public store: Store,
+    public roleService: RoleService
   ) {
   }
 
@@ -84,9 +86,9 @@ export class AuthService {
    * Get user account data from LocalStorage and write to Stream - this.accountSubject$
    */
   public getAccountLocalStorage() {
-    const userInfo = localStorage.getItem('account');
-    const refreshToken = localStorage.getItem('refresh_token');
-    const accessToken = localStorage.getItem('access_token');
+    const userInfo = localStorage.getItem(LocalStorageEnum.ACCOUNT);
+    const refreshToken = localStorage.getItem(LocalStorageEnum.JWT_REFRESH_TOKEN_KEY);
+    const accessToken = localStorage.getItem(LocalStorageEnum.JWT_ACCESS_TOKEN_KEY);
 
     if (userInfo != null && refreshToken != null && accessToken != null) {
       const userInfoPars = JSON.parse(userInfo);
@@ -96,10 +98,18 @@ export class AuthService {
         accessToken: accessToken
       }
       this.accountSubject$.next(account);
+      this.getRoleListLocalStorage();
     } else {
       console.log('NOT AUTHORIZED');
       return;
     }
+  }
+
+  /**
+   * Get user roles list from LocalStorage and write to Stream - this.roleService.rolesListSubject$
+   */
+  public getRoleListLocalStorage() {
+    this.roleService.rolesListSubject$.next(JSON.parse(localStorage.getItem(LocalStorageEnum.ROLES_LIST)!));
   }
 
   /**
@@ -126,9 +136,10 @@ export class AuthService {
     this.stopRefreshTokenTimer();
     this.accountSubject$.next(null);
     this.router.navigate(['/auth/login']);
-    localStorage.removeItem('account');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('access_token');
+    localStorage.removeItem(LocalStorageEnum.ACCOUNT);
+    localStorage.removeItem(LocalStorageEnum.JWT_REFRESH_TOKEN_KEY);
+    localStorage.removeItem(LocalStorageEnum.JWT_ACCESS_TOKEN_KEY);
+    localStorage.removeItem(LocalStorageEnum.ROLES_LIST);
   }
 
   /**

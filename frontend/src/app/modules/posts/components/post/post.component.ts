@@ -1,13 +1,16 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Store } from '@ngxs/store';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
 import { DialogPostsComponent } from '../../dialogs/dialog-posts/dialog-posts.component';
 import { DialogConfirmComponent } from '../../../../shared/components/dialog-confirm/dialog-confirm.component';
-import { Store } from '@ngxs/store';
 import { DeletePost } from '../../store-posts/posts.action';
 import { PostModel } from '../../../../core/models';
 import { RoleEnum } from '../../../../core/enums';
-import { Subject } from 'rxjs';
-import { AuthService } from '../../../auth/auth.service';
+import { AuthorPostModel } from '../../../../core/models/author-post.model';
+import { PermissionService } from '../../../../shared/services';
 
 @Component({
   selector: 'app-post',
@@ -19,13 +22,13 @@ export class PostComponent implements OnInit, OnDestroy {
 
   // Subject to handle subscription cleanup
   private destroy$: Subject<void> = new Subject<void>();
-  // Enum to access route names
+  // Enum for user roles
   protected readonly RoleEnum = RoleEnum;
 
   constructor(
     public store: Store,
     public dialog: MatDialog,
-    private authService: AuthService,
+    public permissionService: PermissionService
   ) {}
 
   ngOnInit(): void {
@@ -40,7 +43,9 @@ export class PostComponent implements OnInit, OnDestroy {
       data: { id, newPost: false },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe((result) => {
       console.log('The dialog was closed', result);
     });
   }
@@ -61,25 +66,24 @@ export class PostComponent implements OnInit, OnDestroy {
       }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(result => {
       if (result === true) {
         this.store.dispatch(new DeletePost(id, params));
-      } else {
-        return;
       }
     });
   }
 
   /**
-   * Check if the user has permission to edit or delete a post
-   * @param id ID of the post
+   * Check if the current user has permission to edit or delete a post
+   * @param author Author of the post
    */
-  public checkPermissionRole(id: number) {
-    const currentUserRole = this.authService.accountSubject$.value?.userInfo.role;
-    return currentUserRole === RoleEnum.Manager && (id === RoleEnum.SuperAdmin || id === RoleEnum.ProjectAdmin);
+  public hasActionPermission(author: AuthorPostModel): boolean {
+    return this.permissionService.checkActionPostPermission(author);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }

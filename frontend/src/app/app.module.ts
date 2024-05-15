@@ -12,7 +12,7 @@ import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsModule } from '@ngxs/store';
 import { AppState } from './store/app.state';
 import { SnackBarMessageComponent } from './shared/components/snack-bar-message/snack-bar-message.component';
-import { NotificationService } from './shared/notification.service';
+import { NotificationService } from './shared/services';
 import { DialogConfirmComponent } from './shared/components/dialog-confirm/dialog-confirm.component';
 import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';

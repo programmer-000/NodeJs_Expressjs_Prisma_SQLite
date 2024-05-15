@@ -1,6 +1,6 @@
 import { Action, State, StateContext } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { NotificationService } from '../../../shared/notification.service';
+import { NotificationService } from '../../../shared/services';
 import { PostsService } from '../posts.service';
 import { tap } from 'rxjs';
 import {

@@ -8,7 +8,7 @@ import { Store } from '@ngxs/store';
 import { UsersService } from '../../../modules/users/users.service';
 import { AppRouteEnum } from '../../../core/enums';
 import { Router } from '@angular/router';
-import { NotificationService } from '../../notification.service';
+import { NotificationService } from '../../services';
 import { DialogNewPasswordModel, ValidResetTokenModel } from '../../../core/models';
 
 @Component({

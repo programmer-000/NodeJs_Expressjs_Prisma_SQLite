@@ -6,9 +6,9 @@ import { COUNTRIES } from '../../../../shared/constants/countries';
 import { MustMatch } from '../../../../core/helpers/must-match.validator';
 import { AuthService } from '../../auth.service';
 import { Router } from '@angular/router';
-import { AppRouteEnum } from '../../../../core/enums';
+import { AppRouteEnum, RoleEnum } from '../../../../core/enums';
 import { EMAIL_VALIDATION_PATTERN } from '../../../../shared/validation-patterns/pattern-email';
-import { NotificationService } from '../../../../shared/notification.service';
+import { NotificationService } from '../../../../shared/services';
 import { CountriesModel, UserModel } from '../../../../core/models';
 
 @Component({
@@ -39,7 +39,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   // Lists of countries
   countriesList = COUNTRIES;
   // Default role is 'Client'
-  defaultRole: number = 4;
+  defaultRole: number = RoleEnum.Client;
   // There may be four role options
   // 1 = Super Admin
   // 2 = Project Admin

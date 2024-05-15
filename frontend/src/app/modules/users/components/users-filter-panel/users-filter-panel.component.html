@@ -4,12 +4,15 @@
     <form [formGroup]="userFilterForm" class="filters__form">
 
       <!-- Roles filter -->
+      <!-- Only show if the user is a Super Admin or Project Admin -->
       <mat-form-field *appAllowAccess="[RoleEnum.SuperAdmin, RoleEnum.ProjectAdmin]" class="filters__input">
         <mat-label>Roles</mat-label>
         <mat-select formControlName="roles" multiple>
-          <mat-option *ngFor="let role of rolesList" [value]="role">
-            {{role.viewValue}}
-          </mat-option>
+          <ng-container *ngFor="let role of this.roleService.rolesListSubject$ | async">
+            <mat-option *ngIf="role.display" [value]="role">
+              {{ role.viewValue }}
+            </mat-option>
+          </ng-container>
         </mat-select>
       </mat-form-field>
 

@@ -5,14 +5,15 @@ import { UsersService } from '../../users.service';
 import { Observable, startWith, Subject, takeUntil } from 'rxjs';
 import { Store } from '@ngxs/store';
 import { AddUser, SetSelectedUser, UpdateUser } from '../../store-users/users.action';
-import { ROLES_LIST } from '../../../../shared/constants/roles-list';
 import { COUNTRIES } from '../../../../shared/constants/countries';
 import { map } from 'rxjs/operators';
 import { MustMatch } from '../../../../core/helpers/must-match.validator';
 import { AppRouteEnum, RoleEnum } from '../../../../core/enums';
 import { DialogNewPasswordComponent } from '../dialog-new-password/dialog-new-password.component';
 import { EMAIL_VALIDATION_PATTERN } from '../../../../shared/validation-patterns/pattern-email';
-import { CountriesModel, UserModel } from '../../../../core/models';
+import { AuthUserModel, CountriesModel, UserModel } from '../../../../core/models';
+import { PermissionService, RoleService } from '../../../../shared/services';
+import { AuthService } from '../../../auth/auth.service';
 
 // Default profile image path
 const defaultProfileImage = 'assets/images/avatar_1.jpg';
@@ -29,13 +30,19 @@ export class DialogUsersComponent implements OnInit, OnDestroy {
     public dialogRefUsersComponent: MatDialogRef<DialogUsersComponent>,
     private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: any,
+    public permissionService: PermissionService,
     public usersService: UsersService,
+    public authService: AuthService,
+    public roleService: RoleService,
     public dialog: MatDialog
   ) {
   }
 
-  // Enum to access route names
+
+  // Enum for user roles
   protected readonly RoleEnum = RoleEnum;
+
+  authUser: AuthUserModel | undefined = this.authService.accountSubject$.value?.userInfo;
 
   // Subject to handle subscription cleanup
   private destroy$: Subject<void> = new Subject<void>();
@@ -47,7 +54,6 @@ export class DialogUsersComponent implements OnInit, OnDestroy {
   AppRouteEnum = AppRouteEnum;
 
   // Constants
-  rolesList = ROLES_LIST;
   countriesList = COUNTRIES;
 
   // Form variables
@@ -227,6 +233,15 @@ export class DialogUsersComponent implements OnInit, OnDestroy {
   public deleteAvatar() {
     this.avatarUrl = '';
     this.avatarFile = '';
+  }
+
+  /**
+   * Check if the current Manager has access to the dialog box elements
+   * @param authUser
+   * @param currentUser Current user
+   */
+  isPermissionsManager(authUser: AuthUserModel | undefined, currentUser: UserModel): boolean | string[] {
+    return this.permissionService.checkManagerPermissions(authUser, currentUser);
   }
 
   /**

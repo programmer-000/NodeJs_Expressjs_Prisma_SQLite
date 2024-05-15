@@ -4,8 +4,8 @@ import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router'
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../auth.service';
-import { NotificationService } from '../../../../shared/notification.service';
-import { PasswordResetTokenModel } from '../../../../core/models/password-reset-token.model';
+import { NotificationService } from '../../../../shared/services';
+import { PasswordResetTokenModel } from '../../../../core/models';
 
 @Component({
   selector: 'app-reset-password',
