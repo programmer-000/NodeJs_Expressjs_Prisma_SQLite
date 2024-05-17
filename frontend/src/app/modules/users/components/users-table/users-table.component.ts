@@ -78,7 +78,6 @@ export class UsersTableComponent implements OnInit, OnDestroy {
   private usersFilters: UserFilterModel = this.defaultUsersFilters;
 
   ngOnInit(): void {
-    // this.setRolesForFiltering();
     this.getUsersFilter();
   }
 

@@ -36,14 +36,22 @@
             </mat-optgroup>
 
             <!-- Display no results message if there are no matching authors -->
-            <mat-optgroup *ngIf="(filteredOptions | async)?.length == 0">
+            <mat-optgroup *ngIf="(filteredOptions$ | async)?.length == 0">
               <div>No results found!</div>
             </mat-optgroup>
+
+            <!-- Clear all authors button -->
+            <mat-option
+              class="filters__option_clearAll"
+              *ngIf="postFilterForm.controls['authors'].value?.length > 0"
+              [value]="clearAllOption" (click)="clearAllAuthors()">
+              {{ clearAllOption }}
+            </mat-option>
 
             <!-- Option for each author -->
             <mat-option
               (onSelectionChange)="selectionChange($event)"
-              *ngFor="let option of filteredOptions | async"
+              *ngFor="let option of filteredOptions$ | async"
               [value]="option">
               {{option.firstName}}
               {{option.lastName}}
@@ -53,7 +61,7 @@
       </mat-form-field>
 
       <!-- Select input for categories -->
-      <mat-form-field>
+      <mat-form-field class="filters__field">
         <mat-select class="filters__select" (openedChange)="openedChangeCategories($event)"
                     placeholder="Select categories"
                     formControlName="categories"
@@ -85,20 +93,32 @@
             </mat-optgroup>
 
             <!-- Display no results message if there are no matching categories -->
-            <mat-optgroup *ngIf="(filteredOptionsCategories | async)?.length == 0">
+            <mat-optgroup *ngIf="(filteredOptionsCategories$ | async)?.length == 0">
               <div>No results found!</div>
             </mat-optgroup>
+
+            <!-- Clear all categories button -->
+            <mat-option
+              class="filters__option_clearAll"
+              *ngIf="postFilterForm.controls['categories'].value?.length > 0"
+              [value]="clearAllOption"
+              (click)="clearAllCategories()">
+              {{ clearAllOption }}
+            </mat-option>
 
             <!-- Option for each category -->
             <mat-option
               (onSelectionChange)="selectionChangeCategories($event)"
-              *ngFor="let option of filteredOptionsCategories | async"
+              *ngFor="let option of filteredOptionsCategories$ | async"
               [value]="option">
               {{option.name}}
             </mat-option>
           </div>
         </mat-select>
       </mat-form-field>
+
+      <!-- Clear all fields button -->
+      <button mat-button color="warn" *ngIf="isFilterFieldsPosts()" (click)="clearAllFields()">Clear All</button>
     </form>
 
     <!-- Buttons for managing categories and adding new posts -->

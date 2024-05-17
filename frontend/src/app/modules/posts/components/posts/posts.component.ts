@@ -41,7 +41,7 @@ export class PostsComponent implements OnInit, OnDestroy {
   private postsFilters: PostFilterModel = this.defaultPostsFilters;
 
   // Current userId
-  userId: any
+  userId: any;
 
   // Pagination variables
   length = 0; // Total number of items
@@ -95,9 +95,7 @@ export class PostsComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe(resp => {
       this.length = resp;
-      if (resp) {
-        this.dataLoading = false;
-      }
+      this.dataLoading = false;
     });
   }
 

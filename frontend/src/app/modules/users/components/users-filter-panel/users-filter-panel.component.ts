@@ -11,13 +11,15 @@ import { RoleService } from '../../../../shared/services';
   styleUrls: ['./users-filter-panel.component.scss']
 })
 export class UsersFilterPanelComponent implements OnInit, OnDestroy {
-
   constructor(
     private fb: FormBuilder,
     public usersService: UsersService,
     public roleService: RoleService
   ) {
   }
+
+  // Array to store available roles
+  public rolesList: any[] = [];
 
   // Enum for user roles
   protected readonly RoleEnum = RoleEnum;
@@ -28,7 +30,18 @@ export class UsersFilterPanelComponent implements OnInit, OnDestroy {
   // Subject to handle subscription cleanup
   private destroy$: Subject<void> = new Subject<void>();
 
+  // Select All option label
+  public selectAllOption: string = 'Select All';
+
+  // Flag to track if all roles are selected
+  private selectAllFlag: boolean = false;
+
+  // Initialize flag to track if all fields are filled
+  public allFieldsFilled: boolean = false;
+
   ngOnInit() {
+    // Get available roles list
+    this.getAvailableRoleList()
     // Initialize form
     this.buildForm();
     // Listen for form changes
@@ -36,14 +49,25 @@ export class UsersFilterPanelComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Get available roles list
+   */
+  private getAvailableRoleList(): void {
+    this.roleService.rolesListSubject$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(resp => {
+      this.rolesList = resp.filter(role => role.display) || [];
+    });
+  }
+
+  /**
    * Build the form
    */
-  private buildForm() {
+  private buildForm(): void{
     this.userFilterForm = this.fb.group({
       firstName: '',
       lastName: '',
       email: '',
-      roles: [],
+      roles: [[]], // Set initial value as an empty array
     });
     this.initDefaultUsersFilters();
   }
@@ -78,8 +102,54 @@ export class UsersFilterPanelComponent implements OnInit, OnDestroy {
         email: val.email,
         roles: arrRoles
       }
-      this.usersService.usersFilters$.next(filterData)
+      this.usersService.usersFilters$.next(filterData);
+
+      // Check if all fields are filled
+      this.allFieldsFilled = this.isFilterFieldsUsers();
+      this.updateSelectAllLabel();
     });
+  }
+
+  /**
+   * Function to toggle all roles selection
+   */
+  toggleAllRoles(): void {
+    const rolesControl = this.userFilterForm.get('roles');
+    const rolesList = this.rolesList
+    if (rolesControl && rolesList) {
+      rolesControl.setValue(this.selectAllFlag ? [] : rolesList);
+      this.selectAllFlag = !this.selectAllFlag;
+      this.selectAllOption = this.selectAllFlag ? 'Deselect All' : 'Select All';
+    }
+  }
+
+  /**
+   * Update the label of the "Select All" option based on current selection
+   */
+  updateSelectAllLabel(): void {
+    const selectedRoles = this.userFilterForm.get('roles')?.value?.length;
+    const totalRoles = this.rolesList?.length;
+    this.selectAllOption = selectedRoles === totalRoles ? 'Deselect All' : 'Select All';
+  }
+
+  /**
+   * Check if more than one form field is filled
+   */
+  isFilterFieldsUsers(): boolean {
+    const {firstName, lastName, email, roles} = this.userFilterForm.value;
+    return [firstName, lastName, email, roles?.length].filter(Boolean).length > 1;
+  }
+
+  /**
+   * Clear all form fields
+   */
+  clearAllFields(): void {
+    this.userFilterForm.setValue({
+      firstName: '',
+      lastName: '',
+      email: '',
+      roles: [],
+    })
   }
 
   ngOnDestroy(): void {

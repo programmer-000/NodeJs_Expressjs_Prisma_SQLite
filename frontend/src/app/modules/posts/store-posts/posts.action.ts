@@ -1,4 +1,4 @@
-import { PostModel } from '../../../core/models/post.model';
+import { PostModel } from '../../../core/models';
 
 /**
  * Actions related to posts

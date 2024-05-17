@@ -1,3 +1,6 @@
+@import '../../../../styles/variables';
+
+
 .additional-selection {
   opacity: 0.75;
   font-size: 0.75em;
@@ -15,7 +18,7 @@
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    padding-bottom: 0!important;
+    padding-bottom: 0 !important;
   }
 
   &__field {
@@ -26,10 +29,25 @@
     .cdk-overlay-pane {
       top: 100px !important;
     }
+  }
 
+  &__option {
+    &_clearAll {
+      background: $gray-dark;
+      border-top: 1px solid $border;
+      position: absolute;
+      bottom: 0;
+      z-index: 3000 !important;
+      width: -webkit-fill-available;
+      &:hover:not(.mdc-list-item--dissabled){
+        background: $gray-dark;
+        z-index: 3000;
+      }
+    }
   }
 
   &__btnAdd {
     margin: 0 20px 0 0;
   }
+
 }

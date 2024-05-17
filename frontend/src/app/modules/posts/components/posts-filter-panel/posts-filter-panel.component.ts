@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, Subject } from 'rxjs';
+import { filter, Observable, pairwise, Subject } from 'rxjs';
 import { debounceTime, map, startWith, takeUntil } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
 import { PostsService } from '../../posts.service';
@@ -53,15 +53,18 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   listAllCategories: CategoriesModel[] = [];
 
   // Arrays to store selected values
-  selectedValues: any = [];
+  selectedValuesAuthors: any = [];
   selectedValuesCategories: any = [];
 
   // Observables for filtering options
-  filteredOptions: Observable<any[]>;
-  filteredOptionsCategories: Observable<any[]>;
+  filteredOptions$: Observable<any[]>;
+  filteredOptionsCategories$: Observable<any[]>;
+
+  // Clear All option label
+  clearAllOption: string = 'Clear All';
 
   ngOnInit() {
-    this.fetchUsers();
+    this.fetchAllUsers();
     this.fetchCategories();
     this.buildForm();
     this.onChangesControlAuthors();
@@ -71,7 +74,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   /**
    *Fetches users from the store
    */
-  private fetchUsers() {
+  private fetchAllUsers() {
     this.store.dispatch(new GetListAllUsers());
     this.listAllUsers$.pipe(
       takeUntil(this.destroy$))
@@ -87,7 +90,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
    *Sets up filtering for user search
    */
   private filteredUsers() {
-    this.filteredOptions = this.searchTextboxControl.valueChanges
+    this.filteredOptions$ = this.searchTextboxControl.valueChanges
       .pipe(
         startWith<any>(''),
         map(name => this._filter(name))
@@ -105,24 +108,35 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   }
 
   /**
-   *Subscribes to changes in the authors control
+   * Subscribes to changes in the authors control
    */
   private onChangesControlAuthors(): void {
     this.postFilterForm.controls['authors'].valueChanges.pipe(
       debounceTime(250),
-      takeUntil(this.destroy$)
-    ).subscribe(val => {
+      map(val => {
+        let arrAuthors = [];
 
-      let arrAuthors = [];
-      if (val.length) {
-        for (let i = 0; i < val.length; i++) {
-          arrAuthors.push(val[i].id);
+        if (val.length) {
+          for (let i = 0; i < val.length; i++) {
+            arrAuthors.push(val[i].id);
+          }
         }
-      } else if (!Object.keys(val).length) {
-        arrAuthors = [];
+
+        if (arrAuthors.length > 0) {
+          this.filterData.authors = arrAuthors;
+          this.postsService.postsFilters$.next(this.filterData);
+        }
+
+        return arrAuthors;
+      }),
+      pairwise(),
+      filter(([prev, curr]) => prev.length > 0 && curr.length === 0),
+      takeUntil(this.destroy$)
+    ).subscribe(([prev, curr]) => {
+      if (prev.length > 0 && curr.length === 0) {
+        this.filterData.authors = [];
+        this.postsService.postsFilters$.next(this.filterData);
       }
-      this.filterData.authors = arrAuthors;
-      this.postsService.postsFilters$.next(this.filterData)
     });
   }
 
@@ -132,7 +146,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   private _filter(name: string): any[] {
     const filterValue = name.toLowerCase();
     this.setSelectedValues();
-    this.postFilterForm.controls['authors'].patchValue(this.selectedValues);
+    this.postFilterForm.controls['authors'].patchValue(this.selectedValuesAuthors);
     return this.listAllUsers.filter(option => option.firstName.toLowerCase().indexOf(filterValue) === 0);
   }
 
@@ -141,8 +155,8 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
    */
   selectionChange(event: any) {
     if (event.isUserInput && !event.source.selected) {
-      const index = this.selectedValues.indexOf(event.source.value);
-      this.selectedValues.splice(index, 1);
+      const index = this.selectedValuesAuthors.indexOf(event.source.value);
+      this.selectedValuesAuthors.splice(index, 1);
     }
   }
 
@@ -170,8 +184,8 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   setSelectedValues() {
     if (this.postFilterForm.controls['authors'].value && this.postFilterForm.controls['authors'].value.length > 0) {
       this.postFilterForm.controls['authors'].value.forEach((e: any) => {
-        if (this.selectedValues.indexOf(e) === -1) {
-          this.selectedValues.push(e);
+        if (this.selectedValuesAuthors.indexOf(e) === -1) {
+          this.selectedValuesAuthors.push(e);
         }
       });
     }
@@ -196,7 +210,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
    *Sets up filtering for category search
    */
   private filteredCategories() {
-    this.filteredOptionsCategories = this.searchTextboxControlCategories.valueChanges.pipe(
+    this.filteredOptionsCategories$ = this.searchTextboxControlCategories.valueChanges.pipe(
       startWith(''),
       map(name => this._filterCategories(name))
     );
@@ -218,20 +232,31 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   private onChangesControlCategories(): void {
     this.postFilterForm.controls['categories'].valueChanges.pipe(
       debounceTime(250),
-      takeUntil(this.destroy$)
-    ).subscribe(val => {
+      map(val => {
         let arrCategories = [];
+
         if (val.length) {
           for (let i = 0; i < val.length; i++) {
             arrCategories.push(val[i].id);
           }
-        } else if (!Object.keys(val).length) {
-          arrCategories = [];
         }
-        this.filterData.categories = arrCategories;
-        this.postsService.postsFilters$.next(this.filterData)
+
+        if (arrCategories.length > 0) {
+          this.filterData.categories = arrCategories;
+          this.postsService.postsFilters$.next(this.filterData);
+        }
+
+        return arrCategories;
+      }),
+      pairwise(),
+      filter(([prev, curr]) => prev.length > 0 && curr.length === 0),
+      takeUntil(this.destroy$)
+    ).subscribe(([prev, curr]) => {
+      if (prev.length > 0 && curr.length === 0) {
+        this.filterData.categories = [];
+        this.postsService.postsFilters$.next(this.filterData);
       }
-    );
+    });
   }
 
   /**
@@ -293,6 +318,41 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       console.log('dialogRef result', result);
     });
+  }
+
+  /**
+   *Checks if all roles are selected
+   */
+  public isFilterFieldsPosts(): boolean {
+    const {authors, categories} = this.postFilterForm.value;
+    return [authors?.length, categories?.length].filter(Boolean).length > 1;
+  }
+
+  /**
+   * Clear all form fields
+   */
+  public clearAllFields(): void {
+    this.postFilterForm.setValue({
+      authors: [],
+      categories: []
+    });
+    this.selectedValuesAuthors = [];
+    this.selectedValuesCategories = [];
+  }
+
+  /**
+   * Clear all authors
+   */
+  clearAllAuthors() {
+    this.postFilterForm.patchValue({authors: []});
+    this.selectedValuesAuthors = [];
+  }
+  /**
+   * Clear all categories
+   */
+  clearAllCategories() {
+    this.postFilterForm.patchValue({categories: []});
+    this.selectedValuesCategories = [];
   }
 
   ngOnDestroy(): void {

@@ -67,9 +67,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.buildRegForm(); // Initialize registration form
-    this.registerForm.patchValue({
-      status: true
-    });
     this.autocompleteCountries(); // Enable country autocomplete
   }
 
@@ -110,7 +107,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
       ],
       birthAt: [null, Validators.compose([
         Validators.required])],
-      status: '',
+      status: false,
     }, {
       validator: MustMatch('password', 'confirmPassword') // Custom validator for password match
     });
