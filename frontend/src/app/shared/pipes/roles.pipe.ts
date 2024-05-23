@@ -11,7 +11,6 @@ export class RolesPipe implements PipeTransform {
    * @returns The string representation of the user role
    */
   transform(value: number): string {
-    // Check the numeric value and return the corresponding role string
     switch (value) {
       case 1:
         return 'Super Admin';

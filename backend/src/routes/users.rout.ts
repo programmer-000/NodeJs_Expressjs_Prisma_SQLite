@@ -1,7 +1,7 @@
 import express from 'express';
 import type { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
-import * as UserHandler from '../controllers/users.conroller';
+import * as UserHandler from '../controllers/users.controller';
 import fs from 'fs';
 import bcrypt from 'bcrypt';
 import * as AuthUserHandler from '../controllers/auth.controller';

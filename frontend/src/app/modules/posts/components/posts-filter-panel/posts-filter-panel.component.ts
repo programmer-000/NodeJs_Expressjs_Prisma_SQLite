@@ -76,6 +76,8 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
    */
   private fetchAllUsers() {
     this.store.dispatch(new GetListAllUsers());
+
+    // Subscribe to the list of all users
     this.listAllUsers$.pipe(
       takeUntil(this.destroy$))
       .subscribe(resp => {
@@ -196,6 +198,8 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
    */
   fetchCategories() {
     this.store.dispatch(new GetCategories());
+
+    // Subscribe to the list of all categories
     this.listAllCategories$.pipe(
       takeUntil(this.destroy$))
       .subscribe(resp => {

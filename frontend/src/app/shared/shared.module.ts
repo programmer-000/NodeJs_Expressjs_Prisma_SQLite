@@ -19,6 +19,9 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
+// Ng2 Charts Module
+import { NgChartsModule } from 'ng2-charts';
+
 // Directives Modules
 import { DirectivesModule } from './directives/directives.module';
 
@@ -52,6 +55,7 @@ const sharedModules = [
   ReactiveFormsModule,
   RouterModule,
   DirectivesModule,
+  NgChartsModule,
   ...angularMaterialModules,
 ];
 

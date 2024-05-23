@@ -9,7 +9,7 @@
         <mat-select formControlName="roles" multiple>
 
           <!-- Select All option -->
-          <mat-option [value]="selectAllOption" (click)="toggleAllRoles()">{{ selectAllOption }}</mat-option>
+          <mat-option class="filters__option_toggle" [value]="selectAllOption" (click)="toggleAllRoles()">{{ selectAllOption }}</mat-option>
 
           <!-- Only show if the user is a Super Admin or Project Admin -->
           <ng-container *ngFor="let role of rolesList">

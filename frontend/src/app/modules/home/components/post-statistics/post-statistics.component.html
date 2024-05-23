@@ -1,0 +1,51 @@
+<mat-card class="post-statistics">
+  <!--  <mat-card-header>-->
+  <!--    <mat-card-title>Post Statistics</mat-card-title>-->
+  <!--  </mat-card-header>-->
+  <mat-card-content>
+    <div class="post-statistics__description-items">
+      <div class="post-statistics__description-title">Total Posts: {{ statisticsPosts.totalPosts }}</div>
+      <div class="post-statistics__description-status">Published Posts: {{ getPublishedPostsCount() }}</div>
+    </div>
+
+    <div class="post-statistics__charts">
+      <div class="post-statistics__chart">
+        <canvas baseChart
+                [datasets]="categoryPostsChartData"
+                [labels]="categoryPostsChartLabels"
+                [options]="categoryPostsCartOptions"
+                [legend]="true"
+                [type]="'doughnut'">
+        </canvas>
+      </div>
+
+      <div class="post-statistics__chart">
+        <canvas baseChart
+                [datasets]="rolePostsChartData"
+                [labels]="rolePostsChartLabels"
+                [options]="rolePostsCartOptions"
+                [legend]="true"
+                [type]="'doughnut'">
+        </canvas>
+      </div>
+    </div>
+
+    <div class="post-statistics__chart post-statistics__chart_full">
+      <canvas baseChart
+              [datasets]="userPostsChartData"
+              [labels]="userPostsChartLabels"
+              [options]="userPostsCartOptions"
+              [legend]="false"
+              [type]="'bar'">
+      </canvas>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<mat-progress-spinner
+  *ngIf="dataLoading"
+  color="primary"
+  diameter="70"
+  mode="indeterminate"
+  class="posts-spinner">
+</mat-progress-spinner>

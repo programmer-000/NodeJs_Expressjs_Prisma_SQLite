@@ -11,7 +11,7 @@
 }
 
 .filters {
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 
   &__content {
     display: flex;
@@ -35,7 +35,6 @@
     &_clearAll {
       background: $gray-dark;
       border-top: 1px solid $border;
-      position: absolute;
       bottom: 0;
       z-index: 3000 !important;
       width: -webkit-fill-available;

@@ -72,6 +72,8 @@ export class DialogCategoriesPostComponent implements OnInit, OnDestroy {
   private fetchCategories() {
     this.dataLoading = true;
     this.store.dispatch(new GetCategories());
+
+    // Subscribe to the list of categories
     this.listAllCategories$.pipe(
       takeUntil(this.destroy$))
       .subscribe(resp => {

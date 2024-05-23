@@ -91,6 +91,8 @@ export class PostsComponent implements OnInit, OnDestroy {
       categories: this.postsFilters.categories
     };
     this.store.dispatch(new GetPosts(params));
+
+    // Subscribe to posts counter
     this.postsCounter$.pipe(
       takeUntil(this.destroy$)
     ).subscribe(resp => {

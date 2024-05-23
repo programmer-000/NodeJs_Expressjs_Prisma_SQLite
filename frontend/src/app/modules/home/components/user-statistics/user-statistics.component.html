@@ -1,0 +1,54 @@
+<div>
+  <mat-card class="users-statistics">
+<!--    <mat-card-header>-->
+<!--      <mat-card-title>Users Statistics</mat-card-title>-->
+<!--    </mat-card-header>-->
+    <mat-card-content>
+
+      <div class="users-statistics__description-items">
+        <div class="users-statistics__description-title">Total Users: {{ statisticsUsers.totalUser }}</div>
+        <div class="users-statistics__description-status">Active Users: {{ getActiveUsersCount() }}</div>
+      </div>
+
+      <div class="users-statistics__charts">
+        <div class="users-statistics__chart">
+          <canvas baseChart
+                  [datasets]="usersByRoleChartData"
+                  [labels]="usersByRoleChartLabels"
+                  [options]="usersByRoleChartOptions"
+                  [legend]="true"
+                  [type]="'doughnut'">
+          </canvas>
+        </div>
+
+        <div class="users-statistics__chart">
+          <canvas baseChart
+                  [datasets]="usersByStatusChartData"
+                  [labels]="usersByStatusChartLabels"
+                  [options]="usersByStatusChartOptions"
+                  [legend]="true"
+                  [type]="'doughnut'">
+          </canvas>
+        </div>
+      </div>
+
+      <div class="users-statistics__chart users-statistics__chart_full">
+        <canvas baseChart
+                [datasets]="usersByLocationChartData"
+                [labels]="usersByLocationChartLabels"
+                [options]="usersByLocationChartOptions"
+                [legend]="false"
+                [type]="'bar'">
+        </canvas>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<mat-progress-spinner
+  *ngIf="dataLoading"
+  color="primary"
+  diameter="70"
+  mode="indeterminate"
+  class="users-spinner">
+</mat-progress-spinner>

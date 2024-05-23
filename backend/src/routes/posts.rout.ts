@@ -1,10 +1,11 @@
 import express from 'express';
 import type { Request, Response } from 'express';
-import * as PostHandler from '../controllers/posts.conroller';
+import * as PostHandler from '../controllers/posts.controller';
 import { body, validationResult } from 'express-validator';
 import * as fs from 'fs';
-import * as UserHandler from '../controllers/users.conroller';
+import * as UserHandler from '../controllers/users.controller';
 import { PostsQueryParamsModel } from '../models';
+
 export const postsRouter = express.Router();
 
 

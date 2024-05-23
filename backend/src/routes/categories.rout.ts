@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import * as CategoryHandler from '../controllers/categories.conroller';
+import * as CategoryHandler from '../controllers/categories.controller';
 import { CategoriesModel } from '../models';
 
 

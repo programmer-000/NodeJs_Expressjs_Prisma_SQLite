@@ -6,6 +6,7 @@ import { rootRouter } from './root.rout';
 import { usersRouter } from './users.rout';
 import { postsRouter } from './posts.rout';
 import { categoriesRouter } from './categories.rout';
+import { dashboardRouter } from './dashboard.rout';
 
 // Import middleware
 import upload from '../middleware/upload';
@@ -16,11 +17,11 @@ import { isAuthenticated } from '../middleware/middlewares';
 export const router = express.Router();
 
 // Route definitions
-
-router.use('/auth', upload, authRouter);
+router.use('/auth', authRouter);
 router.use('/posts', isAuthenticated, upload, postsRouter);
 router.use('/categories', isAuthenticated, categoriesRouter);
 router.use('/users', isAuthenticated, upload, usersRouter);
+router.use('/dashboard', isAuthenticated, dashboardRouter);
 
 // Root route
 router.use('/', rootRouter);

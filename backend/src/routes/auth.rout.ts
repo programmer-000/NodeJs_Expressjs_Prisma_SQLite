@@ -5,7 +5,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import crypto from 'crypto';
 import * as AuthUserHandler from '../controllers/auth.controller';
-import * as UserHandler from '../controllers/users.conroller';
+import * as UserHandler from '../controllers/users.controller';
 import { check } from 'express-validator';
 
 import { generateTokens } from '../utils/jwt';
