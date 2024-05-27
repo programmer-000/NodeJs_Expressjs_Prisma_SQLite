@@ -37,7 +37,7 @@
 
   &__chart {
     margin-top: 20px;
-    width: 50%;
+    width: 49%;
 
     &_full {
       width: 100%;
@@ -49,4 +49,19 @@
   position: absolute;
   left: 50%;
   top: 10%;
+}
+
+/* Responsive */
+@media (max-width: 620px) {
+  .users-statistics {
+    &__charts {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    &__chart {
+      width: 100%;
+    }
+  }
 }

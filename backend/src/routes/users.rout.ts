@@ -5,10 +5,7 @@ import * as UserHandler from '../controllers/users.controller';
 import fs from 'fs';
 import bcrypt from 'bcrypt';
 import * as AuthUserHandler from '../controllers/auth.controller';
-import { UserModel } from '../models';
-import { HEAD_SUPER_ADMIN } from '../constants';
 
-const path = require('path');
 
 export const usersRouter = express.Router();
 
@@ -75,20 +72,18 @@ usersRouter.post(
     async (request: Request, response: Response) => {
         const errors = validationResult(request);
         if (!errors.isEmpty()) {
-            return response.status(400).json({errors: errors.array()});
+            return response.status(400).json({ errors: errors.array() });
         }
         try {
-            console.log('Root POST - Create USER = ', request.body)
+            console.log('Root POST - Create USER = ', request.body);
 
             const user = JSON.parse(request.body.user_params);
-
             const existingUser = await AuthUserHandler.findUserByEmail(user.email);
             if (existingUser) {
-                return response.status(409).json({message: `Email already in use`})
+                return response.status(409).json({ message: `Email already in use` });
             }
 
             const hashPassword = bcrypt.hashSync(user.password, 7);
-
             let filename = '';
 
             if (request.file?.filename) {
@@ -103,11 +98,25 @@ usersRouter.post(
             const newUser = await UserHandler.createUserHandler(user);
             return response.status(201).json(newUser);
         } catch (error: any) {
+
+            // Delete the uploaded file if an error occurs
+            if (request.file?.filename) {
+                const avatarPath = `src/uploads/${request.file.filename}`;
+                fs.stat(avatarPath, (err, stats) => {
+                    if (err) {
+                        console.error('Error checking avatar file:', err);
+                    } else {
+                        fs.unlink(avatarPath, (err) => {
+                            if (err) console.error('Error deleting avatar file:', err);
+                            else console.log('Avatar file deleted successfully');
+                        });
+                    }
+                });
+            }
             return response.status(500).json(error.message);
         }
     }
 );
-
 
 /**
  PUT: Updating USER
@@ -215,41 +224,25 @@ usersRouter.put(
     }
 );
 
-
 /**
- DELETE: Delete an USER based on the ID
+ * DELETE: Delete a USER based on the ID
  */
 usersRouter.delete('/:id', async (request: Request, response: Response) => {
     const id: number = parseInt(request.params.id, 10);
     try {
-        console.log('DELETE USER', 'request.query', request.query)
+        console.log('DELETE USER', 'request.query', request.query);
 
         const previousAvatarUrl = String(request.query.avatar);
         const pathRemovePicture = previousAvatarUrl.replace('http://localhost:5000/', '');
 
-        /** check is Head Super Admin*/
-        const isHeadSuperAdmin: UserModel | null = await UserHandler.findUserById(id);
-        if (isHeadSuperAdmin?.id === HEAD_SUPER_ADMIN.id && isHeadSuperAdmin?.role === HEAD_SUPER_ADMIN.role) {
-            return response.status(409).json({message: `Cannot delete the head super admin user.`})
+        const result = await UserHandler.deleteUserHandler(id, pathRemovePicture);
+
+        if (!result.success) {
+            return response.status(409).json({ message: result.message });
         }
 
-        /** deleting photos in the database and folder (uploads)*/
-        console.log('deleting a picture path in base')
-        fs.stat(pathRemovePicture, (err, stats) => {
-            console.log('search for a deleted file in a folder (uploads)', stats);
-            if (err) {
-                return console.error(err);
-            }
-            fs.unlink(pathRemovePicture, err => {
-                if (err) return console.log(err);
-                console.log('file deleted successfully');
-            });
-        });
-
-        /** delete user*/
-        await UserHandler.deleteUserHandler(id);
-        return response.status(204).json('User has been successfully deleted');
+        return response.status(204).json({ message: result.message });
     } catch (error: any) {
-        return response.status(500).json(error.message);
+        return response.status(500).json({ message: error.message });
     }
 });

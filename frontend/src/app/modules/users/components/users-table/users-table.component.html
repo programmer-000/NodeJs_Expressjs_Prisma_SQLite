@@ -59,8 +59,8 @@
 
       <!-- Posts Column -->
       <ng-container matColumnDef="posts">
-        <th mat-header-cell *matHeaderCellDef> Posts</th>
-        <td mat-cell *matCellDef="let element"> {{ element.posts.length || 0 }}</td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Posts</th>
+        <td mat-cell *matCellDef="let element"> {{ element.postsCount || 0 }}</td>
       </ng-container>
 
       <!-- Status Column -->
@@ -130,7 +130,7 @@
     </table>
 
     <!-- Paginator for navigating through pages -->
-    <mat-paginator class="demo-paginator"
+    <mat-paginator class="users-table__paginator"
                    (page)="handlePageEvent($event)"
                    [length]="length"
                    [pageSize]="pageSize"

@@ -61,26 +61,31 @@ postsRouter.post(
     async (request: Request, response: Response) => {
         const errors = validationResult(request);
         if (!errors.isEmpty()) {
-            return response.status(400).json({errors: errors.array()});
+            return response.status(400).json({ errors: errors.array() });
         }
         try {
             const post = JSON.parse(request.body.post_params);
             const existingUser = await UserHandler.findUserById(post.userId);
 
             if (!existingUser) {
-                return response.status(401).json({message: `No such user exists`})
+                return response.status(401).json({ message: `No such user exists` });
             }
 
             let filename = '';
             if (request.file?.filename) {
                 filename = `http://localhost:5000/src/uploads/${request.file?.filename}`;
-            } else {
-                filename = '';
             }
             post.picture = filename;
+
             const newPost = await PostHandler.createPostHandler(post);
             return response.status(201).json(newPost);
         } catch (error: any) {
+            if (request.file?.filename) {
+                const path = `src/uploads/${request.file.filename}`;
+                fs.unlink(path, (err) => {
+                    if (err) console.error(`Error deleting file: ${err.message}`);
+                });
+            }
             return response.status(500).json(error.message);
         }
     }

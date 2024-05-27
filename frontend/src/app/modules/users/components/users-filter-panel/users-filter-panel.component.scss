@@ -25,3 +25,19 @@
     }
   }
 }
+
+/* Responsive */
+@media (max-width: 720px) {
+  .filters {
+    &__content {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    &__input {
+      margin: 0 0 20px;
+      width: 100%;
+    }
+  }
+}

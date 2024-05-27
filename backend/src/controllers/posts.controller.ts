@@ -109,46 +109,49 @@ export const getSinglePostHandler = async (id: number): Promise<any> => {
  * @returns An object containing the total count of posts and the newly created post.
  */
 export const createPostHandler = async (post: CreateUpdatePostModel): Promise<any> => {
-    const {title, description, content, picture, published, userId, categories} = post;
-
+    const { title, description, content, picture, published, userId, categories } = post;
     /** In this code, `categories.map(category => ({ id: category.id }))`
      * converts the array of `CategoriesModel` objects into an array of objects containing only category IDs,
      * which matches the expected type of `CategoryWhereUniqueInput`.*/
-    const newPost = await db.post.create({
-        data: {
-            title,
-            description,
-            content,
-            picture,
-            published,
-            userId,
-            categories: {
-                connect: categories?.map(category => ({ id: category.id }))
-            }
-        },
-        select: {
-            id: true,
-            title: true,
-            description: true,
-            content: true,
-            picture: true,
-            published: true,
-            createdAt: true,
-            updatedAt: true,
-            userId: true,
-            categories: true,
-            user: {
-                select: {
-                    id: true,
-                    firstName: true,
-                    lastName: true,
-                    role: true
+    try {
+        const newPost = await db.post.create({
+            data: {
+                title,
+                description,
+                content,
+                picture,
+                published,
+                userId,
+                categories: {
+                    connect: categories?.map(category => ({ id: category.id }))
+                }
+            },
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                content: true,
+                picture: true,
+                published: true,
+                createdAt: true,
+                updatedAt: true,
+                userId: true,
+                categories: true,
+                user: {
+                    select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        role: true
+                    },
                 },
             },
-        },
-    });
-    const totalCount = await db.post.count();
-    return {totalCount, newPost}
+        });
+        const totalCount = await db.post.count();
+        return { totalCount, newPost };
+    } catch (error: any) {
+        throw new Error(`Error creating post: ${error.message}`);
+    }
 };
 
 /**

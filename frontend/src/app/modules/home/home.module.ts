@@ -14,7 +14,6 @@ import { DashboardState } from './store-dashboard/dashboard-state.service';
 // Components
 import { PostStatisticsComponent } from './components/post-statistics/post-statistics.component';
 import { UserStatisticsComponent } from './components/user-statistics/user-statistics.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 // Define the routes for the HomeComponent
 const routes: Routes = [
@@ -28,8 +27,7 @@ const routes: Routes = [
   declarations: [
     HomeComponent,
     PostStatisticsComponent,
-    UserStatisticsComponent,
-    DashboardComponent
+    UserStatisticsComponent
   ],
   imports: [
     CommonModule,

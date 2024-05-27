@@ -39,9 +39,24 @@
 
   &__chart {
     margin-top: 20px;
-    width: 50%;
+    width: 49%;
 
     &_full {
+      width: 100%;
+    }
+  }
+}
+
+/* Responsive */
+@media (max-width: 620px) {
+  .post-statistics {
+    &__charts {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    &__chart {
       width: 100%;
     }
   }

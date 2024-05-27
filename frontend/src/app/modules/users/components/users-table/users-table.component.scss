@@ -1,3 +1,7 @@
+.mdc-data-table__cell, .mdc-data-table__header-cell {
+  padding: 0 7px 0 7px;
+}
+
 .users-table {
   position: relative;
 
@@ -7,10 +11,12 @@
   }
 
   &__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: auto;
     max-height: 100px;
     overflow: hidden;
-    text-align: center;
 
     &_inactive {
       opacity: 0.3;
@@ -18,9 +24,12 @@
     }
 
     img {
-      width: 100px;
-      height: auto;
       display: block;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: 2px solid wheat;
+      object-fit: cover;
     }
   }
 
@@ -32,13 +41,44 @@
     &-inactive {
       color: red;
     }
+  }
 
+  &__paginator {
+    width: 100%;
   }
 }
 
 table {
   width: 100%;
 }
+
+.mat-column-id {
+  max-width: 50px;
+  padding: 0 10px 0 16px;
+}
+
+.mat-column-avatar {
+  max-width: 100px;
+  padding: 10px;
+}
+
+.mat-column-email {
+  //max-width: 200px;
+}
+
+.mat-column-status {
+  //max-width: 78px;
+}
+
+.mat-column-birthAt {
+  //max-width: 50px;
+}
+
+.mat-column-actions {
+  min-width: 110px;
+  width: 110px;
+}
+
 
 .data-spinner {
   position: absolute;
