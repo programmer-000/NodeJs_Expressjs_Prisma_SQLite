@@ -57,13 +57,18 @@ export class PostsState {
   @Action(GetPosts)
   getAllPosts({getState, setState}: StateContext<PostsStateModel>, {params}: GetPosts) {
     return this.postsService.fetchPosts(params).pipe(tap((result) => {
-      const state = getState();
-      setState({
-        ...state,
-        posts: result.posts,
-        postsCounter: result.totalCount
-      });
-    }));
+        const state = getState();
+        setState({
+          ...state,
+          posts: result.posts,
+          postsCounter: result.totalCount
+        });
+      },
+      (error) => {
+        console.error(error);
+        this.notificationService.showError(error);
+      }
+    ));
   }
 
   /**
@@ -84,11 +89,11 @@ export class PostsState {
   @Action(AddPost)
   addNewPost({getState, patchState}: StateContext<PostsStateModel>, {params, avatar}: AddPost) {
     return this.postsService.addPost(params, avatar).pipe(tap((result) => {
-        this.notificationService.showSuccess('Post created successfully');
+        this.notificationService.showSuccess(result.message);
         const state = getState();
         patchState({
-          posts: [...state.posts, result.newPost],
-          postsCounter: result.totalCount
+          posts: [...state.posts, result.data.newPost],
+          postsCounter: result.data.totalCount
         });
       },
       (error) => {
@@ -106,11 +111,11 @@ export class PostsState {
     id, params, picture, pictureOrUrl, previousPictureUrl
   }: UpdatePost) {
     return this.postsService.updatePost(id, params, picture, pictureOrUrl, previousPictureUrl).pipe(tap((result) => {
-        this.notificationService.showSuccess('Post updated successfully');
+        this.notificationService.showSuccess(result.message);
         const state = getState();
         const postsList = [...state.posts];
         const postIndex = postsList.findIndex(item => item.id === id);
-        postsList[postIndex] = result;
+        postsList[postIndex] = result.data;
         setState({
           ...state,
           posts: postsList,
@@ -130,9 +135,8 @@ export class PostsState {
    */
   @Action(DeletePost)
   deletePost({getState, setState}: StateContext<PostsStateModel>, {id, params}: DeletePost) {
-    return this.postsService.removePost(id, params).pipe(tap(() => {
-        this.notificationService.showSuccess('Post delete successfully');
-
+    return this.postsService.removePost(id, params).pipe(tap((result) => {
+        this.notificationService.showSuccess(result.message);
         const state = getState();
         const filteredArray = state.posts.filter(item => item.id !== id);
         setState({
@@ -154,12 +158,19 @@ export class PostsState {
   @Action(GetListAllUsers)
   getListAllUsers({getState, setState}: StateContext<PostsStateModel>) {
     return this.postsService.fetchListAllUsers().pipe(tap((result) => {
-      const state = getState();
-      setState({
-        ...state,
-        usersList: result.users
-      });
-    }));
+        const state = getState();
+        setState({
+          ...state,
+          usersList: result.users
+        });
+      },
+      (error) => {
+        console.error(error);
+        const firstErrorAttempt: string = _.get(error, 'error.error.message', 'An error occurred');
+        const secondErrorAttempt: string = _.get(error, 'error.message', firstErrorAttempt);
+        this.notificationService.showError(secondErrorAttempt);
+      }
+    ));
   }
 
   /**
@@ -168,12 +179,19 @@ export class PostsState {
   @Action(GetCategories)
   getListCategories({getState, setState}: StateContext<PostsStateModel>) {
     return this.postsService.fetchListCategories().pipe(tap((result) => {
-      const state = getState();
-      setState({
-        ...state,
-        categories: result.categories
-      });
-    }));
+        const state = getState();
+        setState({
+          ...state,
+          categories: result.categories
+        });
+      },
+      (error) => {
+        console.error(error);
+        const firstErrorAttempt: string = _.get(error, 'error.error.message', 'An error occurred');
+        const secondErrorAttempt: string = _.get(error, 'error.message', firstErrorAttempt);
+        this.notificationService.showError(secondErrorAttempt);
+      }
+    ));
   }
 
   /**
@@ -182,10 +200,10 @@ export class PostsState {
   @Action(AddCategory)
   addNewCategory({getState, patchState}: StateContext<PostsStateModel>, {params}: AddCategory) {
     return this.postsService.addCategory(params).pipe(tap((result) => {
-        this.notificationService.showSuccess('Category created successfully');
+        this.notificationService.showSuccess(result.message);
         const state = getState();
         patchState({
-          categories: [...state.categories, result.newCategory],
+          categories: [...state.categories, result.data.newCategory],
         });
       },
       (error) => {
@@ -203,11 +221,11 @@ export class PostsState {
     id, params
   }: UpdateCategory) {
     return this.postsService.updateCategory(id, params).pipe(tap((result) => {
-        this.notificationService.showSuccess('Category updated successfully');
+        this.notificationService.showSuccess(result.message);
         const state = getState();
         const categoriesList = [...state.categories];
         const postIndex = categoriesList.findIndex(item => item.id === id);
-        categoriesList[postIndex] = result;
+        categoriesList[postIndex] = result.data;
         setState({
           ...state,
           categories: categoriesList,
@@ -225,9 +243,8 @@ export class PostsState {
    */
   @Action(DeleteCategory)
   deleteCategory({getState, setState}: StateContext<PostsStateModel>, {id}: DeleteCategory) {
-    return this.postsService.removeCategory(id).pipe(tap(() => {
-        this.notificationService.showSuccess('Category delete successfully');
-
+    return this.postsService.removeCategory(id).pipe(tap((result) => {
+        this.notificationService.showSuccess(result.message);
         const state = getState();
         const filteredArray = state.categories.filter(item => item.id !== id);
         setState({
@@ -241,5 +258,4 @@ export class PostsState {
       }
     ));
   }
-
 }

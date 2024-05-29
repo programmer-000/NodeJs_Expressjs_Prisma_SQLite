@@ -110,7 +110,7 @@ export const getSinglePostHandler = async (id: number): Promise<any> => {
  */
 export const createPostHandler = async (post: CreateUpdatePostModel): Promise<any> => {
     const { title, description, content, picture, published, userId, categories } = post;
-    /** In this code, `categories.map(category => ({ id: category.id }))`
+    /** In this code, 'categories.map(category => ({ id: category.id }))'
      * converts the array of `CategoriesModel` objects into an array of objects containing only category IDs,
      * which matches the expected type of `CategoryWhereUniqueInput`.*/
     try {
@@ -207,9 +207,13 @@ export const updatePostHandler = async (post: CreateUpdatePostModel, id: number
  * @param id The ID of the post to delete.
  */
 export const deletePostHandler = async (id: number): Promise<void> => {
-    await db.post.delete({
-        where: {
-            id,
-        },
-    });
+    try {
+        await db.post.delete({
+            where: {
+                id,
+            },
+        });
+    } catch (error: any) {
+        throw new Error(`Error deleting post: ${error.message}`);
+    }
 };

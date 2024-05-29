@@ -5,6 +5,7 @@
     <table
       mat-table
       matSort
+      matSortDisableClear
       [dataSource]="users$ | async"
       (matSortChange)="sortData($event)"
       [matSortActive]="orderByColumn" [matSortDirection]="orderByDirection"

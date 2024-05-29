@@ -8,6 +8,7 @@ import { PostsQueryParamsModel } from '../models';
 
 export const postsRouter = express.Router();
 
+const BASE_URL = process.env.BASE_URL as string;
 
 /**
  GET: List of all POSTS
@@ -24,8 +25,8 @@ postsRouter.get('/', async (request: Request, response: Response) => {
             categories: String(request.query.categories)
         };
 
-        const posts = await PostHandler.getAllPostsHandler(params);
-        return response.status(200).json(posts);
+        const data = await PostHandler.getAllPostsHandler(params);
+        return response.status(200).json(data);
     } catch (error: any) {
         return response.status(500).json(error.message);
     }
@@ -73,12 +74,15 @@ postsRouter.post(
 
             let filename = '';
             if (request.file?.filename) {
-                filename = `http://localhost:5000/src/uploads/${request.file?.filename}`;
+                filename = `${BASE_URL}/src/uploads/${request.file?.filename}`;
             }
             post.picture = filename;
 
-            const newPost = await PostHandler.createPostHandler(post);
-            return response.status(201).json(newPost);
+            const data = await PostHandler.createPostHandler(post);
+            return response.status(201).json({
+                data,
+                message: `Post created successfully`
+            });
         } catch (error: any) {
             if (request.file?.filename) {
                 const path = `src/uploads/${request.file.filename}`;
@@ -114,11 +118,10 @@ postsRouter.put(
 
             let pathRemovePicture ='';
             if (previousPictureUrl !== null) {
-                pathRemovePicture = previousPictureUrl.replace('http://localhost:5000/', '');
+                pathRemovePicture = previousPictureUrl.replace(`${BASE_URL}/`, '');
             } else {
                 pathRemovePicture ='';
             }
-            // const pathRemovePicture = previousPictureUrl.replace('http://localhost:5000/', '');
 
             /** adding, replacing and deleting photos in the database and folder (uploads) */
             let fileUrl = '';
@@ -155,13 +158,16 @@ postsRouter.put(
                 });
 
                 console.log('first image upload or replacement')
-                fileUrl = `http://localhost:5000/src/uploads/${request.file?.filename}`;
+                fileUrl = `${BASE_URL}/src/uploads/${request.file?.filename}`;
 
             }
 
             post.picture = fileUrl;
-            const updatedPost = await PostHandler.updatePostHandler(post, id);
-            return response.status(201).json(updatedPost);
+            const data = await PostHandler.updatePostHandler(post, id);
+            return response.status(201).json({
+                data,
+                message: `Post updated successfully`
+            });
         } catch (error: any) {
             return response.status(500).json(error.message);
         }
@@ -170,28 +176,30 @@ postsRouter.put(
 
 
 /**
- DELETE: Delete an POST based on the ID
+ * DELETE: Delete a POST based on the ID
  */
 postsRouter.delete('/:id', async (request: Request, response: Response) => {
     const id: number = parseInt(request.params.id, 10);
     try {
         const previousPictureUrl = String(request.query.picture);
-        const pathRemovePicture = previousPictureUrl.replace('http://localhost:5000/', '');
+        const pathRemovePicture = previousPictureUrl.replace(`${BASE_URL}/`, '');
 
-        /** deleting photos in the database and folder (uploads)*/
+        await PostHandler.deletePostHandler(id);
+
+        /** Deleting photos in the folder (uploads) only after the post is successfully deleted */
         fs.stat(pathRemovePicture, (err, stats) => {
-            console.log('search for a deleted file in a folder (uploads)', stats);
             if (err) {
-                return console.error(err);
+                return console.error(`Error finding file: ${err.message}`);
             }
             fs.unlink(pathRemovePicture, err => {
-                if (err) return console.log(err);
-                console.log('file deleted successfully');
+                if (err) return console.log(`Error deleting file: ${err.message}`);
+                console.log('File deleted successfully');
             });
         });
 
-        await PostHandler.deletePostHandler(id);
-        return response.status(204).json('Post was successfully deleted');
+        return response.status(200).json({
+            message: `Post was successfully deleted`
+        });
     } catch (error: any) {
         return response.status(500).json(error.message);
     }

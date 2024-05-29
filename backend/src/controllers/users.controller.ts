@@ -201,13 +201,13 @@ export const updateUserPasswordHandler = async (userPassword: any, id: number): 
     });
 };
 
+
 /**
  * Deletes a user by ID if the user does not have posts.
  * @param id - ID of the user to delete.
- * @param avatarPath - Path of the user's avatar to delete.
  * @returns Promise<{ success: boolean, message: string }> A promise containing the success status and a message.
  */
-export const deleteUserHandler = async (id: number, avatarPath: string): Promise<{ success: boolean, message: string }> => {
+export const deleteUserHandler = async (id: number): Promise<{ success: boolean, message: string }> => {
     const user = await db.user.findUnique({
         where: { id },
         include: { posts: true },
@@ -223,16 +223,6 @@ export const deleteUserHandler = async (id: number, avatarPath: string): Promise
 
     if (user.id === HEAD_SUPER_ADMIN.id && user.role === HEAD_SUPER_ADMIN.role) {
         return { success: false, message: 'Cannot delete the head Super Admin user' };
-    }
-
-    if (avatarPath) {
-        fs.stat(avatarPath, (err, stats) => {
-            if (!err && stats) {
-                fs.unlink(avatarPath, err => {
-                    if (err) console.error('Error deleting avatar:', err);
-                });
-            }
-        });
     }
 
     await db.user.delete({ where: { id } });

@@ -54,13 +54,18 @@ export class UsersState {
   @Action(GetUsers)
   getAllUsers({getState, setState}: StateContext<UsersStateModel>, {params}: GetUsers) {
     return this.usersService.fetchUsers(params).pipe(tap((result) => {
-      const state = getState();
-      setState({
-        ...state,
-        users: result.users,
-        usersCounter: result.totalCount,
-      });
-    }));
+        const state = getState();
+        setState({
+          ...state,
+          users: result.users,
+          usersCounter: result.totalCount,
+        });
+      },
+      (error) => {
+        console.error(error);
+        this.notificationService.showError(error);
+      }
+    ));
   }
 
   /**
@@ -79,7 +84,7 @@ export class UsersState {
    * Action to set the authUser
    */
   @Action(SetAuthUser)
-    setAuthUser({getState, setState}: StateContext<UsersStateModel>, {payload}: SetAuthUser) {
+  setAuthUser({getState, setState}: StateContext<UsersStateModel>, {payload}: SetAuthUser) {
     const state = getState();
     setState({
       ...state,
@@ -94,11 +99,11 @@ export class UsersState {
   @Action(AddUser)
   addNewUser({getState, patchState}: StateContext<UsersStateModel>, {params, avatar}: AddUser) {
     return this.usersService.addUser(params, avatar).pipe(tap((result) => {
-        this.notificationService.showSuccess('User created successfully');
+        this.notificationService.showSuccess(result.message);
         const state = getState();
         patchState({
-          users: [...state.users, result.newUser],
-          usersCounter: result.totalCount,
+          users: [...state.users, result.data.newUser],
+          usersCounter: result.data.totalCount,
         });
       },
       (error) => {
@@ -120,7 +125,7 @@ export class UsersState {
     previousImageUrl
   }: UpdateUser) {
     return this.usersService.updateUser(id, params, avatar, imageOrUrl, previousImageUrl).pipe(tap((result) => {
-        this.notificationService.showSuccess('User updated successfully');
+      this.notificationService.showSuccess(result.message);
         const state = getState();
         const usersList = [...state.users];
         const userIndex = usersList.findIndex(item => item.id === id);
@@ -128,12 +133,12 @@ export class UsersState {
         // Update the current account if the user is the same as the current account
         const currentAccount = this.authService.accountValue;
         const authUser: AuthUserModel = {
-          id: result.id,
-          firstName: result.firstName,
-          lastName: result.lastName,
-          email: result.email,
-          role: result.role,
-          avatar: result.avatar,
+          id: result.data.id,
+          firstName: result.data.firstName,
+          lastName: result.data.lastName,
+          email: result.data.email,
+          role: result.data.role,
+          avatar: result.data.avatar,
         }
         if (authUser.id === currentAccount!.userInfo.id) {
           localStorage.setItem(LocalStorageEnum.ACCOUNT, JSON.stringify(authUser));
@@ -146,7 +151,7 @@ export class UsersState {
         }
 
         // Update the user in the list
-        usersList[userIndex] = result;
+        usersList[userIndex] = result.data;
         setState({
           ...state,
           users: usersList,
@@ -168,8 +173,7 @@ export class UsersState {
     id, params
   }: UpdateUserPassword) {
     return this.usersService.updateUserPassword(id, params).pipe(tap((result) => {
-        this.notificationService.showSuccess('User password updated successfully');
-        console.log(result);
+        this.notificationService.showSuccess(result.message);
       },
       (error) => {
         console.error(error);
@@ -184,7 +188,7 @@ export class UsersState {
   @Action(DeleteUser)
   deleteUser({getState, setState}: StateContext<UsersStateModel>, {id, params}: DeleteUser) {
     return this.usersService.removeUser(id, params).pipe(tap((result) => {
-        this.notificationService.showSuccess('User delete successfully');
+        this.notificationService.showSuccess(result.message);
         const state = getState();
         const filteredArray = state.users.filter(item => item.id !== id);
         setState({
