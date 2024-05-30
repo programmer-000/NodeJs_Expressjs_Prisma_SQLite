@@ -45,7 +45,7 @@ export class AuthService {
   /**
    * New User Registration
    */
-  register(registerUserData: RegisterUserModel): Observable<any> {
+  registerUser(registerUserData: RegisterUserModel): Observable<any> {
     return this.http.post<any>(config.API_URL + `/auth/register/`, {registerUserData})
       .pipe(map(account => {
         const {accessToken, refreshToken} = account;

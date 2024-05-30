@@ -12,6 +12,7 @@ import { generateTokens } from '../utils/jwt';
 import { handlerEmailSending } from '../utils/sendEmail';
 import { hashToken } from '../utils/hashToken';
 import { UserModel } from '../models';
+import { registerValidator } from '../validators';
 
 
 export const authRouter = express.Router();
@@ -23,19 +24,20 @@ const urlClient = process.env.BASE_URL_CLIENT as string;
  */
 authRouter.post(
     '/register',
+    registerValidator,
     async (request: Request, response: Response) => {
         try {
-            const {email, password} = request.body.registerUserData;
+            const { email, password } = request.body.registerUserData;
             const user = request.body.registerUserData;
             const hashPassword = bcrypt.hashSync(user.password, 7);
 
             if (!email || !password) {
-                return response.status(400).json({message: `You must provide an email and a password`})
+                return response.status(400).json({ message: `You must provide an email and a password` });
             }
 
             const existingUser = await AuthUserHandler.findUserByEmail(email);
             if (existingUser) {
-                return response.status(409).json({message: `Email already in use`})
+                return response.status(409).json({ message: `Email already in use` });
             }
 
             user.password = hashPassword;
@@ -43,22 +45,19 @@ authRouter.post(
             const userId = createdUser.newUser.id;
 
             const jti: any = uuidv4();
-            const {accessToken, refreshToken} = generateTokens(createdUser.newUser, jti);
-            await AuthUserHandler.addRefreshTokenToWhitelist({jti, refreshToken, userId});
-
+            const { accessToken, refreshToken } = generateTokens(createdUser.newUser, jti);
+            await AuthUserHandler.addRefreshTokenToWhitelist({ jti, refreshToken, userId });
 
             /** SEND access to the site */
             /* Set transporter options:*/
-            const siteLink = `${urlClient}`
-            const subject = 'Registration on the website!'
-            const htmlContent =
-                        `<h2>Hi ${createdUser.newUser.firstName} ${createdUser.newUser.lastName}!</h2>
-                        <p>You have registered on the site "NodeJs_Expressjs_Prisma - ${siteLink}"</p>
-                        <p>To enter the site use:</p>
-                        <p>Login - ${createdUser.newUser.email}</p>
-                        <p>Password - ${password} </p>`
-
-            const text = `Some text`
+            const siteLink = `${urlClient}`;
+            const subject = 'Registration on the website!';
+            const htmlContent = `<h2>Hi ${createdUser.newUser.firstName} ${createdUser.newUser.lastName}!</h2>
+                <p>You have registered on the site "NodeJs_Expressjs_Prisma - ${siteLink}"</p>
+                <p>To enter the site use:</p>
+                <p>Login - ${createdUser.newUser.email}</p>
+                <p>Password - ${password} </p>`;
+            const text = `Some text`;
 
             /* Start send E-MAIL*/
             await handlerEmailSending(existingUser, email, subject, htmlContent, text);
@@ -68,13 +67,11 @@ authRouter.post(
                 accessToken,
                 refreshToken
             });
-
         } catch (error: any) {
             return response.status(500).json(error.message);
         }
     }
 );
-
 
 /**
  POST: Login

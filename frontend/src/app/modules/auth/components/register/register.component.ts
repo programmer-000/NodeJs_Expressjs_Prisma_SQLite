@@ -140,7 +140,19 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.dataLoading = true;
     if (this.registerForm.valid) {
       const registerUserData = this.registerForm.value;
-      this.authService.register(registerUserData).pipe(
+
+      const params: any = {
+        email: registerUserData.email,
+        firstName: registerUserData.firstName,
+        lastName: registerUserData.lastName,
+        role: registerUserData.role,
+        location: registerUserData.location,
+        password: registerUserData.password,
+        birthAt: registerUserData.birthAt,
+        status: registerUserData.status,
+      };
+
+      this.authService.registerUser(params).pipe(
         takeUntil(this.destroy$))
         .subscribe(resp => {
             this.registerUserResp = resp;

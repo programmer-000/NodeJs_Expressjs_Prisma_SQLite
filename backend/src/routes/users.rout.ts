@@ -1,11 +1,17 @@
 import express from 'express';
 import type { Request, Response } from 'express';
-import { body, validationResult, param } from 'express-validator';
-import * as UserHandler from '../controllers/users.controller';
+import { param, validationResult } from 'express-validator';
 import fs from 'fs';
 import bcrypt from 'bcrypt';
+
+import * as UserHandler from '../controllers/users.controller';
 import * as AuthUserHandler from '../controllers/auth.controller';
-import { createUserValidator, getUsersValidator, parseUserParams } from '../validators';
+import {
+    getUsersValidator,
+    parseUserCreateParams, createUserValidator,
+    parseUserUpdateParams, updatePasswordValidator,
+    updateUserValidator
+} from '../validators';
 
 export const usersRouter = express.Router();
 
@@ -18,17 +24,17 @@ const BASE_URL = process.env.BASE_URL as string;
 usersRouter.get(
     '/',
     getUsersValidator,
-    async (request: Request, response: Response) => {
-        const errors = validationResult(request);
+    async (req: Request, res: Response) => {
+        const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return response.status(400).json({errors: errors.array()});
+            return res.status(400).json({errors: errors.array()});
         }
-        const params = request.query;
+        const params = req.query;
         try {
             const data = await UserHandler.getAllUsersHandler(params);
-            return response.status(200).json(data);
+            return res.status(200).json(data);
         } catch (error: any) {
-            return response.status(500).json(error.message);
+            return res.status(500).json(error.message);
         }
     }
 );
@@ -37,12 +43,12 @@ usersRouter.get(
 /**
  GET: List of all USERS
  */
-usersRouter.get('/list_all_users', async (request: Request, response: Response) => {
+usersRouter.get('/list_all_users', async (req: Request, res: Response) => {
     try {
         const users = await UserHandler.getListAllUsersHandler();
-        return response.status(200).json(users);
+        return res.status(200).json(users);
     } catch (error: any) {
-        return response.status(500).json(error.message);
+        return res.status(500).json(error.message);
     }
 });
 
@@ -52,20 +58,20 @@ usersRouter.get('/list_all_users', async (request: Request, response: Response) 
  */
 usersRouter.get('/:id',
     param('id').isInt().withMessage('ID must be an integer'),
-    async (request: Request, response: Response) => {
-        const id: number = parseInt(request.params.id, 10);
-        const errors = validationResult(request);
+    async (req: Request, res: Response) => {
+        const id: number = parseInt(req.params.id, 10);
+        const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return response.status(400).json({errors: errors.array()});
+            return res.status(400).json({ message: 'Validation Error', errors: errors.array() });
         }
         try {
             const user = await UserHandler.getUserHandler(id);
             if (user) {
-                return response.status(200).json(user);
+                return res.status(200).json(user);
             }
-            return response.status(404).json('User could not be found');
+            return res.status(404).json('User could not be found');
         } catch (error: any) {
-            return response.status(500).json(error.message);
+            return res.status(500).json(error.message);
         }
     }
 );
@@ -76,7 +82,7 @@ usersRouter.get('/:id',
  */
 usersRouter.post(
     '/',
-    parseUserParams,
+    parseUserCreateParams,
     createUserValidator,
     async (req: Request, res: Response) => {
         try {
@@ -125,23 +131,18 @@ usersRouter.post(
 
 
 /**
- PUT: Updating USER
+ * PUT: Updating USER
  */
 usersRouter.put(
     '/:id',
-    // body("firstName").isString(),
-    // body("lastName").isString(),
-    // body("email").isString(),
-    async (request: Request, response: Response) => {
-        const errors = validationResult(request);
-        if (!errors.isEmpty()) {
-            return response.status(400).json({errors: errors.array()});
-        }
-        const id: number = parseInt(request.params.id, 10);
+    parseUserUpdateParams,
+    updateUserValidator,
+    async (req: Request, res: Response) => {
+        const id: number = parseInt(req.params.id, 10);
         try {
-            const user = JSON.parse(request.body.user_params);
-            const imageOrUrl = JSON.parse(request.body.imageOrUrl);
-            const previousImageUrl = JSON.parse(request.body.previousImageUrl);
+            const user = req.body.user_params;
+            const imageOrUrl = req.body.imageOrUrl;
+            const previousImageUrl = req.body.previousImageUrl;
 
             let pathRemoveImage = '';
             if (previousImageUrl !== null) {
@@ -152,14 +153,14 @@ usersRouter.put(
 
             /** Adding, replacing and deleting photos in the database and folder (uploads) */
             let fileUrl = '';
-            if (!request.file?.filename) {
-                console.log('updating a user without a image and deleting a image')
+            if (!req.file?.filename) {
+                console.log('updating a user without a image and deleting a image');
                 if (imageOrUrl) {
                     fileUrl = previousImageUrl;
-                    console.log('update a image path in base')
+                    console.log('update a image path in base');
                 } else {
                     fileUrl = '';
-                    console.log('deleting a image path in base')
+                    console.log('deleting a image path in base');
                     fs.stat(pathRemoveImage, (err, stats) => {
                         console.log('search for a deleted file in a folder (uploads)', stats);
                         if (err) {
@@ -172,7 +173,7 @@ usersRouter.put(
                     });
                 }
             } else {
-                console.log('deleting a image path in base')
+                console.log('deleting a image path in base');
                 fs.stat(pathRemoveImage, (err, stats) => {
                     console.log('search for a deleted file in a folder (uploads)', stats);
                     if (err) {
@@ -184,19 +185,19 @@ usersRouter.put(
                     });
                 });
 
-                console.log('first image upload or replacement')
-                fileUrl = `${BASE_URL}/src/uploads/${request.file?.filename}`;
+                console.log('first image upload or replacement');
+                fileUrl = `${BASE_URL}/src/uploads/${req.file?.filename}`;
             }
 
             user.avatar = fileUrl;
 
             const updatedUser = await UserHandler.updateUserHandler(user, id);
-            return response.status(200).json({
+            return res.status(200).json({
                 data: updatedUser,
                 message: `User updated`
             });
         } catch (error: any) {
-            return response.status(500).json(error.message);
+            return res.status(500).json(error.message);
         }
     }
 );
@@ -207,26 +208,19 @@ usersRouter.put(
  */
 usersRouter.put(
     '/update_password/:id',
-    // body("firstName").isString(),
-    // body("lastName").isString(),
-    // body("email").isString(),
-    async (request: Request, response: Response) => {
-        const errors = validationResult(request);
-
-        if (!errors.isEmpty()) {
-            return response.status(400).json({errors: errors.array()});
-        }
-        const id: number = parseInt(request.params.id, 10);
+    updatePasswordValidator,
+    async (req: Request, res: Response) => {
+        const id: number = parseInt(req.params.id, 10);
         try {
-            const hashPassword = bcrypt.hashSync(request.body.password, 7);
-            const newUserPassword: any = {password: hashPassword};
+            const hashPassword = bcrypt.hashSync(req.body.password, 7);
+            const newUserPassword: any = { password: hashPassword };
             const date = await UserHandler.updateUserPasswordHandler(newUserPassword, id);
-            return response.status(200).json({
+            return res.status(200).json({
                 data: date,
-                message: `User password updated`
+                message: 'User password updated'
             });
         } catch (error: any) {
-            return response.status(500).json(error.message);
+            return res.status(500).json({ message: error.message });
         }
     }
 );
@@ -235,16 +229,22 @@ usersRouter.put(
 /**
  * DELETE: Delete a USER based on the ID
  */
-usersRouter.delete('/:id', async (request: Request, response: Response) => {
-    const id: number = parseInt(request.params.id, 10);
+usersRouter.delete('/:id',
+    param('id').isInt().withMessage('ID must be an integer'),
+    async (req: Request, res: Response) => {
+    const id: number = parseInt(req.params.id, 10);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ message: 'Validation Error', errors: errors.array() });
+    }
     try {
-        const previousAvatarUrl = String(request.query.avatar);
+        const previousAvatarUrl = String(req.query.avatar);
         const pathRemovePicture = previousAvatarUrl.replace(`${BASE_URL}/`, '');
 
         const result = await UserHandler.deleteUserHandler(id);
 
         if (!result.success) {
-            return response.status(409).json({ message: result.message });
+            return res.status(409).json({ message: result.message });
         }
 
         // Delete the user's avatar if the user was successfully deleted
@@ -259,10 +259,10 @@ usersRouter.delete('/:id', async (request: Request, response: Response) => {
             });
         }
 
-        return response.status(200).json({
+        return res.status(200).json({
             message: result.message,
         });
     } catch (error: any) {
-        return response.status(500).json({ message: error.message });
+        return res.status(500).json({ message: error.message });
     }
 });

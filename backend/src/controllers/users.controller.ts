@@ -2,7 +2,6 @@ import db from '../utils/db';
 import { UserModel, UsersModel } from '../models';
 import { RoleTypesEnum } from '../enums/role-types.enum';
 import { HEAD_SUPER_ADMIN } from '../constants';
-import fs from 'fs';
 
 /**
  * Retrieves all users based on provided parameters.
