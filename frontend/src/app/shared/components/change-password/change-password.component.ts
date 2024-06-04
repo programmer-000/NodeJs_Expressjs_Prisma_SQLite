@@ -69,17 +69,17 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
     this.changePasswordForm = this.fb.group({
       currentPassword: [null, Validators.compose([
         Validators.required,
-        Validators.minLength(3),
+        Validators.minLength(6),
         Validators.maxLength(50)])
       ],
       newPassword: [null, Validators.compose([
         Validators.required,
-        Validators.minLength(3),
+        Validators.minLength(6),
         Validators.maxLength(50)])
       ],
       confirmPassword: [null, Validators.compose([
         Validators.required,
-        Validators.minLength(3),
+        Validators.minLength(6),
         Validators.maxLength(50)])
       ]
     }, {
@@ -115,13 +115,19 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
     this.authService.fetchValidPassword(userData)
       .pipe(takeUntil(this.destroy$))
       .subscribe(resp => {
-        if (resp) {
-          this.validCurrentPassword = resp;
-          this.toggleStateControls();
-        } else {
-          this.toggleStateControls();
+          if (resp) {
+            this.validCurrentPassword = resp;
+            this.toggleStateControls();
+          } else {
+            this.toggleStateControls();
+          }
+        },
+        (error) => {
+          this.dataLoading = false;
+          console.error(error);
+          this.notificationService.showError(error);
         }
-      });
+      );
   }
 
 

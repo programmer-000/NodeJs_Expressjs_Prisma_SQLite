@@ -9,6 +9,7 @@ import { PostsSelectors } from '../../store-posts/posts.selectors';
 import * as _ from 'lodash';
 import { AuthService } from '../../../auth/auth.service';
 import { CategoriesModel, PostModel } from '../../../../core/models';
+import { NotificationService } from '../../../../shared/services';
 
 const pictureDefault = 'assets/images/image-placeholder.jpg';
 
@@ -31,6 +32,7 @@ export class DialogPostsComponent implements OnInit, OnDestroy {
     public store: Store,
     public dialogRef: MatDialogRef<DialogPostsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
+    private notificationService: NotificationService,
     private fb: FormBuilder,
     public postsService: PostsService,
     private authService: AuthService
@@ -136,15 +138,21 @@ export class DialogPostsComponent implements OnInit, OnDestroy {
     this.postsService.getPost(id).pipe(
       takeUntil(this.destroy$))
       .subscribe(data => {
-        this.currentPost = data;
-        this.initCategories = data.categories;
-        if (this.currentPost) {
-          this.initPostFormValue();
+          this.currentPost = data;
+          this.initCategories = data.categories;
+          if (this.currentPost) {
+            this.initPostFormValue();
+          }
+          this.previousPictureUrl = data.picture;
+          this.pictureUrl = data.picture;
+          this.store.dispatch(new SetSelectedPost(data));
+        },
+        (error) => {
+          this.dataLoading = false;
+          console.error(error);
+          this.notificationService.showError(error);
         }
-        this.previousPictureUrl = data.picture;
-        this.pictureUrl = data.picture;
-        this.store.dispatch(new SetSelectedPost(data));
-      });
+      );
   }
 
   /**

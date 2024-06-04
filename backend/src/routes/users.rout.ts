@@ -1,16 +1,17 @@
 import express from 'express';
 import type { Request, Response } from 'express';
-import { param, validationResult } from 'express-validator';
+import { param } from 'express-validator';
 import fs from 'fs';
 import bcrypt from 'bcrypt';
 
 import * as UserHandler from '../controllers/users.controller';
 import * as AuthUserHandler from '../controllers/auth.controller';
 import {
+    handleErrorsValidator,
     getUsersValidator,
     parseUserCreateParams, createUserValidator,
-    parseUserUpdateParams, updatePasswordValidator,
-    updateUserValidator
+    parseUserUpdateParams, updateUserValidator,
+    updatePasswordValidator,
 } from '../validators';
 
 export const usersRouter = express.Router();
@@ -24,11 +25,8 @@ const BASE_URL = process.env.BASE_URL as string;
 usersRouter.get(
     '/',
     getUsersValidator,
+    handleErrorsValidator,
     async (req: Request, res: Response) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({errors: errors.array()});
-        }
         const params = req.query;
         try {
             const data = await UserHandler.getAllUsersHandler(params);
@@ -43,14 +41,17 @@ usersRouter.get(
 /**
  GET: List of all USERS
  */
-usersRouter.get('/list_all_users', async (req: Request, res: Response) => {
-    try {
-        const users = await UserHandler.getListAllUsersHandler();
-        return res.status(200).json(users);
-    } catch (error: any) {
-        return res.status(500).json(error.message);
+usersRouter.get(
+    '/list_all_users',
+    async (req: Request, res: Response) => {
+        try {
+            const users = await UserHandler.getListAllUsersHandler();
+            return res.status(200).json(users);
+        } catch (error: any) {
+            return res.status(500).json(error.message);
+        }
     }
-});
+);
 
 
 /**
@@ -58,12 +59,9 @@ usersRouter.get('/list_all_users', async (req: Request, res: Response) => {
  */
 usersRouter.get('/:id',
     param('id').isInt().withMessage('ID must be an integer'),
+    handleErrorsValidator,
     async (req: Request, res: Response) => {
         const id: number = parseInt(req.params.id, 10);
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ message: 'Validation Error', errors: errors.array() });
-        }
         try {
             const user = await UserHandler.getUserHandler(id);
             if (user) {
@@ -84,6 +82,7 @@ usersRouter.post(
     '/',
     parseUserCreateParams,
     createUserValidator,
+    handleErrorsValidator,
     async (req: Request, res: Response) => {
         try {
             const user = req.body.user_params;
@@ -137,6 +136,7 @@ usersRouter.put(
     '/:id',
     parseUserUpdateParams,
     updateUserValidator,
+    handleErrorsValidator,
     async (req: Request, res: Response) => {
         const id: number = parseInt(req.params.id, 10);
         try {
@@ -209,6 +209,7 @@ usersRouter.put(
 usersRouter.put(
     '/update_password/:id',
     updatePasswordValidator,
+    handleErrorsValidator,
     async (req: Request, res: Response) => {
         const id: number = parseInt(req.params.id, 10);
         try {
@@ -229,40 +230,39 @@ usersRouter.put(
 /**
  * DELETE: Delete a USER based on the ID
  */
-usersRouter.delete('/:id',
+usersRouter.delete(
+    '/:id',
     param('id').isInt().withMessage('ID must be an integer'),
+    handleErrorsValidator,
     async (req: Request, res: Response) => {
-    const id: number = parseInt(req.params.id, 10);
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ message: 'Validation Error', errors: errors.array() });
-    }
-    try {
-        const previousAvatarUrl = String(req.query.avatar);
-        const pathRemovePicture = previousAvatarUrl.replace(`${BASE_URL}/`, '');
+        const id: number = parseInt(req.params.id, 10);
+        try {
+            const previousAvatarUrl = String(req.query.avatar);
+            const pathRemovePicture = previousAvatarUrl.replace(`${BASE_URL}/`, '');
 
-        const result = await UserHandler.deleteUserHandler(id);
+            const result = await UserHandler.deleteUserHandler(id);
 
-        if (!result.success) {
-            return res.status(409).json({ message: result.message });
-        }
+            if (!result.success) {
+                return res.status(409).json({message: result.message});
+            }
 
-        // Delete the user's avatar if the user was successfully deleted
-        if (pathRemovePicture) {
-            fs.stat(pathRemovePicture, (err, stats) => {
-                if (!err && stats) {
-                    fs.unlink(pathRemovePicture, err => {
-                        if (err) console.error('Error deleting avatar:', err);
-                        else console.log('Avatar file deleted successfully');
-                    });
-                }
+            // Delete the user's avatar if the user was successfully deleted
+            if (pathRemovePicture) {
+                fs.stat(pathRemovePicture, (err, stats) => {
+                    if (!err && stats) {
+                        fs.unlink(pathRemovePicture, err => {
+                            if (err) console.error('Error deleting avatar:', err);
+                            else console.log('Avatar file deleted successfully');
+                        });
+                    }
+                });
+            }
+
+            return res.status(200).json({
+                message: result.message,
             });
+        } catch (error: any) {
+            return res.status(500).json({message: error.message});
         }
-
-        return res.status(200).json({
-            message: result.message,
-        });
-    } catch (error: any) {
-        return res.status(500).json({ message: error.message });
     }
-});
+);
