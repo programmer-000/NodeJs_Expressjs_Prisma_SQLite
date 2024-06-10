@@ -13,7 +13,8 @@ import {
   ValidResetTokenModel
 } from '../../core/models';
 import { Store } from '@ngxs/store';
-import { SetAuthUser } from '../users/store-users/users.action';
+import { SetAuthUser } from '../users/store-users/users.actions';
+import { ClearState } from '../../store/app.actions';
 import { LocalStorageEnum } from '../../core/enums';
 import { RoleService } from '../../shared/services';
 
@@ -140,6 +141,7 @@ export class AuthService {
     localStorage.removeItem(LocalStorageEnum.JWT_REFRESH_TOKEN_KEY);
     localStorage.removeItem(LocalStorageEnum.JWT_ACCESS_TOKEN_KEY);
     localStorage.removeItem(LocalStorageEnum.ROLES_LIST);
+    this.store.dispatch(new ClearState());
   }
 
   /**

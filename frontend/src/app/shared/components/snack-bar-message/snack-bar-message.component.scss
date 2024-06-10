@@ -1,3 +1,5 @@
+@import '../../../styles/variables';
+
 .snackBar {
   display: flex;
   flex-direction: row;
@@ -30,7 +32,7 @@
   }
 
   &.isSuccess {
-    background: #00ff5b8a !important;
+    background: $green !important;
     color: black !important;
     font-weight: 500;
     border-radius: 3px;
@@ -52,7 +54,7 @@
 }
 
 ::ng-deep .mdc-snackbar__label {
-  padding: 2px;
+  padding: 0;
 }
 
 ::ng-deep .mat-mdc-snack-bar-container .mdc-snackbar__surface {

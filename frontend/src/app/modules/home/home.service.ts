@@ -18,7 +18,7 @@ export class HomeService {
     return this.http.get(config.API_URL + `/dashboard`)
       .pipe(
         catchError(error => {
-          console.error('Error:', error.message);
+          console.error('Error:', error);
           return throwError(error);
         })
       );

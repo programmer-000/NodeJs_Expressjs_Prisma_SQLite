@@ -65,6 +65,7 @@
           <mat-error *ngIf="registerForm.controls['location'].hasError('required')">
             Country <strong>required</strong>
           </mat-error>
+          <mat-error *ngIf="registerForm.controls['location'].hasError('countryNotFound')">Country not found</mat-error>
         </mat-form-field>
 
         <!-- Password input field -->
@@ -117,6 +118,7 @@
           <mat-error *ngIf="registerForm.controls['birthAt'].hasError('required')">
             Birth date <strong>required</strong>
           </mat-error>
+          <mat-error *ngIf="registerForm.controls['birthAt'].hasError('futureDate')">Birth date cannot be in the future</mat-error>
         </mat-form-field>
 
       </div>

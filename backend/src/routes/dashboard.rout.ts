@@ -14,6 +14,6 @@ dashboardRouter.get('/', async (reg: Request, res: Response) => {
         const counts: StatisticsResponse = await DashboardHandler.getStatisticsHandler();
         return res.status(200).json(counts);
     } catch (error: any) {
-        return res.status(500).json(error.message);
+        return res.status(500).json({ message: error.message });
     }
 });

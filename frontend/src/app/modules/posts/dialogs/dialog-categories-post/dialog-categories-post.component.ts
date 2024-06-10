@@ -3,7 +3,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormControl, Validators } from '@angular/forms';
 import { Select, Store } from '@ngxs/store';
 import { debounceTime, Observable, Subject, takeUntil } from 'rxjs';
-import { AddCategory, DeleteCategory, GetCategories, UpdateCategory } from '../../store-posts/posts.action';
+import { AddCategory, DeleteCategory, GetCategories, UpdateCategory } from '../../store-posts/posts.actions';
 import { PostsSelectors } from '../../store-posts/posts.selectors';
 import { DialogConfirmComponent } from '../../../../shared/components/dialog-confirm/dialog-confirm.component';
 import { CategoriesModel } from '../../../../core/models';

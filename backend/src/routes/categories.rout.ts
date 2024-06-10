@@ -20,7 +20,7 @@ categoriesRouter.get(
             const categories: AllCategoriesResponseModel = await CategoryHandler.getAllCategoriesHandler();
             return res.status(200).json(categories);
         } catch (error: any) {
-            return res.status(500).json({message: error.message});
+            return res.status(500).json({ message: error.message });
         }
     }
 );
@@ -40,7 +40,7 @@ categoriesRouter.post(
                 message: 'Category created successfully'
             });
         } catch (error: any) {
-            return res.status(500).json({message: error.message});
+            return res.status(500).json({ message: error.message });
         }
     }
 );
@@ -61,7 +61,7 @@ categoriesRouter.put(
                 message: 'Category updated successfully'
             });
         } catch (error: any) {
-            return res.status(500).json({message: error.message});
+            return res.status(500).json({ message: error.message });
         }
     }
 );
@@ -84,7 +84,7 @@ categoriesRouter.delete(
             if (error.message === 'Cannot delete category with associated posts') {
                 return res.status(400).json({message: error.message});
             }
-            return res.status(500).json({message: error.message});
+            return res.status(500).json({ message: error.message });
         }
     }
 );

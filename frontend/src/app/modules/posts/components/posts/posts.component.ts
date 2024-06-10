@@ -4,7 +4,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { PostsService } from '../../posts.service';
-import { GetPosts } from '../../store-posts/posts.action';
+import { GetPosts } from '../../store-posts/posts.actions';
 import { PostsSelectors } from '../../store-posts/posts.selectors';
 import { Select, Store } from '@ngxs/store';
 import { PostFilterModel, PostModel } from '../../../../core/models';

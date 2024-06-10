@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { debounceTime, Observable, Subject, takeUntil } from 'rxjs';
 import { PostsService } from '../../posts.service';
 import { Select, Store } from '@ngxs/store';
-import { AddPost, GetCategories, SetSelectedPost, UpdatePost } from '../../store-posts/posts.action';
+import { AddPost, GetCategories, SetSelectedPost, UpdatePost } from '../../store-posts/posts.actions';
 import { PostsSelectors } from '../../store-posts/posts.selectors';
 import * as _ from 'lodash';
 import { AuthService } from '../../../auth/auth.service';

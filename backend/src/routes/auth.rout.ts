@@ -78,7 +78,7 @@ authRouter.post(
                 refreshToken
             });
         } catch (error: any) {
-            return res.status(500).json(error.message);
+            return res.status(500).json({ message: error.message });
         }
     }
 );
@@ -140,7 +140,7 @@ authRouter.post(
                 refreshToken
             });
         } catch (error: any) {
-            return res.status(500).json(error.message);
+            return res.status(500).json({ message: error.message });
         }
     }
 );
@@ -188,7 +188,7 @@ authRouter.post(
                 refreshToken: newRefreshToken
             });
         } catch (error: any) {
-            return res.status(500).json(error.message);
+            return res.status(500).json({ message: error.message });
         }
     }
 );
@@ -217,7 +217,7 @@ authRouter.post(
             await AuthUserHandler.revokeTokens(savedRefreshToken.id);
             return res.status(201).json({message: `Tokens revoked for user`});
         } catch (error: any) {
-            return res.status(500).json(error.message);
+            return res.status(500).json({ message: error.message });
         }
     }
 );
@@ -307,7 +307,7 @@ authRouter.post(
 
             return res.status(201).json({message: `Password reset link sent to your email account - (${email})`});
         } catch (error: any) {
-            return res.status(500).json(error.message);
+            return res.status(500).json({ message: error.message });
         }
     }
 );

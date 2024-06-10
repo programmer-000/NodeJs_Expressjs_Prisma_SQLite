@@ -5,9 +5,8 @@ import {
   GetUsers,
   SetAuthUser,
   SetSelectedUser,
-  UpdateUser,
-  UpdateUserPassword
-} from './users.action';
+  UpdateUser
+} from './users.actions';
 import { UsersService } from '../users.service';
 import { tap } from 'rxjs';
 import { Injectable } from '@angular/core';
@@ -150,6 +149,7 @@ export class UsersState {
           this.authService.accountSubject$.next(account);
         }
 
+        // TODO 2: Replace setState with patchState
         // Update the user in the list
         usersList[userIndex] = result.data;
         setState({
@@ -157,23 +157,6 @@ export class UsersState {
           users: usersList,
           authUser,
         });
-      },
-      (error) => {
-        console.error(error);
-        this.notificationService.showError(error);
-      }
-    ));
-  }
-
-  /**
-   * Action to update a user's password
-   */
-  @Action(UpdateUserPassword)
-  updateUserPassword({getState}: StateContext<UsersStateModel>, {
-    id, params
-  }: UpdateUserPassword) {
-    return this.usersService.updateUserPassword(id, params).pipe(tap((result) => {
-        this.notificationService.showSuccess(result.message);
       },
       (error) => {
         console.error(error);

@@ -10,7 +10,7 @@ import { dashboardRouter } from './dashboard.rout';
 
 // Import middleware
 import upload from '../middleware/upload';
-import { isAuthenticated } from '../middleware/middlewares';
+import { isAuthenticated } from '../middleware';
 
 
 // Create an instance of Express Router

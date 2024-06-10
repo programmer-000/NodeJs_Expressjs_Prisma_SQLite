@@ -6,7 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 
 import { DialogPostsComponent } from '../../dialogs/dialog-posts/dialog-posts.component';
 import { DialogConfirmComponent } from '../../../../shared/components/dialog-confirm/dialog-confirm.component';
-import { DeletePost } from '../../store-posts/posts.action';
+import { DeletePost } from '../../store-posts/posts.actions';
 import { PostModel } from '../../../../core/models';
 import { RoleEnum } from '../../../../core/enums';
 import { AuthorPostModel } from '../../../../core/models/author-post.model';

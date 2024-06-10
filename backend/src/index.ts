@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import { router } from './routes';
 
-
 const PORT = process.env.PORT || '5000';
 
 const app = express(); // Creating Express application instance
@@ -23,4 +22,3 @@ app.use(router);
 app.listen(PORT, () => {
     console.log(`Server was started on port ${PORT}`);
 });
-

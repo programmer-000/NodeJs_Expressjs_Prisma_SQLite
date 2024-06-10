@@ -71,9 +71,9 @@ export class AppComponent implements OnInit, OnDestroy {
   /**
    * Open dialog to edit a user
    */
-  editUser(id: number | undefined) {
+  editProfile(id: number | undefined) {
     const dialogRef = this.dialog.open(DialogUsersComponent, {
-      data: { id, newUser: false},
+      data: {id, newUser: false, editProfile: true }
     });
 
     // After dialog is closed, render table rows

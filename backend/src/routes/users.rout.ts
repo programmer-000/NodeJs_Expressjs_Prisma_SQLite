@@ -32,7 +32,7 @@ usersRouter.get(
             const data = await UserHandler.getAllUsersHandler(params);
             return res.status(200).json(data);
         } catch (error: any) {
-            return res.status(500).json(error.message);
+            return res.status(500).json({ message: error.message });
         }
     }
 );
@@ -48,7 +48,7 @@ usersRouter.get(
             const users = await UserHandler.getListAllUsersHandler();
             return res.status(200).json(users);
         } catch (error: any) {
-            return res.status(500).json(error.message);
+            return res.status(500).json({ message: error.message });
         }
     }
 );
@@ -69,7 +69,7 @@ usersRouter.get('/:id',
             }
             return res.status(404).json('User could not be found');
         } catch (error: any) {
-            return res.status(500).json(error.message);
+            return res.status(500).json({ message: error.message });
         }
     }
 );
@@ -123,7 +123,7 @@ usersRouter.post(
                     }
                 });
             }
-            return res.status(500).json(error.message);
+            return res.status(500).json({ message: error.message });
         }
     }
 );
@@ -197,7 +197,7 @@ usersRouter.put(
                 message: `User updated`
             });
         } catch (error: any) {
-            return res.status(500).json(error.message);
+            return res.status(500).json({ message: error.message });
         }
     }
 );
@@ -262,7 +262,7 @@ usersRouter.delete(
                 message: result.message,
             });
         } catch (error: any) {
-            return res.status(500).json({message: error.message});
+            return res.status(500).json({ message: error.message });
         }
     }
 );

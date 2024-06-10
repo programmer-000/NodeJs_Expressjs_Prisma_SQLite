@@ -6,7 +6,7 @@ import { DialogUsersComponent } from '../../dialogs/dialog-users/dialog-users.co
 import { DialogConfirmComponent } from '../../../../shared/components/dialog-confirm/dialog-confirm.component';
 import { MatTable } from '@angular/material/table';
 import { Select, Store } from '@ngxs/store';
-import { DeleteUser, GetUsers } from '../../store-users/users.action';
+import { DeleteUser, GetUsers } from '../../store-users/users.actions';
 import { UsersSelectors } from '../../store-users/users.selectors';
 import { PageEvent } from '@angular/material/paginator';
 import { MatSort, SortDirection } from '@angular/material/sort';
@@ -197,7 +197,7 @@ export class UsersTableComponent implements OnInit, OnDestroy {
    */
   editUser(id: UserModel) {
     const dialogRef = this.dialog.open(DialogUsersComponent, {
-      data: {id, newUser: false}
+      data: {id, newUser: false, editProfile: false }
     });
 
     // After dialog is closed, render table rows

@@ -32,7 +32,7 @@ postsRouter.get(
             }
             return res.status(404).json('Post could not be found');
         } catch (error: any) {
-            return res.status(500).json(error.message);
+            return res.status(500).json({ message: error.message });
         }
     }
 );
@@ -60,7 +60,7 @@ postsRouter.get(
             const data = await PostHandler.getAllPostsHandler(params);
             return res.status(200).json(data);
         } catch (error: any) {
-            return res.status(500).json(error.message);
+            return res.status(500).json({ message: error.message });
         }
     }
 );
@@ -101,7 +101,7 @@ postsRouter.post(
                     if (err) console.error(`Error deleting file: ${err.message}`);
                 });
             }
-            return res.status(500).json(error.message);
+            return res.status(500).json({ message: error.message });
         }
     }
 );
@@ -174,7 +174,7 @@ postsRouter.put(
                 message: `Post updated successfully`
             });
         } catch (error: any) {
-            return res.status(500).json(error.message);
+            return res.status(500).json({ message: error.message });
         }
     }
 );
@@ -209,7 +209,7 @@ postsRouter.delete(
                 message: `Post was successfully deleted`
             });
         } catch (error: any) {
-            return res.status(500).json(error.message);
+            return res.status(500).json({ message: error.message });
         }
     }
 );

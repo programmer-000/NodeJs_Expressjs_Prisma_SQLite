@@ -5,7 +5,7 @@ import { filter, Observable, pairwise, Subject } from 'rxjs';
 import { debounceTime, map, startWith, takeUntil } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
 import { PostsService } from '../../posts.service';
-import { GetCategories, GetListAllUsers } from '../../store-posts/posts.action';
+import { GetCategories, GetListAllUsers } from '../../store-posts/posts.actions';
 import { PostsSelectors } from '../../store-posts/posts.selectors';
 import { DialogPostsComponent } from '../../dialogs/dialog-posts/dialog-posts.component';
 import { DialogCategoriesPostComponent } from '../../dialogs/dialog-categories-post/dialog-categories-post.component';

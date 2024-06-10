@@ -4,15 +4,17 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { UsersService } from '../../users.service';
 import { Observable, startWith, Subject, takeUntil } from 'rxjs';
 import { Store } from '@ngxs/store';
-import { AddUser, SetSelectedUser, UpdateUser } from '../../store-users/users.action';
+import { AddUser, SetSelectedUser, UpdateUser} from '../../store-users/users.actions';
 import { COUNTRIES } from '../../../../shared/constants/countries';
 import { map } from 'rxjs/operators';
-import { MustMatch } from '../../../../core/helpers/must-match.validator';
-import { AppRouteEnum, RoleEnum } from '../../../../core/enums';
+import { mustMatchValidator } from '../../../../shared/custom-validators/must-match.validator';
+import { futureDateValidator } from '../../../../shared/custom-validators/future-date.validator';
+import { countryValidator } from '../../../../shared/custom-validators/country.validator';
+import { AppRouteEnum, LocalStorageEnum, RoleEnum } from '../../../../core/enums';
 import { DialogNewPasswordComponent } from '../dialog-new-password/dialog-new-password.component';
 import { EMAIL_VALIDATION_PATTERN } from '../../../../shared/validation-patterns/pattern-email';
-import { AuthUserModel, CountriesModel, UserModel } from '../../../../core/models';
-import { PermissionService, RoleService } from '../../../../shared/services';
+import { AuthModel, AuthUserModel, CountriesModel, UserModel } from '../../../../core/models';
+import { NotificationService, PermissionService, RoleService } from '../../../../shared/services';
 import { AuthService } from '../../../auth/auth.service';
 
 // Default profile image path
@@ -30,6 +32,7 @@ export class DialogUsersComponent implements OnInit, OnDestroy {
     public dialogRefUsersComponent: MatDialogRef<DialogUsersComponent>,
     private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: any,
+    private notificationService: NotificationService,
     public permissionService: PermissionService,
     public usersService: UsersService,
     public authService: AuthService,
@@ -121,9 +124,12 @@ export class DialogUsersComponent implements OnInit, OnDestroy {
         Validators.maxLength(50)])
       ],
       location: [null, Validators.compose([
-        Validators.required])],
+        Validators.required,
+        countryValidator()])],
       birthAt: [null, Validators.compose([
-        Validators.required])],
+        Validators.required,
+        futureDateValidator
+      ])],
       status: '',
     });
   }
@@ -146,7 +152,7 @@ export class DialogUsersComponent implements OnInit, OnDestroy {
         Validators.maxLength(50)])
       ]
     }, {
-      validator: MustMatch('password', 'confirmPassword')
+      validator: mustMatchValidator('password', 'confirmPassword')
     });
   }
 
@@ -281,14 +287,17 @@ export class DialogUsersComponent implements OnInit, OnDestroy {
    * Update existing user
    */
   private updateUser(): void {
+    this.dataLoading = true;
     if (this.userForm.invalid) {
       return;
     }
+
     let {id} = this.currentUser
     const avatar = this.avatarFile;
     const previousImageUrl = this.previousImageUrl;
     let imageOrUrl: boolean;
     imageOrUrl = !!this.avatarUrl;
+
     const params: any = {
       id: id,
       email: this.userForm.value.email,
@@ -300,21 +309,67 @@ export class DialogUsersComponent implements OnInit, OnDestroy {
       birthAt: this.userForm.value.birthAt,
       avatar: '',
     };
-    this.store.dispatch(new UpdateUser(id, params, avatar, imageOrUrl, previousImageUrl));
+
+    // Update Profile
+    if (this.data.editProfile) {
+      this.usersService.updateUser(id, params, avatar, imageOrUrl, previousImageUrl).pipe(
+        takeUntil(this.destroy$))
+        .subscribe(resp => {
+           if (resp) {
+              this.dataLoading = false;
+
+              const currentAccount = this.authService.accountValue;
+              const updatedProfile: AuthUserModel = {
+                id: resp.data.id,
+                firstName: resp.data.firstName,
+                lastName: resp.data.lastName,
+                email: resp.data.email,
+                role: resp.data.role,
+                avatar: resp.data.avatar,
+              }
+
+              // Update the current account if the user is the same as the current account
+              if (updatedProfile.id === currentAccount!.userInfo.id) {
+                localStorage.setItem(LocalStorageEnum.ACCOUNT, JSON.stringify(updatedProfile));
+                const account: AuthModel = {
+                  userInfo: updatedProfile,
+                  refreshToken: currentAccount!.refreshToken,
+                  accessToken: currentAccount!.accessToken
+                }
+                this.authService.accountSubject$.next(account);
+              }
+              this.notificationService.showSuccess(resp.message);
+              this.closeClick();
+            }
+          },
+          (error) => {
+            console.error(error);
+            this.dataLoading = false;
+            this.notificationService.showError(error);
+            this.closeClick();
+          });
+    } else {
+
+      // Update User
+      this.store.dispatch(new UpdateUser(id, params, avatar, imageOrUrl, previousImageUrl));
+      this.dataLoading = false;
+      this.closeClick();
+    }
   }
 
   /**
    * Open dialog to change password
    */
   openDialogNewPassword(currentUser: UserModel) {
-    console.log('openDialogNewPassword - currentUser', currentUser)
-    const {id, email} = currentUser;
+    const {id, email, role} = currentUser;
     const dialogRef = this.dialog.open(DialogNewPasswordComponent, {
       width: '375px',
       panelClass: 'dialog-new-password',
       data: {
+        editProfile: this.data.editProfile,
         userId: id,
         email,
+        role,
         title: 'Change Password',
         okText: 'Submit',
         cancelText: 'Cancel'

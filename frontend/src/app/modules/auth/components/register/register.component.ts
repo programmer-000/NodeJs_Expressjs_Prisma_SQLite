@@ -3,13 +3,15 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { takeUntil, startWith, map } from 'rxjs/operators';
 import { COUNTRIES } from '../../../../shared/constants/countries';
-import { MustMatch } from '../../../../core/helpers/must-match.validator';
+import { mustMatchValidator } from '../../../../shared/custom-validators/must-match.validator';
+import { futureDateValidator } from '../../../../shared/custom-validators/future-date.validator';
 import { AuthService } from '../../auth.service';
 import { Router } from '@angular/router';
 import { AppRouteEnum, RoleEnum } from '../../../../core/enums';
 import { EMAIL_VALIDATION_PATTERN } from '../../../../shared/validation-patterns/pattern-email';
 import { NotificationService } from '../../../../shared/services';
 import { CountriesModel, UserModel } from '../../../../core/models';
+import { countryValidator } from '../../../../shared/custom-validators/country.validator';
 
 @Component({
   selector: 'app-register',
@@ -94,7 +96,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
       role: this.defaultRole, // Default role is 'Client'
 
       location: [null, Validators.compose([
-        Validators.required])],
+        Validators.required,
+        countryValidator()])],
       password: [null, Validators.compose([
         Validators.required,
         Validators.minLength(6),
@@ -106,10 +109,12 @@ export class RegisterComponent implements OnInit, OnDestroy {
         Validators.maxLength(50)])
       ],
       birthAt: [null, Validators.compose([
-        Validators.required])],
+        Validators.required,
+        futureDateValidator
+      ])],
       status: false,
     }, {
-      validator: MustMatch('password', 'confirmPassword') // Custom validator for password match
+      validator: mustMatchValidator('password', 'confirmPassword') // Custom validator for password match
     });
   }
 

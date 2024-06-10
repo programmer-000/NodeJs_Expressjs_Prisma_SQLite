@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AuthorPostModel } from '../../core/models/author-post.model';
 import { RoleEnum } from '../../core/enums';
 import { AuthService } from '../../modules/auth/auth.service';
-import { AuthUserModel, UserModel } from '../../core/models';
+import { AuthUserModel, DialogNewPasswordModel, UserModel } from '../../core/models';
 import { HEAD_SUPER_ADMIN } from '../constants/head-super-admin';
 import { PERMISSIONS } from '../constants/permissions';
 
@@ -65,6 +65,23 @@ export class PermissionService {
       return PERMISSIONS.MANAGER.PAGE_USERS.DIALOG.elements;
     }
     return true;
+  }
+
+  /**
+   * displayFieldCurrentPassword checks if the current password field should be displayed or not based on the user role and the dialog type (edit profile or not)
+   * @param userData DialogNewPasswordModel
+   * @param authUser AuthUserModel
+   */
+  displayFieldCurrentPassword (userData: DialogNewPasswordModel, authUser: AuthUserModel | undefined) {
+    if (userData) {
+      if (userData?.editProfile && authUser?.role !== RoleEnum.SuperAdmin) {
+        return true;
+      } else {
+        return !userData?.editProfile && authUser?.role !== RoleEnum.SuperAdmin && authUser?.role !== RoleEnum.ProjectAdmin;
+      }
+    } else {
+      return false;
+    }
   }
 
 }
