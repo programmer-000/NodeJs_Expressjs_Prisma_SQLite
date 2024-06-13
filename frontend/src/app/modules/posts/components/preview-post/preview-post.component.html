@@ -1,0 +1,22 @@
+<!-- This component is used to display a preview of a post. -->
+<mat-card class="preview-post" *ngIf="post"
+          [ngClass]="{'preview-post__inactive': !post.published}">
+  <mat-card-header class="preview-post__header">
+    <a [routerLink]="['/posts', post.id]" class="preview-post__link" title="View post">
+      <!-- Post image -->
+      <div class="preview-post__img">
+        <img *ngIf="post.picture" [src]="post.picture">
+      </div>
+      <div class="preview-post__details">
+        <!-- Post details -->
+        <div class="preview-post__subTitle" *ngIf="post.categories">
+          <span *ngFor="let category of post.categories">
+            {{ category.name }}
+          </span>
+        </div>
+        <h2 class="preview-post__title">{{ post.title }}</h2>
+        <p class="preview-post__description">{{ post.description }}</p>
+      </div>
+    </a>
+  </mat-card-header>
+</mat-card>

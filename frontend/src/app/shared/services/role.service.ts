@@ -17,7 +17,7 @@ export class RoleService {
    * For the ProjectAdmin, the roles of Managers and Clients are displayed
    * @param currentUserRole - current user role
    */
-  public setRolesList(currentUserRole: number | undefined): void {
+  public setRolesList(currentUserRole: number | null | undefined): void {
     const rolesList = ROLES_LIST.map(role => {
       if (currentUserRole === RoleEnum.ProjectAdmin && (role.id === RoleEnum.SuperAdmin || role.id === RoleEnum.ProjectAdmin)) {
         return {...role, display: false};

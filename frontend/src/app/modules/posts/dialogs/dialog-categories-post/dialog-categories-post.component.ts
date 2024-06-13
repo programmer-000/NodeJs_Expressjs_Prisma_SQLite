@@ -148,6 +148,7 @@ export class DialogCategoriesPostComponent implements OnInit, OnDestroy {
   openDialogDeleteCategory(category: CategoriesModel) {
     const {id, name} = category;
     const dialogRef = this.dialog.open(DialogConfirmComponent, {
+      width: '375px',
       data: {
         subtitle: name,
         title: 'Delete category - ',

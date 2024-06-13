@@ -1,29 +1,50 @@
+@import '../../../../styles/color-variables';
+
+.wrap-post {
+  padding: 20px;
+}
+
 .post {
   padding: 20px;
   margin: 0 0 20px;
 
   &__header {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    flex-direction: column;
   }
 
   &__details {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    margin: 0 0 10px;
   }
 
   &__title {
-
+    font-size: 37px;
+    line-height: 1.2;
+    font-style: italic;
+    font-weight: 500;
   }
 
   &__subTitle {
     color: grey;
+    margin: 0 10px 0 0;
+
+    &_primary {
+      color: $black;
+    }
+
+     &_accent {
+      color: $red;
+     }
   }
 
   &__description {
+    line-height: 1.5;
     font-weight: 600;
     padding: 20px 0 0 0;
+    font-size: 19px;
+    font-style: italic;
   }
 
   &__text {
@@ -32,19 +53,37 @@
 
 
   &__img {
-    max-height: 100px;
-    max-width: 200px;
-    text-align: right;
+    width: 100%;
+    height: auto;
     overflow: hidden;
 
     img {
-      width: auto;
-      height: 100%;
+      width: 100%;
+      height: auto;
     }
+  }
 
+  &__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__actionsBtn {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: row;
   }
 }
 
 ::ng-deep .mat-mdc-card-header-text {
   display: none !important;
+}
+
+.post-spinner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%)
 }

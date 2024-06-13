@@ -21,8 +21,9 @@ import { MatListModule } from '@angular/material/list';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 // Components
-import { PostsComponent } from './components';
 import { PostComponent } from './components/post/post.component';
+import { PostsComponent } from './components';
+import { PreviewPostComponent } from './components/preview-post/preview-post.component';
 import { DialogPostsComponent } from './dialogs/dialog-posts/dialog-posts.component';
 import { PostsFilterPanelComponent } from './components/posts-filter-panel/posts-filter-panel.component';
 import { DialogCategoriesPostComponent } from './dialogs/dialog-categories-post/dialog-categories-post.component';
@@ -33,12 +34,15 @@ import { PostsState } from './store-posts/posts.state';
 import { DirectivesModule } from '../../shared/directives/directives.module';
 import { SharedModule } from '../../shared/shared.module';
 
-
 // Define routes for the Posts module
 const routes: Routes = [
   {
     path: '',
     component: PostsComponent
+  },
+  {
+    path: ':id',
+    component: PostComponent
   }
 ];
 
@@ -46,6 +50,7 @@ const routes: Routes = [
   declarations: [
     // Declare components and dialogs used within the module
     PostComponent,
+    PreviewPostComponent,
     PostsComponent,
     DialogPostsComponent,
     PostsFilterPanelComponent,

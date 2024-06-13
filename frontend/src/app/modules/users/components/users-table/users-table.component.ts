@@ -217,6 +217,7 @@ export class UsersTableComponent implements OnInit, OnDestroy {
     const params = {avatar};
 
     const dialogRef = this.dialog.open(DialogConfirmComponent, {
+      width: 'auto',
       data: {
         subtitle: firstName,
         title: 'Delete user - ',

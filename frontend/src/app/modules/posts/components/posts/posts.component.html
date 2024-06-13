@@ -5,10 +5,14 @@
     <app-posts-filter-panel></app-posts-filter-panel>
   </div>
 
-  <!-- Post components -->
-  <app-post *ngFor="let post of posts$ | async; trackBy: trackByFn; let i = index"
-            [post]="post"
-  ></app-post>
+  <!-- Grid of posts -->
+  <div class="posts__grid">
+    <app-preview-post
+      *ngFor="let post of posts$ | async; trackBy: trackByFn; let i = index"
+      [post]="post"
+    ></app-preview-post>
+  </div>
+
 
   <!-- Paginator component -->
   <mat-paginator class="demo-paginator"

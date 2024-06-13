@@ -47,14 +47,15 @@ postsRouter.get(
     handleErrorsValidator,
     async (req: Request, res: Response) => {
         try {
-            if (!req.query.pageIndex || !req.query.pageSize || !req.query.authors || !req.query.categories) {
+            if (!req.query.pageIndex || !req.query.pageSize || !req.query.authors || !req.query.categories || !req.query.published) {
                 return res.status(400).json('pageIndex and pageSize are required');
             }
             const params: PostsQueryParamsModel = {
                 pageIndex: Number(req.query.pageIndex),
                 pageSize: Number(req.query.pageSize),
                 authors: String(req.query.authors),
-                categories: String(req.query.categories)
+                categories: String(req.query.categories),
+                published: String(req.query.published)
             };
 
             const data = await PostHandler.getAllPostsHandler(params);

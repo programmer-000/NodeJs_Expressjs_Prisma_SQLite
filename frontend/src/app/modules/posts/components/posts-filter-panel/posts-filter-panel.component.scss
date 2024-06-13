@@ -1,4 +1,4 @@
-@import '../../../../styles/variables';
+@import '../../../../styles/color-variables';
 
 
 .additional-selection {
@@ -15,7 +15,7 @@
 
   &__content {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
     flex-wrap: wrap;
     padding-bottom: 0 !important;
@@ -47,6 +47,24 @@
 
   &__btnAdd {
     margin: 0 20px 0 0;
+    min-height: 40px;
+    height: auto;
   }
 
+}
+
+/* Responsive */
+@media (max-width: 765px) {
+  .filters {
+    &__content {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    &__field {
+      margin: 0 0 20px;
+      width: 100%;
+    }
+  }
 }

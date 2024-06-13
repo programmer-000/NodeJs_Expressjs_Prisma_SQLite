@@ -1,0 +1,71 @@
+@import '../../../../styles/color-variables';
+
+.preview-post {
+  padding: 0;
+  margin: 0 0 20px;
+
+  &__link {
+    text-decoration: none;
+    color: $black;
+    cursor: pointer;
+  }
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__title {
+    line-height: 1.2;
+    font-size: 20px;
+    margin: 0 0 5px;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    display: block;
+    display: -webkit-box;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 2;
+  }
+
+  &__subTitle {
+    color: $red;
+  }
+
+  &__description {
+    padding: 5px 0 0 0;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    display: block;
+    display: -webkit-box;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 3;
+  }
+
+  &__img {
+    width: 100%;
+    height: auto;
+    text-align: right;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: auto;
+    }
+
+  }
+
+  &__inactive {
+    filter: grayscale(1);
+    opacity: 0.3;
+  }
+
+}
+
+::ng-deep .mat-mdc-card-header-text {
+  display: none !important;
+}

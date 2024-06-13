@@ -9,12 +9,12 @@ const optionalJsonArrayOfIntegers = (field: string) =>
     query(field).optional().custom(value => {
         try {
             const array = JSON.parse(value);
-            if (Array.isArray(array) && array.every(item => typeof item === 'number')) {
+            if (Array.isArray(array) && array.every(item => typeof item === 'number' || 'boolean')) {
                 return true;
             }
-            throw new Error(`${field} must be a JSON array of integers`);
+            throw new Error(`${field} must be a JSON array of integers or booleans`);
         } catch (err) {
-            throw new Error(`${field} must be a JSON array of integers`);
+            throw new Error(`${field} must be a JSON array of integers or booleans`);
         }
     });
 
@@ -30,6 +30,7 @@ export const getPostsValidator = [
     query('pageSize').optional().isInt().withMessage('pageSize must be an integer'),
     optionalJsonArrayOfIntegers('authors'),
     optionalJsonArrayOfIntegers('categories'),
+    optionalJsonArrayOfIntegers('published'),
 
     // Middleware to check for validation errors
     (req: Request, res: Response, next: NextFunction) => {

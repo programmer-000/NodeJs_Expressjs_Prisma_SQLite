@@ -39,9 +39,11 @@ export class AuthService {
     return this.accountSubject$.value;
   }
 
-  public get currentRole() {
-    return this.accountSubject$.value!.userInfo.role;
+  public get currentRole(): number | undefined | null {
+    const account = this.accountSubject$.value;
+    return account && account.userInfo ? account.userInfo.role : null;
   }
+
 
   /**
    * New User Registration

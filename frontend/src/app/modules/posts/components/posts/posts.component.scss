@@ -2,11 +2,10 @@
   padding: 20px;
   position: relative;
 
-  &__panel {
-    margin-bottom: 25px;
-    mat-card {
-      background: #f0f8ff;
-    }
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-gap: 20px;
   }
 
   &__btn {
@@ -19,3 +18,4 @@
   left: 50%;
   top: 10%;
 }
+

@@ -3,4 +3,5 @@ export interface PostsQueryParamsModel {
     pageSize: number;
     authors: string;
     categories: string;
+    published: string;
 }

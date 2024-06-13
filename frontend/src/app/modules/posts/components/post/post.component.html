@@ -1,52 +1,69 @@
-<mat-card class="post">
-  <mat-card-header class="post__header">
-    <div class="post__details">
-      <!-- Post details -->
+<!-- Post page -->
+<div class="wrap-post" *ngIf="post">
+  <mat-card class="post">
+    <mat-card-header class="post__header">
+
       <h2 class="post__title">{{ post.title }}</h2>
-      <div class="post__subTitle">
-        Author: {{ post.user ? post.user.firstName : '' }} {{ post.user ? post.user.lastName : '' }}
+
+      <!-- Post details -->
+      <div class="post__details">
+
+        <div class="post__subTitle post__subTitle_primary ">
+          <span class="bold-600">{{ post.user ? post.user.firstName : '' }} {{ post.user ? post.user.lastName : '' }}</span>
+        </div>
+<!--        <div class="post__subTitle">Role: {{ post.user ? (post.user.role | roles) : '' }}</div>-->
+        <div class="post__subTitle post__subTitle_accent" *ngIf="post.categories">
+          <span *ngFor="let category of post.categories">
+            {{ category.name }},
+          </span>
+        </div>
+        <div class="post__subTitle">{{ post.createdAt | date: "d/M/yy" }}</div>
+
       </div>
-      <div class="post__subTitle">
-        Role: {{ post.user ? (post.user.role | roles) : '' }}
+
+      <!-- Post image -->
+      <div class="post__img">
+        <img *ngIf="post.picture" [src]="post.picture">
       </div>
-      <div class="post__subTitle" *ngIf="post.categories">
-        Categories:
-        <span *ngFor="let category of post.categories">
-          {{ category.name }},
-        </span>
+    </mat-card-header>
+
+    <!-- Post content -->
+    <mat-card-content>
+      <p class="post__description">{{ post.description }}</p>
+      <p class="post__text">{{ post.content }}</p>
+    </mat-card-content>
+
+    <!-- Post actions -->
+    <mat-card-actions class="post__actions">
+      <!-- Back button to go back to Posts page -->
+      <a mat-flat-button [routerLink]="['/' + AppRouteEnum.Posts]">Back</a>
+
+      <div class="post__actionsBtn">
+        <!-- Edit post button -->
+        <button mat-icon-button class="material-icons app-toolbar-menu save-button"
+                [disabled]="!hasActionPermission(post.user)"
+                matTooltip="Edit" color="primary"
+                (click)="openDialogEditPost(post.id)">
+          <mat-icon>edit</mat-icon>
+        </button>
+
+        <!-- Delete post button -->
+        <button mat-icon-button class="material-icons app-toolbar-menu delete-button"
+                [disabled]="!hasActionPermission(post.user)"
+                matTooltip="Delete" color="warn"
+                (click)="openDialogDeletePost(post)">
+          <mat-icon>delete</mat-icon>
+        </button>
       </div>
-      <div class="post__subTitle">Created: {{ post.createdAt | date: "d/M/yy" }}</div>
-      <div class="post__subTitle">Updated: {{ post.updatedAt | date: "d/M/yy" }}</div>
-    </div>
+    </mat-card-actions>
+  </mat-card>
+</div>
 
-    <!-- Post image -->
-    <div class="post__img">
-      <img *ngIf="post.picture" [src]="post.picture">
-    </div>
-  </mat-card-header>
-
-  <!-- Post content -->
-  <mat-card-content>
-    <p class="post__description">{{ post.description }}</p>
-    <p class="post__text">{{ post.content }}</p>
-  </mat-card-content>
-
-  <!-- Post actions -->
-  <mat-card-actions>
-    <!-- Edit post button -->
-    <button mat-icon-button class="material-icons app-toolbar-menu save-button"
-            [disabled]="!hasActionPermission(post.user)"
-            matTooltip="Edit" color="primary"
-            (click)="openDialogEditPost(post.id)">
-      <mat-icon>edit</mat-icon>
-    </button>
-
-    <!-- Delete post button -->
-    <button mat-icon-button class="material-icons app-toolbar-menu delete-button"
-            [disabled]="!hasActionPermission(post.user)"
-            matTooltip="Delete" color="warn"
-            (click)="openDialogDeletePost(post)">
-      <mat-icon>delete</mat-icon>
-    </button>
-  </mat-card-actions>
-</mat-card>
+<!-- Spinner to indicate loading -->
+<mat-progress-spinner
+  *ngIf="dataLoading"
+  color="primary"
+  diameter="70"
+  mode="indeterminate"
+  class="post-spinner">
+</mat-progress-spinner>

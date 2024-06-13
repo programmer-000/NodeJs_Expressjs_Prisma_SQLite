@@ -7,6 +7,15 @@ import { PostsState, PostsStateModel } from './posts.state';
 export class PostsSelectors {
 
   /**
+   * Retrieves the selected post from the state.
+   * @returns The selected post.
+   */
+  @Selector([PostsState])
+  static getSelectedPost(state: PostsStateModel) {
+    return state.selectedPost;
+  }
+
+  /**
    * Retrieves the list of posts from the state.
    * @returns The list of posts.
    */

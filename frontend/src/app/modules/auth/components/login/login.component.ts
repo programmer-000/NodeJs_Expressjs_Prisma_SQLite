@@ -77,7 +77,10 @@ export class LoginComponent implements OnInit, OnDestroy {
         .subscribe(
           resp => {
             this.dataLoading = false;
-            this.roleService.setRolesList(this.authService.currentRole);
+            const currentRole = this.authService.currentRole;
+            if (currentRole !== null) {
+              this.roleService.setRolesList(currentRole);
+            }
             this.router.navigate(['/']);
           },
           error => {
@@ -88,4 +91,5 @@ export class LoginComponent implements OnInit, OnDestroy {
         );
     }
   }
+
 }

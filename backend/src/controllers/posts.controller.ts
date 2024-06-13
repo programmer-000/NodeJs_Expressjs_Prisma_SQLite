@@ -8,14 +8,17 @@ import { PostModel, PostsQueryParamsModel, CreateUpdatePostModel } from '../mode
  * @returns An object containing an array of posts and the total count of posts.
  */
 export const getAllPostsHandler = async (params: PostsQueryParamsModel): Promise<{ posts: PostModel[]; totalCount: number; }> =>  {
-    const { pageIndex, pageSize, authors, categories } = params;
+    const { pageIndex, pageSize, authors, categories , published} = params;
 
     const skip: number = pageIndex * pageSize;
-    const parseAuthors = JSON.parse(authors as string);
 
+    const parseAuthors = JSON.parse(authors as string);
     let authorsArr = parseAuthors.length ? parseAuthors : undefined;
+
     const parseCategories = JSON.parse(categories as string);
     let categoriesArr = parseCategories.length ? parseCategories : undefined;
+
+    let publishedValue = JSON.parse(published)?.[0];
 
     // Count only the posts that belong to the specified authors
     const totalCount: number = await db.post.count({
@@ -27,6 +30,9 @@ export const getAllPostsHandler = async (params: PostsQueryParamsModel): Promise
                 some: {
                     id: { in: categoriesArr }
                 }
+            },
+            published: {
+                equals: publishedValue
             }
         }
     });
@@ -41,6 +47,9 @@ export const getAllPostsHandler = async (params: PostsQueryParamsModel): Promise
                 some: {
                     id: { in: categoriesArr }
                 }
+            },
+            published: {
+                equals: publishedValue
             }
         },
         take: Number(pageSize),

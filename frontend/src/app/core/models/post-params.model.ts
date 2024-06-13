@@ -3,4 +3,5 @@ export class PostParamsModel {
   pageSize: number;
   authors?: number[];
   categories?: number[];
+  published?: boolean[];
 }

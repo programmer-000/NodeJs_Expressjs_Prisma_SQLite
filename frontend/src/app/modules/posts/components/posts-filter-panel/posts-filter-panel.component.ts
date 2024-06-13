@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { filter, Observable, pairwise, Subject } from 'rxjs';
+import { BehaviorSubject, filter, Observable, pairwise, Subject } from 'rxjs';
 import { debounceTime, map, startWith, takeUntil } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
 import { PostsService } from '../../posts.service';
@@ -17,7 +17,6 @@ import { RoleEnum } from '../../../../core/enums';
   templateUrl: './posts-filter-panel.component.html',
   styleUrls: ['./posts-filter-panel.component.scss']
 })
-
 export class PostsFilterPanelComponent implements OnInit, OnDestroy {
 
   constructor(
@@ -36,7 +35,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   protected readonly RoleEnum = RoleEnum;
 
   // Object to hold filter data
-  private filterData: any = {authors: [], categories: []};
+  private filterData: any = { authors: [], categories: [] };
   public postFilterForm: FormGroup;
   private destroy$: Subject<void> = new Subject<void>();
 
@@ -55,24 +54,35 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   // Arrays to store selected values
   selectedValuesAuthors: any = [];
   selectedValuesCategories: any = [];
+  selectedValuesPublished: any = [];
 
   // Observables for filtering options
   filteredOptions$: Observable<any[]>;
   filteredOptionsCategories$: Observable<any[]>;
+  filteredOptionsPublished$= new BehaviorSubject<any>([]);
 
   // Clear All option label
   clearAllOption: string = 'Clear All';
 
+  // Enum for post status
+  statusPublished = [
+    {id: 1, name: 'Published', published: true},
+    {id: 2, name: 'Not Published', published: false},
+    // {id: 3, name: 'All', published: undefined}
+  ];
+
   ngOnInit() {
     this.fetchAllUsers();
     this.fetchCategories();
+    this.initPublished()
     this.buildForm();
     this.onChangesControlAuthors();
     this.onChangesControlCategories();
+    this.onChangesControlPublished();
   }
 
   /**
-   *Fetches users from the store
+   * Fetches users from the store
    */
   private fetchAllUsers() {
     this.store.dispatch(new GetListAllUsers());
@@ -82,14 +92,14 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$))
       .subscribe(resp => {
         this.listAllUsers = resp;
-        if (this.listAllUsers.length) {
+        if (this.listAllUsers?.length) {
           this.filteredUsers();
         }
       });
   }
 
   /**
-   *Sets up filtering for user search
+   * Sets up filtering for user search
    */
   private filteredUsers() {
     this.filteredOptions$ = this.searchTextboxControl.valueChanges
@@ -100,12 +110,13 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   }
 
   /**
-   *Builds the form for post filters
+   * Builds the form for post filters
    */
   private buildForm() {
     this.postFilterForm = this.fb.group({
       authors: [],
-      categories: []
+      categories: [],
+      published: [],
     });
   }
 
@@ -118,7 +129,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
       map(val => {
         let arrAuthors = [];
 
-        if (val.length) {
+        if (val?.length) {
           for (let i = 0; i < val.length; i++) {
             arrAuthors.push(val[i].id);
           }
@@ -132,7 +143,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
         return arrAuthors;
       }),
       pairwise(),
-      filter(([prev, curr]) => prev.length > 0 && curr.length === 0),
+      filter(([prev, curr]) => prev?.length > 0 && curr.length === 0),
       takeUntil(this.destroy$)
     ).subscribe(([prev, curr]) => {
       if (prev.length > 0 && curr.length === 0) {
@@ -143,7 +154,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   }
 
   /**
-   *Filters users based on input value
+   * Filters users based on input value
    */
   private _filter(name: string): any[] {
     const filterValue = name.toLowerCase();
@@ -153,9 +164,9 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   }
 
   /**
-   *Handles selection change in the user dropdown
+   * Handles selection change in the user dropdown
    */
-  selectionChange(event: any) {
+  selectionChangeAuthors(event: any) {
     if (event.isUserInput && !event.source.selected) {
       const index = this.selectedValuesAuthors.indexOf(event.source.value);
       this.selectedValuesAuthors.splice(index, 1);
@@ -163,7 +174,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   }
 
   /**
-   *Focuses on search input when dropdown is opened
+   * Focuses on search input when dropdown is opened
    */
   openedChangeAuthors(e: any) {
     this.searchTextboxControl.patchValue('');
@@ -173,7 +184,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   }
 
   /**
-   *Clears the search input value
+   * Clears the search input value
    */
   clearSearch(event: Event) {
     event.stopPropagation();
@@ -181,7 +192,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   }
 
   /**
-   *Sets selected values to retain state
+   * Sets selected values to retain state
    */
   setSelectedValues() {
     if (this.postFilterForm.controls['authors'].value && this.postFilterForm.controls['authors'].value.length > 0) {
@@ -194,7 +205,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   }
 
   /**
-   *Fetches categories from the store
+   * Fetches categories from the store
    */
   fetchCategories() {
     this.store.dispatch(new GetCategories());
@@ -204,14 +215,14 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$))
       .subscribe(resp => {
         this.listAllCategories = resp;
-        if (this.listAllCategories.length) {
+        if (this.listAllCategories?.length) {
           this.filteredCategories();
         }
       });
   }
 
   /**
-   *Sets up filtering for category search
+   * Sets up filtering for category search
    */
   private filteredCategories() {
     this.filteredOptionsCategories$ = this.searchTextboxControlCategories.valueChanges.pipe(
@@ -221,7 +232,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   }
 
   /**
-   *Filters categories based on input value
+   * Filters categories based on input value
    */
   private _filterCategories(name: string): any[] {
     const filterValue = name.toLowerCase();
@@ -231,7 +242,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   }
 
   /**
-   *Subscribes to changes in the categories control
+   * Subscribes to changes in the categories control
    */
   private onChangesControlCategories(): void {
     this.postFilterForm.controls['categories'].valueChanges.pipe(
@@ -239,7 +250,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
       map(val => {
         let arrCategories = [];
 
-        if (val.length) {
+        if (val?.length) {
           for (let i = 0; i < val.length; i++) {
             arrCategories.push(val[i].id);
           }
@@ -253,7 +264,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
         return arrCategories;
       }),
       pairwise(),
-      filter(([prev, curr]) => prev.length > 0 && curr.length === 0),
+      filter(([prev, curr]) => prev?.length > 0 && curr.length === 0),
       takeUntil(this.destroy$)
     ).subscribe(([prev, curr]) => {
       if (prev.length > 0 && curr.length === 0) {
@@ -264,7 +275,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   }
 
   /**
-   *Handles selection change in the category dropdown
+   * Handles selection change in the category dropdown
    */
   selectionChangeCategories(event: any) {
     if (event.isUserInput && !event.source.selected) {
@@ -274,7 +285,17 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   }
 
   /**
-   *Focuses on search input when dropdown is opened
+   * Handles selection change in the published dropdown
+   */
+  selectionChangePublished(event: any) {
+    if (event.isUserInput && !event.source.selected) {
+      const index = this.selectedValuesPublished.indexOf(event.source.value);
+      this.selectedValuesPublished.splice(index, 1);
+    }
+  }
+
+  /**
+   * Focuses on search input when dropdown is opened
    */
   openedChangeCategories(e: any) {
     this.searchTextboxControlCategories.patchValue('');
@@ -284,7 +305,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   }
 
   /**
-   *Clears the search input value
+   * Clears the search input value
    */
   clearSearchCategories(event: Event) {
     event.stopPropagation();
@@ -292,7 +313,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   }
 
   /**
-   *Sets selected values to retain state
+   * Sets selected values to retain state
    */
   setSelectedValuesCategories() {
     if (this.postFilterForm.controls['categories'].value && this.postFilterForm.controls['categories'].value.length > 0) {
@@ -305,7 +326,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   }
 
   /**
-   *Opens the dialog for managing categories
+   * Opens the dialog for managing categories
    */
   openDialog(): void {
     const dialogRef = this.dialog.open(DialogCategoriesPostComponent);
@@ -315,21 +336,21 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   }
 
   /**
-   *Opens the dialog for adding a new post
+   * Opens the dialog for adding a new post
    */
   addPost() {
-    const dialogRef = this.dialog.open(DialogPostsComponent, {data: {newPost: true}});
+    const dialogRef = this.dialog.open(DialogPostsComponent, { data: { newPost: true } });
     dialogRef.afterClosed().subscribe(result => {
       console.log('dialogRef result', result);
     });
   }
 
   /**
-   *Checks if all roles are selected
+   * Checks if all roles are selected
    */
   public isFilterFieldsPosts(): boolean {
-    const {authors, categories} = this.postFilterForm.value;
-    return [authors?.length, categories?.length].filter(Boolean).length > 1;
+    const { authors, categories, published } = this.postFilterForm.value;
+    return [authors?.length, categories?.length, published?.length].filter(Boolean).length > 1;
   }
 
   /**
@@ -338,29 +359,83 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   public clearAllFields(): void {
     this.postFilterForm.setValue({
       authors: [],
-      categories: []
+      categories: [],
+      published: []
     });
     this.selectedValuesAuthors = [];
     this.selectedValuesCategories = [];
+    this.selectedValuesPublished = [];
   }
 
   /**
    * Clear all authors
    */
   clearAllAuthors() {
-    this.postFilterForm.patchValue({authors: []});
+    this.postFilterForm.patchValue({ authors: [] });
     this.selectedValuesAuthors = [];
   }
+
   /**
    * Clear all categories
    */
   clearAllCategories() {
-    this.postFilterForm.patchValue({categories: []});
+    this.postFilterForm.patchValue({ categories: [] });
     this.selectedValuesCategories = [];
   }
 
+  /**
+   * Clear all published
+   */
+  clearAllPublished() {
+    this.postFilterForm.patchValue({ published: [] });
+    this.selectedValuesPublished = [];
+  }
+
+  /**
+   * Set published filter
+   * @private
+   */
+  private initPublished() {
+    this.filteredOptionsPublished$.next(this.statusPublished);
+  }
+
+  /**
+   * Subscribes to changes in the published control
+   */
+  private onChangesControlPublished() {
+    this.postFilterForm.controls['published'].valueChanges.pipe(
+      debounceTime(250),
+      map(val => {
+        let arrPublished = [];
+
+        if (val?.length) {
+          for (let i = 0; i < val.length; i++) {
+            arrPublished.push(val[i].published);
+          }
+        }
+
+        if (arrPublished.length > 0) {
+          this.filterData.published = arrPublished;
+          this.postsService.postsFilters$.next(this.filterData);
+        }
+
+        return arrPublished;
+      }),
+      pairwise(),
+      filter(([prev, curr]) => prev?.length > 0 && curr.length === 0),
+      takeUntil(this.destroy$)
+    ).subscribe(([prev, curr]) => {
+      if (prev.length > 0 && curr.length === 0) {
+        this.filterData.published = [];
+        this.postsService.postsFilters$.next(this.filterData);
+      }
+    });
+  }
+
   ngOnDestroy(): void {
+    this.postsService.postsFilters$.next({ authors: [], categories: [], published: []});
     this.destroy$.next();
     this.destroy$.complete();
   }
+
 }

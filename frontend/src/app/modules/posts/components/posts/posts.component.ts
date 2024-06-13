@@ -37,7 +37,7 @@ export class PostsComponent implements OnInit, OnDestroy {
   private destroy$: Subject<void> = new Subject<void>();
 
   // Default and current filters for posts
-  private defaultPostsFilters: PostFilterModel = {authors: [], categories: []};
+  private defaultPostsFilters: PostFilterModel = {authors: [], categories: [], published: []};
   private postsFilters: PostFilterModel = this.defaultPostsFilters;
 
   // Current userId
@@ -45,9 +45,9 @@ export class PostsComponent implements OnInit, OnDestroy {
 
   // Pagination variables
   length = 0; // Total number of items
-  pageSize = 2; // Number of items per page
+  pageSize = 5; // Number of items per page
   pageIndex = 0; // Current page index
-  pageSizeOptions = [2, 3, 5, 10, 15, 20, 25];
+  pageSizeOptions = [5, 10, 15, 25, 30, 50];
   previousPageIndex = 0;
   hidePageSize = false;
   showPageSizeOptions = true;
@@ -84,11 +84,25 @@ export class PostsComponent implements OnInit, OnDestroy {
    */
   private fetchData(): void {
     this.dataLoading = true;
+
+    // Check if both published and unpublished are selected or not selected
+    let published: boolean[] = [];
+    if (this.postsFilters.published?.includes(true) && !this.postsFilters.published?.includes(false)) {
+      published = [true];
+    } else if (!this.postsFilters.published?.includes(true) && this.postsFilters.published?.includes(false)) {
+      published = [false];
+    } else if (this.postsFilters.published?.includes(true) && this.postsFilters.published?.includes(false)) {
+      published = [];
+    } else {
+      published = [];
+    }
+
     const params = {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize,
       authors: this.postsFilters.authors,
-      categories: this.postsFilters.categories
+      categories: this.postsFilters.categories,
+      published
     };
     this.store.dispatch(new GetPosts(params));
 
@@ -100,6 +114,7 @@ export class PostsComponent implements OnInit, OnDestroy {
       this.dataLoading = false;
     });
   }
+
 
   /**
    * Handle page change event

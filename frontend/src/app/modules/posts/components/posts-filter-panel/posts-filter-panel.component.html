@@ -50,7 +50,7 @@
 
             <!-- Option for each author -->
             <mat-option
-              (onSelectionChange)="selectionChange($event)"
+              (onSelectionChange)="selectionChangeAuthors($event)"
               *ngFor="let option of filteredOptions$ | async"
               [value]="option">
               {{option.firstName}}
@@ -110,6 +110,45 @@
             <mat-option
               (onSelectionChange)="selectionChangeCategories($event)"
               *ngFor="let option of filteredOptionsCategories$ | async"
+              [value]="option">
+              {{option.name}}
+            </mat-option>
+          </div>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Select input for published -->
+      <mat-form-field class="filters__field">
+        <mat-select class="filters__select"
+                    placeholder="Select status"
+                    formControlName="published"
+                    multiple>
+
+          <!-- Display selected published -->
+          <mat-select-trigger>
+            <span *ngIf="postFilterForm.controls['published'].value?.length > 0">
+              {{postFilterForm.controls['published'].value ? postFilterForm.controls['published'].value[0].name : ''}}
+            </span>
+            <span *ngIf="postFilterForm.controls['published'].value?.length > 1" class="additional-selection">
+              (+{{postFilterForm.controls['published'].value.length - 1}} {{postFilterForm.controls['published'].value?.length === 2 ? 'other' : 'others'}}
+              )
+            </span>
+          </mat-select-trigger>
+
+          <div class="select-container">
+            <!-- Clear all published button -->
+            <mat-option
+              class="filters__option_clearAll"
+              *ngIf="postFilterForm.controls['published'].value?.length > 0"
+              [value]="clearAllOption"
+              (click)="clearAllPublished()">
+              {{ clearAllOption }}
+            </mat-option>
+
+            <!-- Option for each category -->
+            <mat-option
+              (onSelectionChange)="selectionChangePublished($event)"
+              *ngFor="let option of filteredOptionsPublished$ | async"
               [value]="option">
               {{option.name}}
             </mat-option>
