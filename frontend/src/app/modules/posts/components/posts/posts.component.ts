@@ -115,7 +115,6 @@ export class PostsComponent implements OnInit, OnDestroy {
     });
   }
 
-
   /**
    * Handle page change event
    * @param e PageEvent object containing pagination data

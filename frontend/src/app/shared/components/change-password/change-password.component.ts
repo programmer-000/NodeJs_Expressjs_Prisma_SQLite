@@ -130,8 +130,6 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
         },
         (error) => {
           this.dataLoading = false;
-          console.error(error);
-          this.notificationService.showError(error);
         }
       );
   }
@@ -245,8 +243,6 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
   /** Handle errors during password update/reset */
   private handleError(error: any): void {
     this.dataLoading = false;
-    console.error(error);
-    this.notificationService.showError(error);
     this.closeClick();
   }
 

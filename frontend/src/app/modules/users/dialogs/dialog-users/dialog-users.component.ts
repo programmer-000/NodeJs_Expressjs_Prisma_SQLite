@@ -165,26 +165,30 @@ export class DialogUsersComponent implements OnInit, OnDestroy {
     this.usersService.getUser(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe(data => {
-        if (data) {
+          if (data) {
+            this.dataLoading = false;
+          }
+          this.currentUser = data;
+          this.previousImageUrl = data.avatar;
+          this.avatarUrl = data.avatar;
+
+          // Set form values
+          this.userForm.setValue({
+            email: data.email,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            role: data.role,
+            location: data.location,
+            status: data.status,
+            birthAt: data.birthAt,
+          });
+          // Set selected user in the store
+          this.store.dispatch(new SetSelectedUser(data));
+        },
+        (error) => {
           this.dataLoading = false;
         }
-        this.currentUser = data;
-        this.previousImageUrl = data.avatar;
-        this.avatarUrl = data.avatar;
-
-        // Set form values
-        this.userForm.setValue({
-          email: data.email,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          role: data.role,
-          location: data.location,
-          status: data.status,
-          birthAt: data.birthAt,
-        });
-        // Set selected user in the store
-        this.store.dispatch(new SetSelectedUser(data));
-      });
+      );
   }
 
   /**

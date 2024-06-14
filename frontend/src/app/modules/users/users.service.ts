@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
 import * as config from '../../../app-config';
 import { UserModel, UserParamsModel } from '../../core/models';
 
@@ -81,12 +80,7 @@ export class UsersService {
       .set('email', params.email)
       .set('roles', JSON.stringify(params.roles));
 
-    return this.http.get(config.API_URL + `/users`, { params: queryParams }).pipe(
-      catchError(error => {
-        console.error('Error fetching users: ', error); // Logging error
-        return throwError(error); // Rethrowing the error
-      })
-    );
+    return this.http.get(config.API_URL + `/users`, { params: queryParams });
   }
 
   /**
@@ -94,11 +88,6 @@ export class UsersService {
    * @param id User ID.
    */
   getUser(id: number): Observable<any> {
-    return this.http.get(config.API_URL + `/users/` + id).pipe(
-      catchError(error => {
-        console.error('Error fetching user: ', error); // Logging error
-        return throwError(error); // Rethrowing the error
-      })
-    );
+    return this.http.get(config.API_URL + `/users/` + id);
   }
 }

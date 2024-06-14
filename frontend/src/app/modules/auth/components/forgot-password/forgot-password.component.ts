@@ -77,8 +77,6 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
           },
           (error) => {
             this.dataLoading = false;
-            console.error(error);
-            this.notificationService.showError(error);
           }
         );
     } else {

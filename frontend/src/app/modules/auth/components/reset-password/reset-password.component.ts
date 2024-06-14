@@ -67,8 +67,6 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
         error => {
           const resetToken = { id, token, valid: false };
           this.authService.validResetToken$.next(resetToken);
-          console.error(error);
-          this.notificationService.showError(error);
           this.router.navigate(['auth/forgot-password']);
         }
       );

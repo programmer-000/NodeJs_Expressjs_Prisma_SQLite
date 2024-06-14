@@ -30,7 +30,7 @@ postsRouter.get(
             if (post) {
                 return res.status(200).json(post);
             }
-            return res.status(404).json('Post could not be found');
+            return res.status(404).json({ message: 'Post could not be found'});
         } catch (error: any) {
             return res.status(500).json({ message: error.message });
         }
@@ -48,7 +48,7 @@ postsRouter.get(
     async (req: Request, res: Response) => {
         try {
             if (!req.query.pageIndex || !req.query.pageSize || !req.query.authors || !req.query.categories || !req.query.published) {
-                return res.status(400).json('pageIndex and pageSize are required');
+                return res.status(400).json({ message: 'Fields: pageIndex, pageSize, categories, published are required'});
             }
             const params: PostsQueryParamsModel = {
                 pageIndex: Number(req.query.pageIndex),

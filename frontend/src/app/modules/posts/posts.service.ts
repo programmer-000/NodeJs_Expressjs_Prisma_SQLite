@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
 import * as config from '../../../app-config';
 import { CategoriesModel, PostModel, PostParamsModel } from '../../core/models';
 
@@ -30,13 +29,7 @@ export class PostsService {
         .set('authors', JSON.stringify(params.authors))
         .set('categories', JSON.stringify(params.categories))
         .set('published', JSON.stringify(params.published))
-    })
-      .pipe(
-        catchError(error => {
-          console.log('Error: ', error.message);
-          return throwError(error);
-        })
-      );
+    });
   }
 
   /**
@@ -44,13 +37,7 @@ export class PostsService {
    * @param id The ID of the post to retrieve.
    */
   getPost(id: number): Observable<any> {
-    return this.http.get(config.API_URL + `/posts/` + id)
-      .pipe(
-        catchError(error => {
-          console.log('Error: ', error.message);
-          return throwError(error);
-        })
-      );
+    return this.http.get(config.API_URL + `/posts/` + id);
   }
 
   /**
@@ -95,26 +82,14 @@ export class PostsService {
    * Fetch a list of all users.
    */
   fetchListAllUsers(): Observable<any> {
-    return this.http.get(config.API_URL + `/users/list_all_users`)
-      .pipe(
-        catchError(error => {
-          console.log('Error: ', error.message);
-          return throwError(error);
-        })
-      );
+    return this.http.get(config.API_URL + `/users/list_all_users`);
   }
 
   /**
    * Fetch a list of categories for posts.
    */
   fetchListCategories(): Observable<any> {
-    return this.http.get(config.API_URL + `/categories`)
-      .pipe(
-        catchError(error => {
-          console.log('Error: ', error.message);
-          return throwError(error);
-        })
-      );
+    return this.http.get(config.API_URL + `/categories`);
   }
 
   /**

@@ -169,12 +169,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
               this.dataLoading = false;
             }
-
           },
           (error) => {
-            console.error(error);
             this.dataLoading = false;
-            this.notificationService.showError(error);
           });
     }
   }

@@ -69,11 +69,6 @@ export class PostComponent implements OnInit, OnDestroy {
           this.store.dispatch(new SetSelectedPost(data));
           this.dataLoading = false;
         },
-        (error) => {
-          this.dataLoading = false;
-          console.error(error);
-          this.notificationService.showError(error);
-        }
       );
     }
   }

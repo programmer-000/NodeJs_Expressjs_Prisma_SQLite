@@ -67,7 +67,7 @@ usersRouter.get('/:id',
             if (user) {
                 return res.status(200).json(user);
             }
-            return res.status(404).json('User could not be found');
+            return res.status(404).json({ message: 'User could not be found' });
         } catch (error: any) {
             return res.status(500).json({ message: error.message });
         }

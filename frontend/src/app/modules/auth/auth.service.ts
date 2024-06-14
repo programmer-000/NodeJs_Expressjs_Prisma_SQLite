@@ -135,15 +135,19 @@ export class AuthService {
    */
   logout(): void {
     const refreshToken = this.accountValue!.refreshToken;
-    this.http.post<any>(config.API_URL + `/auth/revokeRefreshTokens`, { refreshToken }).subscribe();
-    this.stopRefreshTokenTimer();
-    this.accountSubject$.next(null);
-    this.router.navigate(['/auth/login']);
-    localStorage.removeItem(LocalStorageEnum.ACCOUNT);
-    localStorage.removeItem(LocalStorageEnum.JWT_REFRESH_TOKEN_KEY);
-    localStorage.removeItem(LocalStorageEnum.JWT_ACCESS_TOKEN_KEY);
-    localStorage.removeItem(LocalStorageEnum.ROLES_LIST);
-    this.store.dispatch(new ClearState());
+    this.http.post<any>(config.API_URL + `/auth/revokeRefreshTokens`, { refreshToken }).subscribe(
+      () => {
+        this.stopRefreshTokenTimer();
+        this.accountSubject$.next(null);
+        localStorage.removeItem(LocalStorageEnum.ACCOUNT);
+        localStorage.removeItem(LocalStorageEnum.JWT_REFRESH_TOKEN_KEY);
+        localStorage.removeItem(LocalStorageEnum.JWT_ACCESS_TOKEN_KEY);
+        localStorage.removeItem(LocalStorageEnum.ROLES_LIST);
+        this.store.dispatch(new ClearState());
+        this.router.navigate(['/auth/login']);
+      }
+    );
+
   }
 
   /**
@@ -170,13 +174,7 @@ export class AuthService {
    * This request is executed to check whether the user has such a password before launching the password replacement function
    */
   fetchValidPassword(validPasswordData: LoginUserModel): Observable<any> {
-    console.log('fetchValidPassword')
-    return this.http.post(config.API_URL + `/auth/valid_password/`, { validPasswordData }).pipe(
-      catchError(error => {
-        console.log('Error: ', error.message);
-        return throwError(error);
-      })
-    );
+    return this.http.post(config.API_URL + `/auth/valid_password/`, { validPasswordData });
   }
 
   /**

@@ -13,7 +13,6 @@ import {
   SetSelectedPost, UpdateCategory,
   UpdatePost
 } from './posts.actions';
-import * as _ from 'lodash';
 import { CategoriesModel, PostModel, UserListModel } from '../../../core/models';
 
 
@@ -63,10 +62,6 @@ export class PostsState {
           posts: result.posts,
           postsCounter: result.totalCount
         });
-      },
-      (error) => {
-        console.error(error);
-        this.notificationService.showError(error);
       }
     ));
   }
@@ -95,10 +90,6 @@ export class PostsState {
           posts: [...state.posts, result.data.newPost],
           postsCounter: result.data.totalCount
         });
-      },
-      (error) => {
-        console.error(error);
-        this.notificationService.showError(error);
       }
     ));
   }
@@ -123,10 +114,6 @@ export class PostsState {
           posts: postsList,
           selectedPost: result.data
         });
-      },
-      (error) => {
-        console.error(error);
-        this.notificationService.showError(error);
       }
     ));
   }
@@ -145,10 +132,6 @@ export class PostsState {
           posts: filteredArray,
           postsCounter: state.postsCounter - 1
         });
-      },
-      (error) => {
-        console.error(error);
-        this.notificationService.showError(error);
       }
     ));
   }
@@ -164,10 +147,6 @@ export class PostsState {
           ...state,
           usersList: result.users
         });
-      },
-      (error) => {
-        console.error(error);
-        this.notificationService.showError(error);
       }
     ));
   }
@@ -183,10 +162,6 @@ export class PostsState {
           ...state,
           categories: result.categories
         });
-      },
-      (error) => {
-        console.error(error);
-        this.notificationService.showError(error);
       }
     ));
   }
@@ -202,10 +177,6 @@ export class PostsState {
         patchState({
           categories: [...state.categories, result.data.newCategory],
         });
-      },
-      (error) => {
-        console.error(error);
-        this.notificationService.showError(error);
       }
     ));
   }
@@ -227,10 +198,6 @@ export class PostsState {
           ...state,
           categories: categoriesList,
         });
-      },
-      (error) => {
-        console.error(error);
-        this.notificationService.showError(error);
       }
     ));
   }
@@ -248,10 +215,6 @@ export class PostsState {
           ...state,
           categories: filteredArray
         });
-      },
-      (error) => {
-        console.error(error);
-        this.notificationService.showError(error);
       }
     ));
   }

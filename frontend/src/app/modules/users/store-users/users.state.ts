@@ -59,10 +59,6 @@ export class UsersState {
           users: result.users,
           usersCounter: result.totalCount,
         });
-      },
-      (error) => {
-        console.error(error);
-        this.notificationService.showError(error);
       }
     ));
   }
