@@ -5,16 +5,17 @@ import { PostsService } from '../posts.service';
 import { tap } from 'rxjs';
 import {
   AddCategory,
-  AddPost, DeleteCategory,
+  AddPost,
+  DeleteCategory,
   DeletePost,
   GetCategories,
   GetListAllUsers,
   GetPosts,
-  SetSelectedPost, UpdateCategory,
+  SetSelectedPost,
+  UpdateCategory,
   UpdatePost
 } from './posts.actions';
 import { CategoriesModel, PostModel, UserListModel } from '../../../core/models';
-
 
 /**
  * Define the structure of the PostsStateModel
@@ -51,7 +52,7 @@ export class PostsState {
   }
 
   /**
-   *Action to get all posts
+   * Action to get all posts
    */
   @Action(GetPosts)
   getAllPosts({getState, setState}: StateContext<PostsStateModel>, {params}: GetPosts) {
@@ -67,19 +68,17 @@ export class PostsState {
   }
 
   /**
-   *Action to set selected post
+   * Action to set selected post
    */
   @Action(SetSelectedPost)
-  setSelectedPostId({getState, setState}: StateContext<PostsStateModel>, {payload}: SetSelectedPost) {
-    const state = getState();
-    setState({
-      ...state,
+  setSelectedPostId({patchState}: StateContext<PostsStateModel>, {payload}: SetSelectedPost) {
+    patchState({
       selectedPost: payload
     });
   }
 
   /**
-   *Action to add a new post
+   * Action to add a new post
    */
   @Action(AddPost)
   addNewPost({getState, patchState}: StateContext<PostsStateModel>, {params, avatar}: AddPost) {
@@ -98,7 +97,7 @@ export class PostsState {
    * Action to update an existing post
    */
   @Action(UpdatePost)
-  updateCurrentPost({getState, setState}: StateContext<PostsStateModel>, {
+  updateCurrentPost({getState, patchState}: StateContext<PostsStateModel>, {
     id, params, picture, pictureOrUrl, previousPictureUrl
   }: UpdatePost) {
     return this.postsService.updatePost(id, params, picture, pictureOrUrl, previousPictureUrl).pipe(tap((result) => {
@@ -107,10 +106,8 @@ export class PostsState {
         const postsList = [...state.posts];
         const postIndex = postsList.findIndex(item => item.id === id);
 
-        // TODO 3: Replace setState with patchState
         postsList[postIndex] = result.data;
-        setState({
-          ...state,
+        patchState({
           posts: postsList,
           selectedPost: result.data
         });
@@ -119,16 +116,15 @@ export class PostsState {
   }
 
   /**
-   *Action to delete a post
+   * Action to delete a post
    */
   @Action(DeletePost)
-  deletePost({getState, setState}: StateContext<PostsStateModel>, {id, params}: DeletePost) {
+  deletePost({getState, patchState}: StateContext<PostsStateModel>, {id, params}: DeletePost) {
     return this.postsService.removePost(id, params).pipe(tap((result) => {
         this.notificationService.showSuccess(result.message);
         const state = getState();
         const filteredArray = state.posts.filter(item => item.id !== id);
-        setState({
-          ...state,
+        patchState({
           posts: filteredArray,
           postsCounter: state.postsCounter - 1
         });
@@ -137,14 +133,12 @@ export class PostsState {
   }
 
   /**
-   *Action to get all users
+   * Action to get all users
    */
   @Action(GetListAllUsers)
-  getListAllUsers({getState, setState}: StateContext<PostsStateModel>) {
+  getListAllUsers({patchState}: StateContext<PostsStateModel>) {
     return this.postsService.fetchListAllUsers().pipe(tap((result) => {
-        const state = getState();
-        setState({
-          ...state,
+        patchState({
           usersList: result.users
         });
       }
@@ -152,14 +146,12 @@ export class PostsState {
   }
 
   /**
-   *Action to get all categories
+   * Action to get all categories
    */
   @Action(GetCategories)
-  getListCategories({getState, setState}: StateContext<PostsStateModel>) {
+  getListCategories({patchState}: StateContext<PostsStateModel>) {
     return this.postsService.fetchListCategories().pipe(tap((result) => {
-        const state = getState();
-        setState({
-          ...state,
+        patchState({
           categories: result.categories
         });
       }
@@ -167,7 +159,7 @@ export class PostsState {
   }
 
   /**
-   *Action to add a new category
+   * Action to add a new category
    */
   @Action(AddCategory)
   addNewCategory({getState, patchState}: StateContext<PostsStateModel>, {params}: AddCategory) {
@@ -182,20 +174,19 @@ export class PostsState {
   }
 
   /**
-   *Action to update an existing category
+   * Action to update an existing category
    */
   @Action(UpdateCategory)
-  updateCurrentCategory({getState, setState}: StateContext<PostsStateModel>, {
+  updateCurrentCategory({getState, patchState}: StateContext<PostsStateModel>, {
     id, params
   }: UpdateCategory) {
     return this.postsService.updateCategory(id, params).pipe(tap((result) => {
         this.notificationService.showSuccess(result.message);
         const state = getState();
         const categoriesList = [...state.categories];
-        const postIndex = categoriesList.findIndex(item => item.id === id);
-        categoriesList[postIndex] = result.data;
-        setState({
-          ...state,
+        const categoryIndex = categoriesList.findIndex(item => item.id === id);
+        categoriesList[categoryIndex] = result.data;
+        patchState({
           categories: categoriesList,
         });
       }
@@ -203,16 +194,15 @@ export class PostsState {
   }
 
   /**
-   *Action to delete a category
+   * Action to delete a category
    */
   @Action(DeleteCategory)
-  deleteCategory({getState, setState}: StateContext<PostsStateModel>, {id}: DeleteCategory) {
+  deleteCategory({getState, patchState}: StateContext<PostsStateModel>, {id}: DeleteCategory) {
     return this.postsService.removeCategory(id).pipe(tap((result) => {
         this.notificationService.showSuccess(result.message);
         const state = getState();
         const filteredArray = state.categories.filter(item => item.id !== id);
-        setState({
-          ...state,
+        patchState({
           categories: filteredArray
         });
       }

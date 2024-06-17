@@ -3,12 +3,15 @@
   <!-- Post Header -->
   <div class="dialog-post__header">
     <div class="dialog-post__title">
-      <p>{{this.currentPost ? this.currentPost.title : 'Add Post'}}</p>
+      <!-- Displaying post title or 'Add Post' if new -->
+      <p>{{ this.currentPost ? this.currentPost.title : 'Add Post' }}</p>
+      <!-- Displaying author's name if editing an existing post -->
       <p *ngIf="this.currentPost" class="dialog-post__subTitle">
         Author:
         {{this.currentPost ? this.currentPost.user.firstName : ''}}
         {{this.currentPost ? this.currentPost.user.lastName : ''}}
       </p>
+      <!-- Displaying author's role if editing an existing post -->
       <p *ngIf="this.currentPost" class="dialog-post__subTitle">
         Role: {{ this.currentPost ? (this.currentPost.user.role | roles) : '' }}
       </p>
@@ -117,7 +120,7 @@
               type="submit"
               [disabled]="!postForm.valid"
               [mat-dialog-close]="true">
-        {{this.data.newPost ? 'Create' : 'Update'}}
+        {{ this.data.newPost ? 'Create' : 'Update' }}
       </button>
       <!-- Cancel Button -->
       <button mat-raised-button color="accent"

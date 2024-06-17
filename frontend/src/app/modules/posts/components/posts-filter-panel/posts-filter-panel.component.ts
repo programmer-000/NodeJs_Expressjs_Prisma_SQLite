@@ -67,8 +67,7 @@ export class PostsFilterPanelComponent implements OnInit, OnDestroy {
   // Enum for post status
   statusPublished = [
     {id: 1, name: 'Published', published: true},
-    {id: 2, name: 'Not Published', published: false},
-    // {id: 3, name: 'All', published: undefined}
+    {id: 2, name: 'Not Published', published: false}
   ];
 
   ngOnInit() {

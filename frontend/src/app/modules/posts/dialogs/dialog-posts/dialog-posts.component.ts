@@ -40,7 +40,7 @@ export class DialogPostsComponent implements OnInit, OnDestroy {
 
 
 // Selecting list of categories from the store
-@Select(PostsSelectors.getListCategories) listAllCategories$: Observable<CategoriesModel[]>;
+  @Select(PostsSelectors.getListCategories) listAllCategories$: Observable<CategoriesModel[]>;
 
 // Current userId
   userId: number | undefined;

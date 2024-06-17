@@ -347,9 +347,7 @@ export class DialogUsersComponent implements OnInit, OnDestroy {
             }
           },
           (error) => {
-            console.error(error);
             this.dataLoading = false;
-            this.notificationService.showError(error);
             this.closeClick();
           });
     } else {

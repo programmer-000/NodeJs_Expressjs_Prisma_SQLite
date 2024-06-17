@@ -4,7 +4,6 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService } from '../../modules/auth/auth.service';
 import { NotificationService } from '../../shared/services';
-import * as _ from "lodash";
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
@@ -30,12 +29,7 @@ export class ErrorInterceptor implements HttpInterceptor {
 
         // Extract error message from the response or use default status text
         const error = (err && err.error && err.error.message) || err.statusText;
-
-        // const firstErrorAttempt: string = _.get(err, "error.error.message",  err.statusText);
-        // const secondErrorAttempt: string = _.get(err, "error.message", firstErrorAttempt);
-
         this.notificationService.showError(error);
-        // Log the error
         console.error(2, 'ErrorInterceptor:', error);
 
         // Throw the error to be caught by the subscriber

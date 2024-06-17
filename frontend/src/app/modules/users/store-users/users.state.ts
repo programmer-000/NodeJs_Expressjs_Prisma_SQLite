@@ -67,10 +67,8 @@ export class UsersState {
    * Action to set the selected user
    */
   @Action(SetSelectedUser)
-  setSelectedUserId({getState, setState}: StateContext<UsersStateModel>, {payload}: SetSelectedUser) {
-    const state = getState();
-    setState({
-      ...state,
+  setSelectedUserId({patchState}: StateContext<UsersStateModel>, {payload}: SetSelectedUser) {
+    patchState({
       selectedUser: payload
     });
   }
@@ -79,10 +77,8 @@ export class UsersState {
    * Action to set the authUser
    */
   @Action(SetAuthUser)
-  setAuthUser({getState, setState}: StateContext<UsersStateModel>, {payload}: SetAuthUser) {
-    const state = getState();
-    setState({
-      ...state,
+  setAuthUser({patchState}: StateContext<UsersStateModel>, {payload}: SetAuthUser) {
+    patchState({
       authUser: payload
     });
   }
@@ -100,10 +96,6 @@ export class UsersState {
           users: [...state.users, result.data.newUser],
           usersCounter: result.data.totalCount,
         });
-      },
-      (error) => {
-        console.error(error);
-        this.notificationService.showError(error);
       }
     ));
   }
@@ -112,18 +104,17 @@ export class UsersState {
    * Action to update a user
    */
   @Action(UpdateUser)
-  updateCurrentsUser({getState, setState}: StateContext<UsersStateModel>, {
-    id,
-    params,
-    avatar,
-    imageOrUrl,
-    previousImageUrl
-  }: UpdateUser) {
-    return this.usersService.updateUser(id, params, avatar, imageOrUrl, previousImageUrl).pipe(tap((result) => {
-      this.notificationService.showSuccess(result.message);
+  updateCurrentsUser(
+    { getState, patchState }: StateContext<UsersStateModel>,
+    { id, params, avatar, imageOrUrl, previousImageUrl }: UpdateUser
+  ) {
+    return this.usersService.updateUser(id, params, avatar, imageOrUrl, previousImageUrl).pipe(
+      tap((result) => {
+        this.notificationService.showSuccess(result.message);
+
         const state = getState();
         const usersList = [...state.users];
-        const userIndex = usersList.findIndex(item => item.id === id);
+        const userIndex = usersList.findIndex((item) => item.id === id);
 
         // Update the current account if the user is the same as the current account
         const currentAccount = this.authService.accountValue;
@@ -134,51 +125,41 @@ export class UsersState {
           email: result.data.email,
           role: result.data.role,
           avatar: result.data.avatar,
-        }
+        };
+
         if (authUser.id === currentAccount!.userInfo.id) {
           localStorage.setItem(LocalStorageEnum.ACCOUNT, JSON.stringify(authUser));
           const account: AuthModel = {
             userInfo: authUser,
             refreshToken: currentAccount!.refreshToken,
-            accessToken: currentAccount!.accessToken
-          }
+            accessToken: currentAccount!.accessToken,
+          };
           this.authService.accountSubject$.next(account);
         }
 
-        // TODO 2: Replace setState with patchState
-        // Update the user in the list
         usersList[userIndex] = result.data;
-        setState({
-          ...state,
+        patchState({
           users: usersList,
           authUser,
         });
-      },
-      (error) => {
-        console.error(error);
-        this.notificationService.showError(error);
-      }
-    ));
+      })
+    );
   }
+
 
   /**
    * Action to delete a user
    */
   @Action(DeleteUser)
-  deleteUser({getState, setState}: StateContext<UsersStateModel>, {id, params}: DeleteUser) {
+  deleteUser({getState, patchState}: StateContext<UsersStateModel>, {id, params}: DeleteUser) {
     return this.usersService.removeUser(id, params).pipe(tap((result) => {
         this.notificationService.showSuccess(result.message);
         const state = getState();
         const filteredArray = state.users.filter(item => item.id !== id);
-        setState({
-          ...state,
+        patchState({
           users: filteredArray,
           usersCounter: state.usersCounter - 1
         });
-      },
-      (error) => {
-        console.error(error);
-        this.notificationService.showError(error);
       }
     ));
   }

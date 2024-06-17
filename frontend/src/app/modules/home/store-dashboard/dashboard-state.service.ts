@@ -1,6 +1,5 @@
 import { Action, State, StateContext } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { NotificationService } from '../../../shared/services';
 import { HomeService } from '../home.service';
 
 import { tap } from 'rxjs';
@@ -30,7 +29,6 @@ export class DashboardState {
 
   constructor(
     private homeService: HomeService,
-    private notificationService: NotificationService,
   ) {
   }
 
@@ -45,11 +43,8 @@ export class DashboardState {
           ...state,
           statisticsCounters: result,
         });
-      },
-      (error) => {
-        console.error(error);
-        this.notificationService.showError(error);
-      }));
+      }
+    ));
   }
 }
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 import * as config from '../../../app-config';
 
 @Injectable({
@@ -15,12 +15,6 @@ export class HomeService {
    * @returns An object containing counts by total, role, user, category, and status.
    */
   getStatistics(): Observable<any> {
-    return this.http.get(config.API_URL + `/dashboard`)
-      .pipe(
-        catchError(error => {
-          console.error('Error:', error);
-          return throwError(error);
-        })
-      );
+    return this.http.get(config.API_URL + `/dashboard`);
   }
 }
