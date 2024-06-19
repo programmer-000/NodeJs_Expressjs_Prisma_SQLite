@@ -18,6 +18,7 @@ import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { SharedModule } from './shared/shared.module';
 import { ClearStatePlugin } from './store/clear-state-plugin.service';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 // Modules array
 const angularModules = [
@@ -49,6 +50,7 @@ const angularModules = [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: NGXS_PLUGINS, useClass: ClearStatePlugin, multi: true },
+    provideCharts(withDefaultRegisterables())
   ],
   bootstrap: [AppComponent]
 })

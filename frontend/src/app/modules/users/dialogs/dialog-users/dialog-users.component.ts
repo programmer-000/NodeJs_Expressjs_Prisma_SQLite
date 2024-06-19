@@ -379,7 +379,6 @@ export class DialogUsersComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('Change Password - afterClosed', result);
       if (result === true) {
       } else {
         return

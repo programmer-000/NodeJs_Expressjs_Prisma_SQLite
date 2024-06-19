@@ -44,8 +44,6 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
   authUser: AuthUserModel | undefined = this.authService.accountSubject$.value?.userInfo;
 
   ngOnInit() {
-    console.log(111, this.userData)
-
     this.buildChangePasswordForm(); // Initialize the change password form
     if (this.userData) {
       this.changesControlCurrentPassword(); // Set up control for current password field

@@ -227,7 +227,6 @@ export class UsersTableComponent implements OnInit, OnDestroy {
 
     // After confirmation, delete the user
     dialogRef.afterClosed().subscribe(result => {
-      console.log('deleteUser - afterClosed', result)
       if (result === true) {
         this.store.dispatch(new DeleteUser(id, params));
       } else {
