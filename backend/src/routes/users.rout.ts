@@ -13,6 +13,8 @@ import {
     parseUserUpdateParams, updateUserValidator,
     updatePasswordValidator,
 } from '../validators';
+import { checkPermissionMiddleware, currentRoleMiddleware } from '../rbac-config';
+
 
 export const usersRouter = express.Router();
 
@@ -26,6 +28,8 @@ usersRouter.get(
     '/',
     getUsersValidator,
     handleErrorsValidator,
+    currentRoleMiddleware(),
+    checkPermissionMiddleware('GET_USERS'),
     async (req: Request, res: Response) => {
         const params = req.query;
         try {
@@ -83,6 +87,8 @@ usersRouter.post(
     parseUserCreateParams,
     createUserValidator,
     handleErrorsValidator,
+    currentRoleMiddleware(),
+    checkPermissionMiddleware('CREATE_USER'),
     async (req: Request, res: Response) => {
         try {
             const user = req.body.user_params;
@@ -234,6 +240,8 @@ usersRouter.delete(
     '/:id',
     param('id').isInt().withMessage('ID must be an integer'),
     handleErrorsValidator,
+    currentRoleMiddleware(),
+    checkPermissionMiddleware('DELETE_USER'),
     async (req: Request, res: Response) => {
         const id: number = parseInt(req.params.id, 10);
         try {

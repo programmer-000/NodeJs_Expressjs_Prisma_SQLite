@@ -7,6 +7,7 @@ import {
     updateCategoryValidator
 } from '../validators';
 import { param } from 'express-validator';
+import { checkPermissionMiddleware, currentRoleMiddleware } from '../rbac-config';
 
 export const categoriesRouter = express.Router();
 
@@ -32,6 +33,8 @@ categoriesRouter.post(
     '/',
     createCategoryValidator,
     handleErrorsValidator,
+    currentRoleMiddleware(),
+    checkPermissionMiddleware('CREATE_CATEGORY'),
     async (req: Request, res: Response): Promise<Response> => {
         try {
             const data: NewCategoryModel = await CategoryHandler.createCategoryHandler(req.body);
@@ -52,6 +55,8 @@ categoriesRouter.put(
     '/:id',
     updateCategoryValidator,
     handleErrorsValidator,
+    currentRoleMiddleware(),
+    checkPermissionMiddleware('UPDATE_CATEGORY'),
     async (req: Request, res: Response): Promise<Response> => {
         const id: number = parseInt(req.params.id, 10);
         try {
@@ -73,6 +78,8 @@ categoriesRouter.delete(
     '/:id',
     param('id').isInt().withMessage('ID must be an integer'),
     handleErrorsValidator,
+    currentRoleMiddleware(),
+    checkPermissionMiddleware('DELETE_CATEGORY'),
     async (req: Request, res: Response): Promise<Response> => {
         const id: number = parseInt(req.params.id, 10);
         try {

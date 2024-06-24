@@ -285,6 +285,7 @@ export class DialogUsersComponent implements OnInit, OnDestroy {
       avatar: ''
     };
     this.store.dispatch(new AddUser(params, avatar));
+    this.closeClick();
   }
 
   /**

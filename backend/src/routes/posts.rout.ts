@@ -12,6 +12,7 @@ import {
     parsePostUpdateParams, updatePostValidator
 } from '../validators';
 
+
 export const postsRouter = express.Router();
 
 const BASE_URL = process.env.BASE_URL as string;
