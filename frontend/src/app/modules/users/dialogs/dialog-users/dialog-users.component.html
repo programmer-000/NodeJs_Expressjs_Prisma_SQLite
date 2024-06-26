@@ -43,7 +43,12 @@
           <input matInput #email class="form-control" placeholder="Email" formControlName="email" type="email"
                  name="email" maxlength="50" required>
           <mat-hint align="end">{{ email.value.length || 0 }}/50</mat-hint>
-          <mat-error *ngIf="userForm.controls['email'].hasError('required')">Email <strong>required</strong></mat-error>
+          <mat-error *ngIf="userForm.controls['email'].hasError('required')">
+            Email <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="userForm.controls['email'].hasError('email')">
+            Invalid email
+          </mat-error>
         </mat-form-field>
 
         <!-- First Name Input -->

@@ -17,6 +17,9 @@
           <mat-error *ngIf="authForm.controls['email'].hasError('required')">
             Email <strong>required</strong>
           </mat-error>
+          <mat-error *ngIf="authForm.controls['email'].hasError('email')">
+            Invalid email
+          </mat-error>
         </mat-form-field>
 
         <!-- Password input field -->
