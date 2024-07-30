@@ -46,6 +46,16 @@
     -webkit-line-clamp: 3;
   }
 
+  &__author {
+    line-height: 1;
+    font-size: 13px;
+    font-weight: 500;
+    font-style: italic;
+    margin: 0 0 15px;
+    overflow: hidden;
+    color: $black;
+  }
+
   &__img {
     width: 100%;
     height: auto;

@@ -1,0 +1,19 @@
+{
+  "totalPosts": 100,
+  "postsByRole": [
+    {"role": "Admin", "count": 50},
+    {"role": "User", "count": 50}
+  ],
+  "postsByCategory": [
+    {"name": "Tech", "_count": {"posts": 40}},
+    {"name": "Lifestyle", "_count": {"posts": 60}}
+  ],
+  "postsByStatus": [
+    {"published": true, "count": 80},
+    {"published": false, "count": 20}
+  ],
+  "postsByUser": [
+    {"firstName": "John", "lastName": "Doe", "_count": {"posts": 30}},
+    {"firstName": "Jane", "lastName": "Doe", "_count": {"posts": 70}}
+  ]
+}

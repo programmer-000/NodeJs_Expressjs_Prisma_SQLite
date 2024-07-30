@@ -3,7 +3,7 @@
   <mat-card class="post">
     <mat-card-header class="post__header">
 
-      <h2 class="post__title">{{ post.title }}</h2>
+      <h2 class="post__title" data-test="post-title">{{ post.title }}</h2>
 
       <!-- Post details -->
       <div class="post__details">
@@ -29,8 +29,8 @@
 
     <!-- Post content -->
     <mat-card-content>
-      <p class="post__description">{{ post.description }}</p>
-      <p class="post__text">{{ post.content }}</p>
+      <p class="post__description" data-test="post-description">{{ post.description }}</p>
+      <p class="post__text" data-test="post-text">{{ post.content }}</p>
     </mat-card-content>
 
     <!-- Post actions -->
@@ -41,6 +41,7 @@
       <div class="post__actionsBtn">
         <!-- Edit post button -->
         <button mat-icon-button class="material-icons app-toolbar-menu save-button"
+                data-test="edit-button"
                 [disabled]="!hasActionPermission(post.user)"
                 matTooltip="Edit" color="primary"
                 (click)="openDialogEditPost(post.id)">
@@ -51,6 +52,7 @@
         <button mat-icon-button class="material-icons app-toolbar-menu delete-button"
                 [disabled]="!hasActionPermission(post.user)"
                 matTooltip="Delete" color="warn"
+                data-test="delete-button"
                 (click)="openDialogDeletePost(post)">
           <mat-icon>delete</mat-icon>
         </button>

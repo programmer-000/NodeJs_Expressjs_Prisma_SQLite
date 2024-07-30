@@ -1,12 +1,12 @@
 <mat-card class="post-statistics">
   <mat-card-content>
     <div class="post-statistics__description-items">
-      <div class="post-statistics__description-title">Total Posts: {{ statisticsPosts.totalPosts }}</div>
-      <div class="post-statistics__description-status">Published Posts: {{ getPublishedPostsCount() }}</div>
+      <div class="post-statistics__description-title" data-test="post-statistics-title">Total Posts: {{ statisticsPosts.totalPosts }}</div>
+      <div class="post-statistics__description-status" data-test="post-statistics-status">Published Posts: {{ getPublishedPostsCount() }}</div>
     </div>
 
     <div class="post-statistics__charts">
-      <div class="post-statistics__chart">
+      <div class="post-statistics__chart" data-test="post-statistics-chart">
         <canvas baseChart
                 [datasets]="categoryPostsChartData"
                 [labels]="categoryPostsChartLabels"
@@ -16,7 +16,7 @@
         </canvas>
       </div>
 
-      <div class="post-statistics__chart">
+      <div class="post-statistics__chart" data-test="post-statistics-chart">
         <canvas baseChart
                 [datasets]="rolePostsChartData"
                 [labels]="rolePostsChartLabels"
@@ -27,7 +27,7 @@
       </div>
     </div>
 
-    <div class="post-statistics__chart post-statistics__chart_full">
+    <div class="post-statistics__chart post-statistics__chart_full" data-test="post-statistics-chart">
       <canvas baseChart
               [datasets]="userPostsChartData"
               [labels]="userPostsChartLabels"

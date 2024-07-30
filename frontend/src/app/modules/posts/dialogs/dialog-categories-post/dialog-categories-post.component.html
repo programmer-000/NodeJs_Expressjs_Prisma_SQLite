@@ -6,7 +6,7 @@
   <mat-form-field class="category__field"
                   (keydown.enter)="$event.preventDefault(); addFlag ? addCategory(): updateCategory()">
     <mat-label>{{ addFlag ? 'Create a new category' : 'Update Category'}}</mat-label>
-    <input matInput [formControl]="category">
+    <input matInput [formControl]="category" data-test="input-category">
     <mat-error *ngIf="category.hasError('required')">
       Category <strong>required</strong>
     </mat-error>
@@ -21,8 +21,10 @@
 
   <button
     class="category__btnSubmit"
+    type="submit"
     mat-raised-button
     aria-label="Create - Update"
+    data-test="submit-category-button"
     [disabled]="!category.value"
     (click)="addFlag ? addCategory(): updateCategory()"
   >{{addFlag ? 'Create' : 'Update'}}
@@ -36,6 +38,7 @@
     color="primary"
     aria-label="Add"
     matTooltip="Add new Category"
+    data-test="add-category-button"
     (click)="displayFields()"
   >
     <mat-icon>add</mat-icon>
@@ -46,12 +49,12 @@
 <div class="categories-wrap">
   <mat-divider></mat-divider>
   <div class="categories" role="listitem" *ngFor="let category of listAllCategories$ | async; trackBy: trackByFn; let i = index">
-    <div class="categories__title">{{category.name}}</div>
+    <div class="categories__title" data-test="category-title">{{category.name}}</div>
     <div class="categories__btn">
-      <button mat-icon-button color="primary" matTooltip="Edit" (click)="editCategory(category)">
+      <button mat-icon-button color="primary" matTooltip="Edit" (click)="editCategory(category)" data-test="edit-category-button">
         <mat-icon aria-label="Edit">edit</mat-icon>
       </button>
-      <button mat-icon-button color="primary" matTooltip="Delete" (click)="openDialogDeleteCategory(category)">
+      <button mat-icon-button color="primary" matTooltip="Delete" (click)="openDialogDeleteCategory(category)" data-test="delete-category-button">
         <mat-icon aria-label="Delete">delete</mat-icon>
       </button>
     </div>

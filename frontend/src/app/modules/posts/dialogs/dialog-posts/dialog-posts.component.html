@@ -47,32 +47,33 @@
   </div>
 
   <!-- Post Form -->
-  <form [formGroup]="postForm" novalidate (ngSubmit)="onSubmitPost()" class="dialog-post__form">
+  <form [formGroup]="postForm" novalidate (ngSubmit)="onSubmitPost()" class="dialog-post__form" data-test="postForm">
     <div mat-dialog-content>
 
       <!-- Title Input -->
       <mat-form-field class="example-full-width">
         <mat-label>Title</mat-label>
-        <input matInput class="form-control" placeholder="Title" formControlName="title">
+        <input matInput class="form-control" placeholder="Title" formControlName="title" data-test="post-title-input">
       </mat-form-field>
 
       <!-- Description Input -->
       <mat-form-field class="example-full-width">
         <mat-label>Description</mat-label>
-        <input matInput class="form-control" placeholder="Description" formControlName="description">
+        <input matInput class="form-control" placeholder="Description" formControlName="description" data-test="post-description-input">
       </mat-form-field>
 
       <!-- Content Input -->
       <mat-form-field class="example-full-width">
         <mat-label>Content</mat-label>
-        <textarea matInput class="form-control" placeholder="Content..." rows="5" formControlName="content"></textarea>
+        <textarea matInput class="form-control" placeholder="Content..." rows="5" formControlName="content" data-test="post-content-input"></textarea>
       </mat-form-field>
 
       <!-- Select Categories -->
       <mat-form-field class="example-full-width">
         <mat-label>Select categories</mat-label>
-        <mat-select formControlName="categories" placeholder="Favorite food" multiple [compareWith]="isSameCategory">
-          <mat-option *ngFor="let category of listAllCategories trackBy: trackByFn; let i = index" [value]="category">
+        <mat-select formControlName="categories" placeholder="Favorite food" multiple [compareWith]="isSameCategory" data-test="categories-field">
+          <mat-option
+            *ngFor="let category of listAllCategories trackBy: trackByFn; let i = index" [value]="category" data-test="categories-title-option">
             {{category.name}}
           </mat-option>
         </mat-select>
@@ -118,6 +119,7 @@
       <!-- Submit Button -->
       <button mat-raised-button color="primary"
               type="submit"
+              data-test="save-post-button"
               [disabled]="!postForm.valid"
               [mat-dialog-close]="true">
         {{ this.data.newPost ? 'Create' : 'Update' }}
@@ -125,6 +127,7 @@
       <!-- Cancel Button -->
       <button mat-raised-button color="accent"
               type="button"
+              data-test="cancel-button"
               [mat-dialog-close]="1"
               (click)="onNoClick()"
               tabindex="-1">Cancel

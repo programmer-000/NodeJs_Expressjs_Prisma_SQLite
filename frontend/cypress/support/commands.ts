@@ -35,3 +35,25 @@
 //     }
 //   }
 // }
+
+
+
+import { CypressEnum } from '../enums/cypress.enum';
+
+Cypress.Commands.add('login', () => {
+  const loginEmail = CypressEnum.LoginEmail;
+  const password = CypressEnum.Password;
+
+  cy.visit('/auth/login');
+
+  cy.intercept('POST', Cypress.env('api_server') + '/auth/login').as('login');
+
+  cy.get('input[formControlName="email"]').type(loginEmail);
+  cy.get('input[formControlName="password"]').type(password);
+  cy.get('button[type="submit"]').click();
+  cy.wait('@login').then((interception) => {
+    expect(interception.response.statusCode).to.eq(200);
+    // console.log('response = ', interception.response);
+  });
+  cy.url().should('eq', Cypress.config().baseUrl + '/');
+});

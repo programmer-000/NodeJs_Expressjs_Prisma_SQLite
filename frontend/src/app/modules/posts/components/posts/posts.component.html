@@ -6,7 +6,7 @@
   </div>
 
   <!-- Grid of posts -->
-  <div class="posts__grid">
+  <div class="posts__grid" data-test="posts-grid">
     <app-preview-post
       *ngFor="let post of posts$ | async; trackBy: trackByFn; let i = index"
       [post]="post"

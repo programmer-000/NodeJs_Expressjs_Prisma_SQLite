@@ -49,15 +49,15 @@
               <div class="account__name">{{ account.userInfo.firstName }}</div>
               <div class="account__role">{{ account.userInfo.role ?? 0 | roles }}</div>
             </div>
-            <a mat-icon-button [matMenuTriggerFor]="menu" class="account__avatar">
+            <a mat-icon-button data-test="account-button" [matMenuTriggerFor]="menu" class="account__avatar">
               <mat-icon *ngIf="!account.userInfo.avatar">account_circle</mat-icon>
               <img *ngIf="account.userInfo.avatar" class="account__img" [src]="account.userInfo.avatar"/>
             </a>
 
             <!-- User menu -->
-            <mat-menu #menu="matMenu">
+            <mat-menu #menu="matMenu" data-test="account-menu">
               <!-- Settings button -->
-              <button mat-menu-item (click)="editProfile(account.userInfo.id)">
+              <button mat-menu-item (click)="editProfile(account.userInfo.id)" data-test="settings-button">
                 <mat-icon>settings</mat-icon>
                 <span>Settings</span>
               </button>

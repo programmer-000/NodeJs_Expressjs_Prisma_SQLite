@@ -9,7 +9,7 @@
         <mat-select formControlName="roles" multiple>
 
           <!-- Select All option -->
-          <mat-option class="filters__option_toggle" [value]="selectAllOption" (click)="toggleAllRoles()">{{ selectAllOption }}</mat-option>
+          <mat-option class="filters__option_toggle" [value]="selectAllOption" (click)="toggleAllRoles()" data-test="filters-option-toggle">{{ selectAllOption }}</mat-option>
 
           <!-- Only show if the user is a Super Admin or Project Admin -->
           <ng-container *ngFor="let role of rolesList">
@@ -30,6 +30,7 @@
                 matSuffix
                 mat-icon-button
                 aria-label="Clear"
+                data-test="firstName-clear-button"
                 (click)="userFilterForm.controls['firstName'].patchValue('')">
           <mat-icon>close</mat-icon>
         </button>
@@ -44,6 +45,7 @@
                 matSuffix
                 mat-icon-button
                 aria-label="Clear"
+                data-test="lastName-clear-button"
                 (click)="userFilterForm.controls['lastName'].patchValue('')">
           <mat-icon>close</mat-icon>
         </button>
@@ -58,13 +60,14 @@
                 matSuffix
                 mat-icon-button
                 aria-label="Clear"
+                data-test="email-clear-button"
                 (click)="userFilterForm.controls['email'].patchValue('')">
           <mat-icon>close</mat-icon>
         </button>
       </mat-form-field>
 
       <!-- Clear all fields button -->
-      <button mat-button color="warn" *ngIf="isFilterFieldsUsers()" (click)="clearAllFields()">Clear All</button>
+      <button mat-button color="warn" *ngIf="isFilterFieldsUsers()" (click)="clearAllFields()" data-test="clearAllFields-button">Clear All</button>
     </form>
 
   </mat-card-content>

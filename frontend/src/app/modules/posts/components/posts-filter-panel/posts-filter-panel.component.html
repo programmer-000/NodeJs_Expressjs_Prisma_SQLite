@@ -44,7 +44,8 @@
             <mat-option
               class="filters__option_clearAll"
               *ngIf="postFilterForm.controls['authors'].value?.length > 0"
-              [value]="clearAllOption" (click)="clearAllAuthors()">
+              [value]="clearAllOption" (click)="clearAllAuthors()"
+              data-test="option-clearAllAuthors">
               {{ clearAllOption }}
             </mat-option>
 
@@ -52,7 +53,8 @@
             <mat-option
               (onSelectionChange)="selectionChangeAuthors($event)"
               *ngFor="let option of filteredOptions$ | async"
-              [value]="option">
+              [value]="option"
+              data-test="author-name-option">
               {{option.firstName}}
               {{option.lastName}}
             </mat-option>
@@ -102,7 +104,8 @@
               class="filters__option_clearAll"
               *ngIf="postFilterForm.controls['categories'].value?.length > 0"
               [value]="clearAllOption"
-              (click)="clearAllCategories()">
+              (click)="clearAllCategories()"
+              data-test="option-clearAllCategories">
               {{ clearAllOption }}
             </mat-option>
 
@@ -110,7 +113,8 @@
             <mat-option
               (onSelectionChange)="selectionChangeCategories($event)"
               *ngFor="let option of filteredOptionsCategories$ | async"
-              [value]="option">
+              [value]="option"
+              data-test="categories-name-option">
               {{option.name}}
             </mat-option>
           </div>
@@ -145,11 +149,12 @@
               {{ clearAllOption }}
             </mat-option>
 
-            <!-- Option for each category -->
+            <!-- Option for each published -->
             <mat-option
               (onSelectionChange)="selectionChangePublished($event)"
               *ngFor="let option of filteredOptionsPublished$ | async"
-              [value]="option">
+              [value]="option"
+              data-test="published-name-option">
               {{option.name}}
             </mat-option>
           </div>
@@ -157,15 +162,15 @@
       </mat-form-field>
 
       <!-- Clear all fields button -->
-      <button mat-button color="warn" *ngIf="isFilterFieldsPosts()" (click)="clearAllFields()">Clear All</button>
+      <button mat-button color="warn" *ngIf="isFilterFieldsPosts()" (click)="clearAllFields()" data-test="clearAllFields-button">Clear All</button>
     </form>
 
     <!-- Buttons for managing categories and adding new posts -->
     <mat-card-actions align="end">
-      <button *appDenyAccess="[RoleEnum.Client]" mat-raised-button class="filters__btnAdd" (click)="openDialog()">
+      <button *appDenyAccess="[RoleEnum.Client]" mat-raised-button class="filters__btnAdd" (click)="openDialog()" data-test="manage-categories-button">
         Manage post categories
       </button>
-      <button mat-mini-fab color="primary" aria-label="Add" matTooltip="Add new post" (click)="addPost()">
+      <button mat-mini-fab color="primary" aria-label="Add" matTooltip="Add new post" (click)="addPost()" data-test="add-post-button">
         <mat-icon aria-label="Add">add</mat-icon>
       </button>
     </mat-card-actions>

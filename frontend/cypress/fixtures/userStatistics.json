@@ -1,0 +1,16 @@
+{
+  "totalUser": 200,
+  "usersByRole": [
+    {"role": "Admin", "count": 10},
+    {"role": "User", "count": 190}
+  ],
+  "usersByStatus": [
+    {"status": true, "count": 150},
+    {"status": false, "count": 50}
+  ],
+  "usersByLocation": [
+    {"location": "USA", "count": 100},
+    {"location": "UK", "count": 50},
+    {"location": "Canada", "count": 50}
+  ]
+}

@@ -32,7 +32,7 @@
   </div>
 
   <!-- User Form -->
-  <form [formGroup]="userForm" novalidate (ngSubmit)="onSubmitUser()" class="example-form">
+  <form [formGroup]="userForm" novalidate (ngSubmit)="onSubmitUser()" class="example-form" data-test="userForm">
     <div mat-dialog-content>
 
       <!-- Only show if the user is not a manager -->
@@ -169,7 +169,7 @@
         <!-- Change Password Link (if not new user) -->
         <!-- Do not show if Role of manager -->
         <ng-container *ngIf="isPermissionsManager(authUser, currentUser)">
-          <a *ngIf="!data.newUser" class="dialog__actions_link" (click)="openDialogNewPassword(currentUser)">
+          <a *ngIf="!data.newUser" class="dialog__actions_link" data-test="link-change-password" (click)="openDialogNewPassword(currentUser)">
             <span>Change password</span>
           </a>
         </ng-container>
@@ -184,7 +184,7 @@
         {{ this.data.newUser ? 'Create' : 'Update' }}
       </button>
       <!-- Cancel Button -->
-      <button mat-raised-button color="accent" type="button" [mat-dialog-close]="1" (click)="closeClick()"
+      <button mat-raised-button data-test="cancel-button" color="accent" type="button" [mat-dialog-close]="1" (click)="closeClick()"
               tabindex="-1">Cancel
       </button>
     </div>
