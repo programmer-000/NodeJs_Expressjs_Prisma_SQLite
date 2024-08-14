@@ -1,6 +1,6 @@
 import { CypressEnum } from '../../enums/cypress.enum';
 
-describe('RegisterComponent', () => {
+describe('RegisterTest', () => {
   const registerEmail = CypressEnum.RegisterEmail;
   const password = CypressEnum.Password;
   const firstName = CypressEnum.RegisterFirstName;
@@ -29,7 +29,6 @@ describe('RegisterComponent', () => {
   });
 
   it('should fill out and submit the registration form successfully', () => {
-    interceptRegisterUser(200, { message: 'Registration successful!' });
     fillAndSubmitRegistrationForm({
       email: registerEmail,
       firstName,
@@ -84,13 +83,6 @@ describe('RegisterComponent', () => {
     cy.get('mat-error').contains('Birth date cannot be in the future');
   };
 
-  const interceptRegisterUser = (statusCode: number, body: object) => {
-    cy.intercept('POST', '/api/auth/register', {
-      statusCode,
-      body,
-    }).as('registerUser');
-  };
-
   const fillAndSubmitRegistrationForm = ({
                                            email,
                                            firstName,
@@ -108,8 +100,9 @@ describe('RegisterComponent', () => {
     cy.get('input[formControlName="confirmPassword"]').type(password);
     cy.get('input[formControlName="birthAt"]').type(birthDate);
 
+    cy.intercept('POST', Cypress.env('api_server') + '/auth/register').as('registerUser');
     cy.get('form').submit();
-    // cy.wait('@registerUser')
+    cy.wait('@registerUser').its('response.statusCode').should('eq', 201);
   };
 
   const verifyRegistrationSuccess = () => {

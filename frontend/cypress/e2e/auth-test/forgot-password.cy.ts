@@ -1,6 +1,6 @@
 import { CypressEnum } from '../../enums/cypress.enum';
 
-describe('ForgotPasswordComponent', () => {
+describe('ForgotPasswordTest', () => {
   const testExampleEmail = CypressEnum.TestExampleEmail;
   const loginEmail = CypressEnum.LoginEmail;
 
@@ -80,7 +80,6 @@ describe('ForgotPasswordComponent', () => {
   const submitForgotPasswordForm = (email: string) => {
     fillEmail(email);
     cy.get('button[type="submit"]').click();
-    // cy.wait('@verifyEmail');
   };
 
   const verifyNotificationIsDisplayed = () => {

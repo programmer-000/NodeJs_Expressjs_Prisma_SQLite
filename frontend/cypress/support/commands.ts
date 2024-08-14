@@ -24,36 +24,27 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-//
-// declare global {
-//   namespace Cypress {
-//     interface Chainable {
-//       login(email: string, password: string): Chainable<void>
-//       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
-//     }
-//   }
-// }
-
 
 
 import { CypressEnum } from '../enums/cypress.enum';
 
-Cypress.Commands.add('login', () => {
+Cypress.Commands.add('loginAndSaveToken', () => {
   const loginEmail = CypressEnum.LoginEmail;
   const password = CypressEnum.Password;
 
   cy.visit('/auth/login');
 
-  cy.intercept('POST', Cypress.env('api_server') + '/auth/login').as('login');
+  cy.intercept('POST', Cypress.env('api_server') + '/auth/login', (req) => {
+    req.on('response', (res) => {
+      window.localStorage.setItem('accessToken', res.body.accessToken);
+    });
+  }).as('login');
 
   cy.get('input[formControlName="email"]').type(loginEmail);
   cy.get('input[formControlName="password"]').type(password);
   cy.get('button[type="submit"]').click();
-  cy.wait('@login').then((interception) => {
-    expect(interception.response.statusCode).to.eq(200);
-    // console.log('response = ', interception.response);
-  });
+
+  cy.wait('@login').its('response.statusCode').should('eq', 200);
   cy.url().should('eq', Cypress.config().baseUrl + '/');
 });
+

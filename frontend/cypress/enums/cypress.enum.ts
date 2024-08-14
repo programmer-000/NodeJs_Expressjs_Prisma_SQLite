@@ -1,15 +1,19 @@
 export enum CypressEnum {
-  LoginEmail = 'andypetrov114@gmail.com',
-  // LoginEmail = 'andypetrov114+Client-Keanu@gmail.com',
 
-  LoginFirstName = 'Andy',
-  LoginLastName = 'Petrov',
+  // Depending on the test, uncomment on the one you need LoginEmail
+
+  // This is the super administrator's email and we do all the testing on it.
+  LoginEmail = 'andypetrov114@gmail.com',
+
+  // This email is used to test AccountSettingsDialogTest, before using it, you need to create it first using AddUserDialogTest
+  // LoginEmail = 'andypetrov114+113@gmail.com',
+
 
   RegisterEmail = 'andypetrov114+112@gmail.com',
   RegisterFirstName = 'RegisterFirstName',
   RegisterLastName = 'RegisterLastName',
 
-  NewUserEmail = 'andypetrov114+113@gmail.com',
+  NewUserEmail = 'andypetrov114+116@gmail.com',
   NewUserFirstName = 'NewUserFirstName',
   NewUserLastName = 'NewUserLastName',
 

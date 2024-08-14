@@ -1,11 +1,11 @@
 import { CypressEnum } from '../../enums/cypress.enum';
 
-describe('ManagePostCategories', () => {
+describe('ManagePostCategoriesTest', () => {
   const newCategory = CypressEnum.NewCategory;
   const updatedCategory = CypressEnum.UpdatedCategory;
 
   beforeEach(() => {
-    cy.login();
+    cy.loginAndSaveToken();
     cy.visit('/posts');
     cy.url().should('eq', Cypress.config().baseUrl + '/posts');
   });

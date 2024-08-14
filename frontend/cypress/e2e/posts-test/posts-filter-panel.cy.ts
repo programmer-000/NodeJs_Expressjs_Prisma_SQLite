@@ -1,15 +1,17 @@
-describe('PostsFilterPanel', () => {
+describe('PostsFilterPanelTest', () => {
   let selectedAuthor = '';
   let selectedCategories = '';
   let selectedPublished = '';
 
   beforeEach(() => {
-    cy.login();
+    cy.loginAndSaveToken();
 
     // Verify successful login by checking the URL or a specific element
     cy.visit('/posts');
     cy.url().should('eq', Cypress.config().baseUrl + '/posts');
     cy.get('app-posts-filter-panel').should('be.visible');
+
+    interceptFetchPosts();
   });
 
   it('should detect posts of the selected author on the page', () => {
@@ -67,15 +69,24 @@ describe('PostsFilterPanel', () => {
       selectedAuthor = option.text().trim();
       cy.get('mat-option[data-test="author-name-option"]').first().should('have.attr', 'aria-selected', 'true');
     });
-    cy.wait(300);
+    cy.wait('@fetchPosts');
     cy.get('body').type('{esc}');
   };
+
+
+  const interceptFetchPosts =() => {
+    const token = window.localStorage.getItem('accessToken');
+    cy.intercept('GET', '**/posts*', (req) => {
+      req.headers['Authorization'] = `Bearer ${token}`;
+      req.continue();
+    }).as('fetchPosts');
+  }
 
   // Deselect all authors
   const deselectAllAuthors = () => {
     cy.get('mat-select[formControlName="authors"]').click();
     cy.get('mat-option').contains('Clear All').click();
-    cy.wait(300);
+    cy.wait('@fetchPosts');
     cy.get('mat-select[formControlName="authors"]')
       .each(author => {
         cy.wrap(author).should('not.contain', selectedAuthor);
@@ -90,7 +101,7 @@ describe('PostsFilterPanel', () => {
       cy.get('mat-option[data-test="categories-name-option"]').first().should('have.attr', 'aria-selected', 'true');
     });
     cy.get('mat-select[formControlName="categories"]').should('contain.text', selectedCategories);
-    cy.wait(300);
+    cy.wait('@fetchPosts');
     cy.get('body').type('{esc}');
   };
 
@@ -98,7 +109,7 @@ describe('PostsFilterPanel', () => {
   const deselectAllCategories = () => {
     cy.get('mat-select[formControlName="categories"]').click();
     cy.get('mat-option').contains('Clear All').click();
-    cy.wait(300);
+    cy.wait('@fetchPosts');
     cy.get('mat-select[formControlName="categories"]')
       .each(category => {
         cy.wrap(category).should('not.contain', selectedCategories);
@@ -113,7 +124,7 @@ describe('PostsFilterPanel', () => {
       cy.get('mat-option[data-test="published-name-option"]').last().should('have.attr', 'aria-selected', 'true');
     });
     cy.get('mat-select[formControlName="published"]').should('contain', selectedPublished);
-    cy.wait(300);
+    cy.wait('@fetchPosts');
     cy.get('body').type('{esc}');
   };
 
@@ -121,7 +132,7 @@ describe('PostsFilterPanel', () => {
   const deselectAllPublishedStatuses = () => {
     cy.get('mat-select[formControlName="published"]').click();
     cy.get('mat-option').contains('Clear All').click();
-    cy.wait(300);
+    cy.wait('@fetchPosts');
     cy.get('mat-select[formControlName="published"]').should('contain.text', 'Select status');
   };
 

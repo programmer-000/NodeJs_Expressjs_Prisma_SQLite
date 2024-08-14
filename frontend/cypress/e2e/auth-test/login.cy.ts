@@ -1,6 +1,6 @@
 import { CypressEnum } from '../../enums/cypress.enum';
 
-describe('LoginComponent', () => {
+describe('LoginTest', () => {
   const loginEmail = CypressEnum.LoginEmail;
   const password = CypressEnum.Password;
   const testExampleEmail = CypressEnum.TestExampleEmail;

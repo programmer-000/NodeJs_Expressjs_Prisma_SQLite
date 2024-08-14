@@ -1,12 +1,12 @@
 import { DataPost } from '../../constants/data-post';
 
-describe('EditPostDialog', () => {
+describe('EditPostDialogTest', () => {
   const { title, description, content } = DataPost;
   const postUrl = `${Cypress.config().baseUrl}/posts/1`;
   let selectedCategories = '';
 
   beforeEach(() => {
-    cy.login();
+    cy.loginAndSaveToken();
     cy.visit('/posts');
     cy.url().should('eq', Cypress.config().baseUrl + '/posts');
   });
@@ -23,7 +23,7 @@ describe('EditPostDialog', () => {
     fillPostDetails(title, description, content);
     toggleCategoryOption();
     togglePublishedCheckbox();
-    savePost();
+    updatePost();
     verifySuccessMessage();
     verifyPostDetails(title, description, content);
   });
@@ -32,8 +32,15 @@ describe('EditPostDialog', () => {
   const openEditDialog = () => {
     cy.visit(postUrl);
     cy.url().should('eq', postUrl);
+
+    const token = window.localStorage.getItem('accessToken');
+    cy.intercept('GET', '**/posts/*', (req) => {
+      req.headers['Authorization'] = `Bearer ${token}`;
+      req.continue();
+    }).as('getPost');
     cy.get('[data-test="edit-button"]').should('be.visible').click();
     cy.get('mat-dialog-container').should('be.visible');
+    cy.wait('@getPost');
   };
 
   // Fill in the post details
@@ -70,8 +77,17 @@ describe('EditPostDialog', () => {
   };
 
   // Save the post
-  const savePost = () => {
+  const updatePost = () => {
+    cy.intercept('PUT', '**/posts/*', (req) => {
+      const token = window.localStorage.getItem('accessToken');
+      if (token) {
+        req.headers['Authorization'] = `Bearer ${token}`;
+      }
+      req.continue();
+    }).as('updatePost');
+
     cy.get('[data-test="save-post-button"]').click();
+    cy.wait('@updatePost').its('response.statusCode').should('eq', 201);
   };
 
   // Verify the success message

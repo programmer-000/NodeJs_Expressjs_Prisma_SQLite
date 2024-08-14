@@ -1,11 +1,11 @@
 import { DataPost } from '../../constants/data-post';
 
-describe('AddPostDialog', () => {
+describe('AddPostDialogTest', () => {
   const { title, description, content } = DataPost;
   let selectedCategories = '';
 
   beforeEach(() => {
-    cy.login();
+    cy.loginAndSaveToken();
     cy.visit('/posts');
     cy.url().should('eq', Cypress.config().baseUrl + '/posts');
   });
@@ -25,12 +25,19 @@ describe('AddPostDialog', () => {
   });
 
   it('should navigate to the last page when paginator is used', () => {
-    cy.get('.mat-mdc-paginator-navigation-last').click();
+    navigateToLastPage();
   });
 
   // Open the Add Post dialog
   const openAddPostDialog = () => {
+    const token = window.localStorage.getItem('accessToken');
+    cy.intercept('GET', '**/categories', (req) => {
+      req.headers['Authorization'] = `Bearer ${token}`;
+      req.continue();
+    }).as('getCategories');
+
     cy.get('[data-test="add-post-button"]').should('be.visible').click();
+    cy.wait('@getCategories');
     cy.get('mat-dialog-container').should('be.visible');
   };
 
@@ -59,11 +66,35 @@ describe('AddPostDialog', () => {
 
   // Save the post
   const savePost = () => {
+    cy.intercept('POST', '**/posts', (req) => {
+      const token = window.localStorage.getItem('accessToken');
+      if (token) {
+        req.headers['Authorization'] = `Bearer ${token}`;
+      }
+      req.continue();
+    }).as('savePost');
+
     cy.get('[data-test="save-post-button"]').click();
+    cy.wait('@savePost').its('response.statusCode').should('eq', 201);
   };
 
   // Verify the success message
   const verifySuccessMessage = () => {
     cy.get('mat-snack-bar-container').should('be.visible');
+  };
+
+  // Navigate to the last page using the paginator and check out the new post
+  const navigateToLastPage = () => {
+
+    const token = window.localStorage.getItem('accessToken');
+    cy.intercept('GET', '**/posts*', (req) => {
+      req.headers['Authorization'] = `Bearer ${token}`;
+      req.continue();
+    }).as('getPosts');
+
+    cy.get('.mat-mdc-paginator-navigation-last').click();
+
+    cy.wait('@getPosts');
+    cy.get('[data-test="posts-grid"]').contains(title);
   };
 });

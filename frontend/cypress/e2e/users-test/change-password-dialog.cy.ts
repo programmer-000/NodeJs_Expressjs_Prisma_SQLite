@@ -1,10 +1,10 @@
 import { CypressEnum } from '../../enums/cypress.enum';
 
-describe('ChangePasswordDialog', () => {
+describe('ChangePasswordDialogTest', () => {
   const newPassword = CypressEnum.NewPassword;
 
   beforeEach(() => {
-    cy.login();
+    cy.loginAndSaveToken();
     cy.visit('/users');
     cy.url().should('eq', Cypress.config().baseUrl + '/users');
     openEditUserDialog();
@@ -41,14 +41,37 @@ describe('ChangePasswordDialog', () => {
   });
 
   it('should fill out the change password form and submit it', () => {
+    cy.intercept('PUT', '**/users/update_password/*', (req) => {
+      const token = window.localStorage.getItem('accessToken');
+      if (token) {
+        req.headers['Authorization'] = `Bearer ${token}`;
+      }
+    }).as('changePasswordRequest');
+
+    // Custom functions for filling and submitting the form
     openChangePasswordDialog();
     fillAndSubmitChangePasswordForm(newPassword);
+
+    // Wait for the intercepted request to finish and check the response
+    cy.wait('@changePasswordRequest').its('response.statusCode').should('eq', 200);
+
+    // Verify the success of the form submission
     verifyFormSubmissionSuccess();
   });
 
   // Helper functions
   const openEditUserDialog = () => {
+    cy.intercept('GET', '**/users/*', (req) => {
+      const token = window.localStorage.getItem('accessToken');
+      if (token) {
+        req.headers['Authorization'] = `Bearer ${token}`;
+      }
+    }).as('getUserData');
+
     cy.get('[data-test="editUser-button"]').first().click();
+
+    // Wait for the user data request to complete
+    cy.wait('@getUserData');
     cy.get('mat-dialog-container').should('be.visible');
   };
 

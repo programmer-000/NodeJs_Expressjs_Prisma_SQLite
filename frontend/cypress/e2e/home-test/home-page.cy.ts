@@ -1,15 +1,21 @@
-describe('HomeComponent', () => {
+describe('HomeTest', () => {
   beforeEach(() => {
-    cy.login();
-    cy.visit('/');
-    cy.url().should('include', '/');
+    cy.loginAndSaveToken();
   });
 
   it('should display post and user statistics components', () => {
-    cy.intercept('GET', '**/dashboard', { delay: 500 }).as('fetchStatistics');
+    cy.intercept('GET', '**/dashboard', (req) => {
+      const token = window.localStorage.getItem('accessToken');
+      if (token) {
+        req.headers['Authorization'] = `Bearer ${token}`;
+      }
+      req.continue();
+    }).as('fetchStatistics');
+
     cy.visit('/');
 
     cy.wait('@fetchStatistics');
+
     cy.get('app-post-statistics').should('be.visible');
     cy.get('app-user-statistics').should('be.visible');
   });
